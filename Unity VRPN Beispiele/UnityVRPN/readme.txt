@@ -1,0 +1,1 @@
+                    // OUTPUTSTREAM: SUBJECT;TRIALNUM;POSITIONID;(posX0;posY0;posZ0);SCALEID;(scaleX0;scaleY0;scaleZ0);SHAPEID;REPERITIONID;(((fingerposX0;fingerposY0;fingerposZ0);(headposX0;headposY0;headposZ0;));...)

@@ -1,0 +1,1 @@
+Basic demo of spinning a globe
