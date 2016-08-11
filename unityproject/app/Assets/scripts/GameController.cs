@@ -56,7 +56,7 @@ public class GameController : MonoBehaviour {
 
                     Node nodeObject = Instantiate(nodePrefab, new Vector3(x, y, z), Quaternion.identity) as Node;
 
-                    nodeObject.nodeText.text = xmlNode.Attributes["id"].Value;
+                    nodeObject.nodeText.text = WWW.UnEscapeURL(xmlNode.Attributes["id"].Value.Replace("_"," "));
                     nodeObject.id = xmlNode.Attributes["id"].Value;
                     nodes.Add(nodeObject.id, nodeObject);
 
