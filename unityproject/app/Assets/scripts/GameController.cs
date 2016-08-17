@@ -64,7 +64,9 @@ public class GameController : MonoBehaviour
 					nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " "));
 					nodeObject.id = xmlNode.Attributes ["id"].Value;
 					nodes.Add (nodeObject.id, nodeObject);
-
+					nodeObject.title = nodeObject.nodeText.text;
+					nodeObject.desc = nodeObject.nodeText.text + nodeObject.nodeText.text + nodeObject.nodeText.text;
+					nodeObject.SetupLabel ();
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
 					float size = 0.5f * (count + 1) * SCALE / (max_count + 1);
 					nodeObject.transform.localScale = new Vector3 (size, size, size);
