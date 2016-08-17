@@ -35,7 +35,5 @@ public class CameraController : MonoBehaviour {
             transform.position = new Vector3(0, 1.0f, -10.0f);
             transform.rotation = new Quaternion(0, 0, 0, 0);
         }
-
     }
-
 }
