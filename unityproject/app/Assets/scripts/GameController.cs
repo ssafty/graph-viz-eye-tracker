@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Xml;
 using System.IO;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour {
 	public bool loadDataset = false;
@@ -139,4 +140,29 @@ public class GameController : MonoBehaviour {
         }
         return max;
     }
+
+
+	void Update(){
+		if(Input.GetKey(KeyCode.LeftBracket))
+		{
+			RaycastHit hitPoint;
+			Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+			if(Physics.Raycast(ray, out hitPoint, 50)){ //used 50 instead of Mathf.Infinity
+				foreach (Node n in nodes.Values) {
+					n.transform.RotateAround(Camera.main.ViewportToWorldPoint ( new Vector3 (0.5f, 0.5f, hitPoint.distance)), Vector3.up, 20 * Time.deltaTime);
+				}
+			}
+		}
+
+		if(Input.GetKey(KeyCode.RightBracket))
+		{
+			RaycastHit hitPoint;
+			Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
+			if(Physics.Raycast(ray, out hitPoint, 50)){
+				foreach (Node n in nodes.Values) {
+					n.transform.RotateAround(Camera.main.ViewportToWorldPoint ( new Vector3 (0.5f, 0.5f, hitPoint.distance)), -Vector3.up, 20 * Time.deltaTime);
+				}
+			}
+		}
+	}
 }
