@@ -5,48 +5,53 @@ using UnityEditor;
 
 public class InfoLabelController : MonoBehaviour
 {
-	public static float WIDTH = 200f;
-	public static float HEIGHT = 300f;
+
 	private GameObject header;
 	private GameObject desc;
-	private GameObject node;
+	public KeyCode dismissKey;
+
 
 
 	// Update is called once per frame
 	void Update ()
 	{
+		Node node = MouseClickUtil.checkMouseClick (0, 10000);
 		if (node != null) {
-			Vector3 pos = node.transform.position;
-			float newX = pos.x + InfoLabelController.WIDTH / 2;
-			float newY = pos.y - 20 - InfoLabelController.HEIGHT / 2;
-			gameObject.transform.position = new Vector3 (newX, newY, pos.z);
+
+			setTitle (node.title);
+			setDescription (node.desc);
+			toggle (true);
+		}
+
+		if (Input.GetKeyDown (dismissKey)) {
+			toggle (false);
+			setTitle ("");
+			setDescription ("");
 		}
 	}
 
-	public void setGraphNode (GameObject node)
-	{
-		this.node = node;
-	}
 
-	public void setTitle (string title)
+
+	private void setTitle (string title)
 	{
 		transform.Find ("Header").GetComponent<Text> ().text = title;
 	}
 
-	public void setDescription (string description)
+	private void setDescription (string description)
 	{
-		transform.Find ("Text/Viewport/Content").GetComponent<Text> ().text = description;
+		transform.Find ("Text").GetComponent<Text> ().text = description;
 	}
 
-	public void hide ()
+	private void toggle (bool visible)
 	{
-		gameObject.SetActive (false);
+		transform.Find ("Header").GetComponent<Text> ().enabled = visible;
+		transform.Find ("Text").GetComponent<Text> ().enabled = visible;
+		gameObject.GetComponent<Image> ().enabled = visible;
+
 	}
 
-	public void show ()
-	{
-		gameObject.SetActive (true);
-	}
+
+
 
 
 
