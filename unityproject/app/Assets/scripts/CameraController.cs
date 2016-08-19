@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
 			float fracJourney = distCovered / journeyLength;
 			transform.position = Vector3.Lerp (transform.position, targetPos, fracJourney);
 
-			if ((transform.position - targetPos).magnitude < 1 && (transform.forward - targetForward).magnitude < 1) {
+			if ((transform.position - targetPos).magnitude < 0.01 && (transform.forward - targetForward).magnitude < 0.01) {
 				isCameraTransitionRunning = false;
 			}
 		}
@@ -35,7 +35,7 @@ public class CameraController : MonoBehaviour
 		//Handles the Camera Orientation
 		if (isCameraTransitionRunning && transform.forward != targetForward) {
 			Debug.Log ("inside loop");
-			float distCovered = (Time.time - startTime) * 2.0f; //speed = 1.0f
+			float distCovered = (Time.time - startTime) * 0.035f; //speed = 1.0f
 			float fracJourney = distCovered / journeyLengthForward;
 
 			transform.forward = (new Vector3 (
@@ -44,7 +44,7 @@ public class CameraController : MonoBehaviour
 				Mathf.LerpAngle (transform.forward.z, targetForward.z, fracJourney)
 			));
 
-			if ((transform.position - targetPos).magnitude < 1 && (transform.forward - targetForward).magnitude < 1) {
+			if ((transform.position - targetPos).magnitude < 0.01 && (transform.forward - targetForward).magnitude < 0.01) {
 				isCameraTransitionRunning = false;
 			}
 		}
@@ -53,17 +53,38 @@ public class CameraController : MonoBehaviour
 
 		Node targetNode = MouseClickUtil.checkMouseClick (MouseClickUtil.LEFT_BTN, 10000);
 		if (targetNode != null) {
-			//get Point on the same Z level of the target
-//					Vector3 CameraToTargetVector = (new Vector3(
-//						transform.position.x,
-//						transform.position.y,
-//						targetNode.transform.position.z) - targetNode.transform.position ).normalized;
-			targetPos = targetNode.transform.position + offset;
-//					targetPos = targetNode.transform.position + CameraToTargetVector * 10f;
+
+
+			Vector3 CameraToTargetVector = (transform.position - targetNode.transform.position);
+			CameraToTargetVector.y = 0; //get Point on the same Y level of the target
+			CameraToTargetVector = CameraToTargetVector.normalized;
+
+
+			targetPos = targetNode.transform.position + (CameraToTargetVector * 25f);
+			targetForward = (targetNode.transform.position - targetPos).normalized;
+
+
 			startTime = Time.time;
-			journeyLength = Vector3.Distance (transform.position, targetPos);
-			journeyLengthForward = Vector3.Distance (transform.forward, targetNode.transform.position - transform.position);
+			journeyLength = Vector3.Distance(transform.position, targetPos);
+			journeyLengthForward = Vector3.Distance (transform.forward,  targetForward);
+
 			isCameraTransitionRunning = true;
+
+
+
+
+//
+//			//get Point on the same Z level of the target
+////					Vector3 CameraToTargetVector = (new Vector3(
+////						transform.position.x,
+////						transform.position.y,
+////						targetNode.transform.position.z) - targetNode.transform.position ).normalized;
+//			targetPos = targetNode.transform.position + offset;
+////					targetPos = targetNode.transform.position + CameraToTargetVector * 10f;
+//			startTime = Time.time;
+//			journeyLength = Vector3.Distance (transform.position, targetPos);
+//			journeyLengthForward = Vector3.Distance (transform.forward, targetNode.transform.position - transform.position);
+//			isCameraTransitionRunning = true;
 
 		}
 
