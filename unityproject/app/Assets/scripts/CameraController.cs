@@ -8,8 +8,68 @@ public class CameraController : MonoBehaviour
 	public float rotationSpeed = 1.5f;
 	public float strafeSpeed = 0.6f;
 
+	bool isCameraTransitionRunning = false;
+	float CameraTransitionsmoothing = 5f;
+	Vector3 targetPos;
+	Vector3 targetForward = new Vector3(0,0,1);
+	float startTime;
+	float journeyLength;
+	float journeyLengthForward;
+
+	Vector3 offset = new Vector3(0,0,-20);
+
 	void Update ()
 	{
+		//Handles the camera Position
+		if (isCameraTransitionRunning && transform.position != targetPos) {
+			float distCovered = (Time.time - startTime) * 2.0f; //speed = 1.0f
+			float fracJourney = distCovered / journeyLength;
+			transform.position = Vector3.Lerp(transform.position, targetPos, fracJourney);
+
+			if ((transform.position - targetPos).magnitude < 1 && (transform.forward - targetForward).magnitude < 1) {
+				isCameraTransitionRunning = false;
+			}
+		}
+
+		//Handles the Camera Orientation
+		if (isCameraTransitionRunning && transform.forward != targetForward) {
+			Debug.Log ("inside loop");
+			float distCovered = (Time.time - startTime) * 2.0f; //speed = 1.0f
+			float fracJourney = distCovered / journeyLengthForward;
+
+			transform.forward =  ( new Vector3(
+				Mathf.LerpAngle(transform.forward.x, targetForward.x, fracJourney),
+				Mathf.LerpAngle(transform.forward.y, targetForward.y, fracJourney),
+				Mathf.LerpAngle(transform.forward.z, targetForward.z, fracJourney)
+			));
+
+			if ((transform.position - targetPos).magnitude < 1 && (transform.forward - targetForward).magnitude < 1) {
+				isCameraTransitionRunning = false;
+			}
+		}
+
+		//when clicked on a node, zoom in
+		if (Input.GetMouseButtonDown (0)) {
+			RaycastHit hitPoint;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			if (Physics.Raycast (ray, out hitPoint, 150)) { //used 150 instead of Mathf.Infinity
+				Node targetNode = (Node)hitPoint.transform.gameObject.GetComponent ("Node");
+				if (targetNode != null) {
+					//get Point on the same Z level of the target
+//					Vector3 CameraToTargetVector = (new Vector3(
+//						transform.position.x,
+//						transform.position.y,
+//						targetNode.transform.position.z) - targetNode.transform.position ).normalized;
+					targetPos = targetNode.transform.position + offset;
+//					targetPos = targetNode.transform.position + CameraToTargetVector * 10f;
+					startTime = Time.time;
+					journeyLength = Vector3.Distance(transform.position, targetPos);
+					journeyLengthForward = Vector3.Distance (transform.forward,  targetNode.transform.position - transform.position);
+					isCameraTransitionRunning = true;
+				}
+			}
+		}
+
 		//Rotation
 		transform.RotateAround (transform.position, new Vector3 (0, 1.0f, 0), rotationSpeed * Input.GetAxis ("Horizontal"));
 		//This up/down split is necessary, because the boundaries need to be different to avoid getting stuck because of rounding errors 
@@ -31,6 +91,8 @@ public class CameraController : MonoBehaviour
 			transform.position = new Vector3 (0, 1.0f, -10.0f);
 			transform.rotation = new Quaternion (0, 0, 0, 0);
 		}
+
+
 	}
 
 
