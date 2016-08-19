@@ -63,6 +63,8 @@ public class GameController : MonoBehaviour
 					Node nodeObject = Instantiate (nodePrefab, new Vector3 (x, y, z), Quaternion.identity) as Node;
 					nodeObject.transform.parent = graphParent.transform;
 					nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " "));
+					nodeObject.nodeText.fontSize = 250;
+					nodeObject.nodeText.transform.localScale = new Vector3 (0.018f, 0.018f, 0.018f);
 					nodeObject.id = xmlNode.Attributes ["id"].Value;
 					nodes.Add (nodeObject.id, nodeObject);
 					nodeObject.title = nodeObject.nodeText.text;
