@@ -70,11 +70,17 @@ class Tcp_Server(Plugin):
             #self.conn.send(str(g['norm_pos']))
             #print g
             try:
+                x,y = g['realtime gaze on unnamed']
                 print str(g['realtime gaze on unnamed'])
-                self.conn.send(str(g['realtime gaze on unnamed']))
-                gf.write(g + '\n')
+
+                lo,hi = 0,1
+                x = lo if x <= lo else hi if x >= hi else x
+                y = lo if y <= lo else hi if y >= hi else y
+
+                self.conn.send((x,y))
+                # gf.write(g + '\n')
             except:
-                print "no realtime"
+                pass
     #for key, value in g.iteritems():
     #self.conn.send( key+":"+str(value)+'\n' )
 
