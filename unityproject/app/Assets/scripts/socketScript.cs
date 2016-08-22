@@ -11,6 +11,7 @@ public class socketScript : MonoBehaviour
 	public string msgToServer;
 
 	public GameObject eyepointer;
+	public Vector2 LastEyeCoordinate;
 
 	void Awake ()
 	{
@@ -21,12 +22,13 @@ public class socketScript : MonoBehaviour
 
 	void Start ()
 	{
-
+		LastEyeCoordinate = Vector2.zero;
 	}
 
 	void Update ()
 	{
 		ShowPositionOnScreen (false, 3840, 2160);
+		eyepointer.GetComponent<RectTransform> ().anchoredPosition = LastEyeCoordinate;
 
 	}
 
@@ -70,9 +72,9 @@ public class socketScript : MonoBehaviour
 						y = 1 - y;
 					}
 					y *= height;
-					Vector2 newPos = new Vector2 (-((float)x - (Screen.width / 2)), (float)y - (Screen.height / 2));
+					Vector2 newPos = new Vector2 (((float)x - (Screen.width / 2)), (float)y - (Screen.height / 2));
 					Debug.Log ("moving cube to x: " + x + "y: " + y);
-					eyepointer.GetComponent<RectTransform> ().anchoredPosition = newPos;
+					LastEyeCoordinate = newPos;
 					using (System.IO.StreamWriter file = new System.IO.StreamWriter (@"F:\eyetracker\eyetracker-project\coordinateLog.csv", true)) {
 						file.WriteLine (x + ";" + y);
 					}
