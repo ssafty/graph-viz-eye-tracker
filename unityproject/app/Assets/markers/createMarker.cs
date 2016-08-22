@@ -18,7 +18,8 @@ public class createMarker : MonoBehaviour {
         float hStepsize = screenWidth / (columns-1);
         int lastMarker = 0;
         markers = GameObject.FindGameObjectsWithTag("marker");
-        
+		float offset = 1.3f;
+
         for (int i = 0; i < rows; i++)
         {
             for (int j = 0; j < columns; j++)
@@ -32,18 +33,13 @@ public class createMarker : MonoBehaviour {
                     x = ((hStepsize * j) - (screenWidth / 2));
                     y = ((vStepsize * i) - (screenHeight / 2));
 
-					RectTransform rect = markers[lastMarker].GetComponent<RectTransform> ();
-					Vector2 rectPosition = rect.rect.position; //gets x,y
+					Rect rect = markers[lastMarker].GetComponent<RectTransform> ().rect;
 					//Debug.Log (rectPosition);
 
-                    if (j == 0) { x += markers[lastMarker].transform.localScale.x / 0.9f; }
-                    if (i == 0) { y += markers[lastMarker].transform.localScale.y / 1f; }
-                    if (j == (columns-1))   { x -= markers[lastMarker].transform.localScale.x / 0.9f; }
-                    if (i == (rows-1))      { y -= markers[lastMarker].transform.localScale.y / 1f; }
-
-                    // new screen coordinates should be (USED FOR OFFSET)
-                    // newWidth = (screenWidth)  - (( markers[lastMarker].transform.localScale.x / 0.9f ) * 2) 
-                    // newHeight = -(screenHeight) - (( markers[lastMarker].transform.localScale.y / 1f ) * 2)
+					if (j == 0) { x += rect.width / offset; }
+					if (i == 0) { y += rect.height / offset; }
+					if (j == (columns-1))   { x -= rect.width / offset; }
+					if (i == (rows-1))      { y -= rect.height / offset; }
 
                     newPos = new Vector3(x, y, 5);
 					Debug.Log (newPos);
