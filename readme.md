@@ -2,7 +2,7 @@
 Creating a gaze-aided graph navigating application using [Unity3D](https://unity3d.com/) and [Pupil-lab](https://github.com/pupil-labs/pupil).
 
 ### Notes:
-* [Dataset](https://snap.stanford.edu/data/#wikipedia) from wikipedia are sampled and projected in 3D space using [Force-directed-layouts](https://en.wikipedia.org/wiki/Force-directed_graph_drawing). 
+* [Dataset](https://snap.stanford.edu/data/#wikipedia) from wikipedia is sampled and projected in 3D space using [Force-directed-layouts](https://en.wikipedia.org/wiki/Force-directed_graph_drawing). 
 * Supports keyboard/mouse controls.
 * Navigation/Rotation and Dramatic Camera in Node selection implemented.
 * Information panel added for each selected Node to render extra information.
