@@ -15,11 +15,12 @@ class Tcp_Server(Plugin):
         super(Tcp_Server, self).__init__(g_pool)
         self.order = .9
         self.ip = '0.0.0.0'
-        self.port = 5006
+        self.port = 5007
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind((self.ip, self.port))
         self.s.listen(1)
         self.conn, addr = self.s.accept()
+
 
 
     def init_gui(self):
@@ -36,6 +37,7 @@ class Tcp_Server(Plugin):
     def deinit_gui(self):
         if self.menu and self.g_pool.app == 'capture':
             self.g_pool.sidebar.remove(self.menu)
+            self.cleanup()
         self.menu = None
 
     def close(self): self.alive = False
@@ -56,31 +58,33 @@ class Tcp_Server(Plugin):
     def update(self,frame,events):
         # pf = open('pupil_pos', 'a')
         # for p in events.get('pupil_positions',[]):
-        #     try:
-        #         pf.write(p + '\n')
-        #     except:
-        #         print "no pupil position"
+        #   try:
+        #       pf.write(p + '\n')
+        #   except:
+        #       print "no pupil position"
         # msg = "Pupil\n"
         # for key,value in p.iteritems():
         #     if key not in self.exclude_list:
         #         msg +=key+":"+str(value)+'\n'
         # self.socket.send( msg )
         # gf = open('pupil_pos', 'a')
-        for g in events.get('gaze_positions',[]):
+        for g in events.get('surface',[]):
             #self.conn.send(str(g['norm_pos']))
             #print g
             try:
-                x,y = g['realtime gaze on unnamed']
-                print str(g['realtime gaze on unnamed'])
+                print g['gaze_on_srf']
+                for x,y in g['gaze_on_srf']:
+                    print x,y
 
-                lo,hi = 0,1
-                x = lo if x <= lo else hi if x >= hi else x
-                y = lo if y <= lo else hi if y >= hi else y
+                    lo,hi = 0,1
+                    x = lo if x <= lo else hi if x>=hi else x
+                    y = lo if y <= lo else hi if y>=hi else y
 
-                self.conn.send((x,y))
-                # gf.write(g + '\n')
-            except:
-                pass
+                    print "(" + str(x) + "," + str(y) + ")"
+                    self.conn.send("(" + str(x) + "," + str(y) + ")")
+                    # gf.write(g + '\n')
+            except Exception, e:
+                print "not on surface:" + str(e)
     #for key, value in g.iteritems():
     #self.conn.send( key+":"+str(value)+'\n' )
 
