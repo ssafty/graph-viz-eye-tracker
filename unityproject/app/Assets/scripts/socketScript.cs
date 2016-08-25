@@ -54,7 +54,7 @@ public class socketScript : MonoBehaviour
 	{
 
 		string response = SocketResponse ();
-		Debug.Log (response);
+		Debug.Log ("empty response");
 		if (response.Length > 0) {
 			string[] responseArray = response.Split (')');
 
@@ -72,7 +72,9 @@ public class socketScript : MonoBehaviour
 						y = 1 - y;
 					}
 					y *= height;
-					Vector2 newPos = new Vector2 (((float)x - (Screen.width / 2)), (float)y - (Screen.height / 2));
+
+					createMarker markerScript = (createMarker) GameObject.Find ("Main Camera").GetComponent<createMarker> ();
+					Vector2 newPos = new Vector2 (((float)x - (markerScript.newScreen.x / 2)), (float)y - (markerScript.newScreen.y / 2));
 					Debug.Log ("moving cube to x: " + x + "y: " + y);
 					LastEyeCoordinate = newPos;
 					using (System.IO.StreamWriter file = new System.IO.StreamWriter (@"F:\eyetracker\eyetracker-project\coordinateLog.csv", true)) {
@@ -83,7 +85,6 @@ public class socketScript : MonoBehaviour
 		} else {
 			Vector2 newPos = new Vector2 (((float)Input.mousePosition.x - (Screen.width / 2)), (float)Input.mousePosition.y - (Screen.height / 2));
 
-			Cursor.visible = false;
 			eyepointer.GetComponent<RectTransform> ().anchoredPosition = newPos;
 		}
 	}

@@ -8,7 +8,7 @@ public class TCPConnection : MonoBehaviour {
 
 	public string conName = "Localhost";
 	public string conHost = "134.100.10.224";
-	public int conPort = 5006;
+	public int conPort = 5007;
 	public bool socketReady = false;
 	
 	TcpClient mySocket;
