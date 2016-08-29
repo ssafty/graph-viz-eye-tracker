@@ -1,0 +1,6 @@
+C:\Users\chris\Documents\graph-viz-eye-tracker\util\UDP Stuff\UDP Server\UDP Server\bin\Debug\UDP Server.exe.config
+C:\Users\chris\Documents\graph-viz-eye-tracker\util\UDP Stuff\UDP Server\UDP Server\bin\Debug\UDP Server.exe
+C:\Users\chris\Documents\graph-viz-eye-tracker\util\UDP Stuff\UDP Server\UDP Server\bin\Debug\UDP Server.pdb
+C:\Users\chris\Documents\graph-viz-eye-tracker\util\UDP Stuff\UDP Server\UDP Server\obj\Debug\UDP Server.csprojResolveAssemblyReference.cache
+C:\Users\chris\Documents\graph-viz-eye-tracker\util\UDP Stuff\UDP Server\UDP Server\obj\Debug\UDP Server.exe
+C:\Users\chris\Documents\graph-viz-eye-tracker\util\UDP Stuff\UDP Server\UDP Server\obj\Debug\UDP Server.pdb
