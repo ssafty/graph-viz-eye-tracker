@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class GameController : MonoBehaviour
 {
 	public bool loadDataset = false;
-	public string datasetName = "output_2"
+	public string datasetName = "output_2";
 	public float SCALE = 2;
 
 	public Node nodePrefab;
