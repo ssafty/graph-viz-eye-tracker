@@ -54,11 +54,13 @@ with open(OUTPUT_XML, 'w') as output_file:
     for key,value in words_count.iteritems():
         nodes.append("{ \"id\": \"" + key + "\", \"count\": \""+ str(value) +"\" }")
     output_file.write(",".join(nodes))
+    print "[NOTE] Nodes: " + str(len(nodes))
     output_file.write("], \"edges\": [")
 
     print "[NOTE] Writing edges ..."
     output_file.write(",".join(edges))
     output_file.write("] }")
+    print "[NOTE] Edges: " + str(len(edges))
     print "[NOTE] Finished!"
 
 
@@ -66,4 +68,3 @@ print "[TODO] install https://github.com/godlikemouse/ForceDirectedLayout"
 print "[TODO] change all occurrances of \"(filename_)\" to \"(filename_.c_str())\" if gcc is old"
 print "[TODO] add #include <string.h> if strcmp is not identified"
 print "[TODO] run ./fdl --in=dataset.json --out=output.xml --out-type=GraphML --mode=3D --in-type=JSON"
-
