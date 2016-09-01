@@ -11,10 +11,10 @@ public class CameraController : MonoBehaviour
 	public float strafeSpeed = 0.6f;
 
 	//mouse parameters
-	public float sensitivity;
-	public float scrollSpeed;
+	public float sensitivity = 0.1f;
+	public float scrollSpeed = 4.0f;
 	
-	private actualSens;
+	private float actualSens;
 
 
 
