@@ -52,18 +52,5 @@ public class Node : MonoBehaviour
 		rend.material.color = color;
 	}
 
-	public void SetupLabel ()
-	{
-		Vector3 pos = transform.position;
-		float newX = pos.x + InfoLabelController.WIDTH / 2;
-		float newY = pos.y - 20 - InfoLabelController.HEIGHT / 2;
-		pos = new Vector3 (newX, newY, pos.z);
-		infoController = Instantiate (labelPrefab, pos, Quaternion.identity) as GameObject;
-		InfoLabelController ctrl =	infoController.GetComponent<InfoLabelController> ();
-		ctrl.setGraphNode (gameObject);
-		ctrl.hide ();
-		ctrl.setTitle (title);
-		ctrl.setDescription (desc); 
-		infoController.transform.SetParent (GameObject.Find ("Canvas").transform);
-	}
+
 }

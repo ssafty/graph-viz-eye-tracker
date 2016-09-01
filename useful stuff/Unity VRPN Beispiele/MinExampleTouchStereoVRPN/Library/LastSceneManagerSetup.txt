@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/scenes/ispace.unity
-  isLoaded: 1
-  isActive: 1

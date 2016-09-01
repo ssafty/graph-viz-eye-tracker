@@ -7,11 +7,12 @@ using System.Collections.Generic;
 public class GameController : MonoBehaviour
 {
 	public bool loadDataset = false;
-
+	public string datasetName = "output_2";
 	public float SCALE = 2;
 
 	public Node nodePrefab;
 	public Edge edgePrefab;
+
 
 	private Hashtable nodes;
 	private Hashtable edges;
@@ -31,7 +32,7 @@ public class GameController : MonoBehaviour
 		string sourceFile;
 
 		if (loadDataset) {
-			sourceFile = "output_2";
+			sourceFile = datasetName;
 		} else {
 			sourceFile = "sample_output";
 		}
@@ -63,11 +64,12 @@ public class GameController : MonoBehaviour
 					Node nodeObject = Instantiate (nodePrefab, new Vector3 (x, y, z), Quaternion.identity) as Node;
 					nodeObject.transform.parent = graphParent.transform;
 					nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " "));
+					nodeObject.nodeText.fontSize = 250;
+					nodeObject.nodeText.transform.localScale = new Vector3 (0.018f, 0.018f, 0.018f);
 					nodeObject.id = xmlNode.Attributes ["id"].Value;
 					nodes.Add (nodeObject.id, nodeObject);
 					nodeObject.title = nodeObject.nodeText.text;
 					nodeObject.desc = nodeObject.nodeText.text + nodeObject.nodeText.text + nodeObject.nodeText.text;
-					nodeObject.SetupLabel ();
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
 					float size = 0.5f * (count + 1) * SCALE / (max_count + 1);
 					nodeObject.transform.localScale = new Vector3 (size, size, size);
