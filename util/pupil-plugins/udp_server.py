@@ -5,31 +5,26 @@ from pyglui import ui
 
 # This file has to be copied to pupil/capture_settings/plugins/
 
-class Tcp_Server(Plugin):
+class Udp_Server(Plugin):
     """
-    Tcp Server broadcasts the gaze position
+    Udp Server broadcasts the gaze position
     over the network
     """
 
     def __init__(self, g_pool):
-        super(Tcp_Server, self).__init__(g_pool)
+        super(Udp_Server, self).__init__(g_pool)
         self.order = .9
-        self.ip = '0.0.0.0'
-        self.port = 5007
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.bind((self.ip, self.port))
-        self.s.listen(1)
-        self.conn, addr = self.s.accept()
-
-
+        self.ip = '192.168.0.2' #change to unity IP
+        self.port = 5007        #change to unity port
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def init_gui(self):
         if self.g_pool.app == 'capture':
-            self.menu = ui.Growing_Menu("TCP Broadcast Server")
+            self.menu = ui.Growing_Menu("UDP Broadcast Server")
             self.g_pool.sidebar.append(self.menu)
 
         self.menu.append(ui.Button('Close', self.close))
-        help_str = "TCP Message server"
+        help_str = "UDP Message server"
         self.menu.append(ui.Info_Text(help_str))
     #self.menu.append(ui.Text_Input('address', self, setter=self.set_server, label='Address'))
 
@@ -51,7 +46,6 @@ class Tcp_Server(Plugin):
         This happens either voluntarily or forced.
         """
         self.deinit_gui()
-        self.conn.close() #close connection!
         self.s.close() #close socket
 
 
@@ -73,7 +67,6 @@ class Tcp_Server(Plugin):
             #print g
             try:
                 print g['gaze_on_srf']
-                #TODO x,y = tuple(map(lambda y: sum(y) / float(len(y)), zip(*g['gaze_on_srf'])))
                 for x,y in g['gaze_on_srf']:
                     print x,y
 
@@ -82,7 +75,7 @@ class Tcp_Server(Plugin):
                     y = lo if y <= lo else hi if y>=hi else y
 
                     print "(" + str(x) + "," + str(y) + ")"
-                    self.conn.send("(" + str(x) + "," + str(y) + ")")
+                    self.s.sendto((" + str(x) + "," + str(y) + "), (self.ip, self.port))
                     # gf.write(g + '\n')
             except Exception, e:
                 print "not on surface:" + str(e)
