@@ -73,9 +73,9 @@ class Tcp_Server(Plugin):
             #print g
             try:
                 print g['gaze_on_srf']
+                #TODO x,y = tuple(map(lambda y: sum(y) / float(len(y)), zip(*g['gaze_on_srf'])))
                 for x,y in g['gaze_on_srf']:
                     print x,y
-                    # x,y = tuple(map(lambda y: sum(y) / float(len(y)), zip(*g['gaze_on_srf'])))
 
                     lo,hi = 0,1
                     x = lo if x <= lo else hi if x>=hi else x
