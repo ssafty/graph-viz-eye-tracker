@@ -3,6 +3,7 @@ using System.Collections;
 using System.Xml;
 using System.IO;
 using System.Collections.Generic;
+using UnityEngine.Networking.Types;
 
 public class GameController : MonoBehaviour
 {
@@ -71,7 +72,7 @@ public class GameController : MonoBehaviour
 					nodeObject.title = nodeObject.nodeText.text;
 					nodeObject.desc = nodeObject.nodeText.text + nodeObject.nodeText.text + nodeObject.nodeText.text;
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
-					float size = 0.5f * (count + 1) * SCALE / (max_count + 1);
+					float size = 1f;
 					nodeObject.transform.localScale = new Vector3 (size, size, size);
 
 					status.text = "Loading Topology: Node\n" + nodeObject.id;
@@ -85,7 +86,7 @@ public class GameController : MonoBehaviour
 					edgeObject.id = xmlNode.Attributes ["id"].Value;
 					edgeObject.sourceId = xmlNode.Attributes ["source"].Value;
 					edgeObject.targetId = xmlNode.Attributes ["target"].Value;
-					edges.Add (edgeObject.id, edgeObject);
+					edges.Add (edgeObject.sourceId + edgeObject.targetId, edgeObject);
 					edgeObject.transform.parent = graphParent.transform;
 					status.text = "Loading Topology:\nEdge " + edgeObject.id;
 					edgeCount++;
@@ -97,8 +98,9 @@ public class GameController : MonoBehaviour
 					yield return true;
 			}
 		}
-
+		Debug.LogWarning (edgeCount);
 		MapLinkNodes ();
+
 
 		status.text = "";
 
@@ -106,6 +108,7 @@ public class GameController : MonoBehaviour
 
 	private void MapLinkNodes ()
 	{
+		
 		foreach (string key in edges.Keys) {
 			Edge link = edges [key] as Edge;
 			link.source = nodes [link.sourceId] as Node;

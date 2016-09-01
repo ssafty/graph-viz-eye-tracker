@@ -6,6 +6,7 @@ import time
 from itertools import chain
 from multiprocessing import Pool
 import pprint
+from random import random
 
 parser = optparse.OptionParser()
 
@@ -16,10 +17,15 @@ parser.add_option('-t', '--threads',
 parser.add_option('-f', '--file',
                   type="string", nargs=1, action="store", dest="File",
                   help="", default="dataset.json")
+
+parser.add_option('-i', '--iter',
+                  type="int", nargs=1, action="store", dest="Iterations",
+                  help="", default="1")
 options, args = parser.parse_args()
 
 THREADS = options.Threads
 FILE = options.File
+ITERATIONS = options.Iterations
 
 
 WORK_FILE = copyfile(FILE, "full_2_" + FILE)
@@ -32,7 +38,6 @@ with open(WORK_FILE) as data_file:
 
 
 def thin(edges):
-    print("start with " + str(len(edges)) + " edges")
     newEdges = {}
     validNodes = []
     for i in edges:
@@ -40,22 +45,22 @@ def thin(edges):
             if i["target"] == j["source"]:
                 for k in edges:
                     if j["target"] == k["source"]:
-                        copy = i.copy()
-                        validNodes.append(copy["source"])
-                        validNodes.append(copy["target"])
-                        copy["target"] = k["source"]
-                        newEdges[copy["id"]] = i
-                        newEdges[k["id"]] = k
-                        validNodes.append(k["source"])
-                        validNodes.append(k["target"])
-                        if j in edges:
-                            edges.remove(j)
+                        if True:
+                            copy = i.copy()
+                            validNodes.append(copy["target"])
+                            copy["target"] = k["source"]
+                            newEdges[copy["id"]] = i
+                            if i != k:
+                                newEdges[k["id"]] = k
+                            validNodes.append(k["source"])
+                            if j in edges:
+                                edges.remove(j)
 
     newNodes = []
     for n in loadedNodes:
         if n["id"] in validNodes:
             newNodes.append(n)
-    print("done " + str(len(newEdges.values())))
+    print("From " +str(len(edges)) +" to " + str(len(newEdges.values())) + " edges")
     return (newNodes, list(newEdges.values()))
 
 
@@ -74,20 +79,22 @@ def write_to_disk(nodes, edges):
         m = {"nodes": nodes, "edges": edges}
         json.dump(m, out)
 
-p = Pool(THREADS)
-start = time.time()
-res = p.map(thin, ll)
-final_edges = []
-final_nodes = []
+for i in range(0, ITERATIONS):
+    p = Pool(THREADS)
+    start = time.time()
+    res = p.map(thin, ll)
+    final_edges = []
+    final_nodes = []
 
-for tp in res:
-    for node in tp[0]:
-        if node not in final_nodes:
-            final_nodes.append(node)
-    for edge in tp[1]:
-        if edge not in final_edges:
-            final_edges.append(edge)
+    for tp in res:
+        for node in tp[0]:
+            if node not in final_nodes:
+                final_nodes.append(node)
+        for edge in tp[1]:
+            if edge not in final_edges:
+                final_edges.append(edge)
 
-write_to_disk(final_nodes, final_edges)
-
-print("Finished: " + str(time.time() - start))
+    write_to_disk(final_nodes, final_edges)
+    loadedEdges = final_edges[:]
+    loadedNodes = final_nodes[:]
+    print(str(i)+" Finished: " + str(time.time() - start))
