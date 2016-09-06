@@ -9,7 +9,7 @@ public class socketScript : MonoBehaviour
 	private TCPConnection myTCP;
 	private string serverMsg;
 	public string msgToServer;
-
+	createMarker markerScript;
 	public GameObject eyepointer;
 	public Vector2 LastEyeCoordinate;
 
@@ -22,6 +22,7 @@ public class socketScript : MonoBehaviour
 
 	void Start ()
 	{
+		 markerScript = (createMarker) GameObject.Find ("Main Camera").GetComponent<createMarker> ();
 		LastEyeCoordinate = Vector2.zero;
 	}
 
@@ -67,13 +68,13 @@ public class socketScript : MonoBehaviour
 					double.TryParse (tempCoordinates [0].Substring (1), out x);
 					double.TryParse (tempCoordinates [1].Substring (1), out y);
 
-					x *= width;
+					x *= markerScript.newScreen.x;
 					if (flip_y) {
 						y = 1 - y;
 					}
-					y *= height;
+					y *= markerScript.newScreen.y;
 
-					createMarker markerScript = (createMarker) GameObject.Find ("Main Camera").GetComponent<createMarker> ();
+
 					Vector2 newPos = new Vector2 (((float)x - (markerScript.newScreen.x / 2)), (float)y - (markerScript.newScreen.y / 2));
 					Debug.Log ("moving cube to x: " + x + "y: " + y);
 					LastEyeCoordinate = newPos;
