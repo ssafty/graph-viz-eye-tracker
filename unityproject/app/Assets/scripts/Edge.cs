@@ -29,9 +29,14 @@ public class Edge : MonoBehaviour
 	void Update ()
 	{
 		if (target != null && source != null) {
-			Vector3 m = (target.transform.position - source.transform.position) + source.transform.position; //get Vector source -> target
-			lineRenderer.SetPosition (0, source.transform.position);
-			lineRenderer.SetPosition (1, m);
+//			Vector3 m = (target.transform.position - source.transform.position) + source.transform.position; //get Vector source -> target
+//			lineRenderer.SetPosition (0, source.transform.position);
+//			lineRenderer.SetPosition (1, m);
+
+			Vector3 dir = (target.transform.position - source.transform.position).normalized;
+
+			lineRenderer.SetPosition (0, source.transform.position + dir * source.scale_size/2); 
+			lineRenderer.SetPosition (1, target.transform.position - dir * target.scale_size/2);
 		}
 	}
 }
