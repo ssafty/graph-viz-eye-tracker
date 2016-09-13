@@ -19,6 +19,7 @@ public class Node : MonoBehaviour
 	private GameObject cam; 		// Scene Camera
 	private float opaqueClamp; 		// Distance at which this Node is fully opaque
 	private Renderer rend;
+	public float scale_size;
 
 	void Start ()
 	{
