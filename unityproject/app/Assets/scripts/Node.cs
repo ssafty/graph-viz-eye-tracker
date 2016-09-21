@@ -15,7 +15,7 @@ public class Node : MonoBehaviour
 	private GameObject infoController;
 	public GameObject labelPrefab;
 
-	public float opaque_distance; 	// Distance at which a Node with size 2 is fully opaque (currently 12f)
+	public float opaque_distance; 	// Distance at which a Node with size 2 is fully opaque (currently 40f)
 	private GameObject cam; 		// Scene Camera
 	private float opaqueClamp; 		// Distance at which this Node is fully opaque
 	private Renderer rend;
