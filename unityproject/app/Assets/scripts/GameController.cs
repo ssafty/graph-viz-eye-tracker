@@ -60,7 +60,7 @@ public class GameController : MonoBehaviour
 					nodeObject.id = xmlNode.Attributes ["id"].Value;
 					nodes.Add (nodeObject.id, nodeObject);
 					nodeObject.title = nodeObject.nodeText.text;
-					nodeObject.desc = nodeObject.nodeText.text + nodeObject.nodeText.text + nodeObject.nodeText.text;
+					nodeObject.desc = "Loading ...";
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
 					//nodeObject.scale_size = 500/count; //Scale with count
 					nodeObject.scale_size = 1f;
