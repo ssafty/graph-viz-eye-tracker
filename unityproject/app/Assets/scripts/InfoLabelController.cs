@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using SimpleJSON;
 
 public class InfoLabelController : MonoBehaviour
 {
@@ -36,14 +37,13 @@ public class InfoLabelController : MonoBehaviour
 		WWW www = new WWW(url);
 		yield return www;
 
-
-
-
+		JSONNode N = JSON.Parse(www.text);
+		string desc = N["query"]["pages"][0]["extract"];
 
 		//set and call render again
-		node.desc = www.text;
+		node.desc = desc;
 		setDescription (node.desc);
-		Debug.Log (www.text);
+		Debug.Log (desc);
 	}
 
 	private void setTitle (string title)
