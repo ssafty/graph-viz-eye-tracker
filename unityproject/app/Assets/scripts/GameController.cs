@@ -86,7 +86,8 @@ public class GameController : MonoBehaviour
 					edgeObject.id = xmlNode.Attributes ["id"].Value;
 					edgeObject.sourceId = xmlNode.Attributes ["source"].Value;
 					edgeObject.targetId = xmlNode.Attributes ["target"].Value;
-					edges.Add (edgeObject.sourceId + edgeObject.targetId, edgeObject);
+					if(!edges.ContainsKey(edgeObject.targetId + edgeObject.sourceId))
+						edges.Add (edgeObject.sourceId + edgeObject.targetId, edgeObject);
 					edgeObject.transform.parent = graphParent.transform;
 				}
 
@@ -185,10 +186,27 @@ public class GameController : MonoBehaviour
 				//isNeighbor, but we only have int ID and hashmap uses String as hashValue (so it can build edges)
 				// solution: use another HashMap to save IDs reference to Node objects (memory vs speed tradeoff)
 				Node neighbor = nodesByID[i] as Node;
-				if (Highlight)
+
+				//get Edge from HashMap (stored as sourceId+targetId)
+				Edge forwardLink = edges[neighbor.id_string + main.id_string] as Edge;
+				Edge backwardLink = edges[main.id_string + neighbor.id_string] as Edge;
+
+				if (Highlight) 
+				{
 					neighbor.HighlightAsNeighbor ();
+					if (forwardLink != null)
+						forwardLink.HighlightAsNeighbor ();
+					if (backwardLink != null)
+						backwardLink.HighlightAsNeighbor ();
+				}
 				else
+				{
 					neighbor.HighlightDefault ();
+					if (forwardLink != null)
+						forwardLink.HighlightDefault ();
+					if (backwardLink != null)
+						backwardLink.HighlightDefault ();
+				}
 			}	
 		}
 	}

@@ -16,9 +16,8 @@ public class Edge : MonoBehaviour
 	{
 		lineRenderer = gameObject.AddComponent<LineRenderer> ();
 
-
-		//lineRenderer.material = new Material (Shader.Find("Self-Illumin/Diffuse"));
 		lineRenderer.material.SetColor ("_Color", Color.grey);
+
 		lineRenderer.SetWidth (0.05f, 0.05f);
 		lineRenderer.SetVertexCount (2);
 		lineRenderer.SetPosition (0, new Vector3 (0, 0, 0));
@@ -34,5 +33,18 @@ public class Edge : MonoBehaviour
 			lineRenderer.SetPosition (0, source.transform.position + dir * source.scale_size/2); 
 			lineRenderer.SetPosition (1, target.transform.position - dir * target.scale_size/2);
 		}
+	}
+
+	public void HighlightAsNeighbor () {
+		Color color = lineRenderer.material.color;
+		color.r = 0.9f;
+		color.g = 0.1f;
+		color.b = 0.1f;
+		color.a = 0.5f;
+		lineRenderer.material.color = color;
+	}
+
+	public void HighlightDefault(){
+		lineRenderer.material.SetColor ("_Color", Color.grey);
 	}
 }
