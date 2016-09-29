@@ -21,10 +21,19 @@ public class Node : MonoBehaviour
 	private Renderer rend;
 	public float scale_size;
 
+	private float default_red;
+	private float default_blue;
+	private float default_green;
+
 	void Start ()
 	{
 		cam = GameObject.Find ("Main Camera");
 		rend = GetComponent<Renderer>();
+
+		default_red = rend.material.color.r;
+		default_blue = rend.material.color.b;
+		default_green = rend.material.color.g;
+
 
 		// Bigger Nodes become transparent more easily
 		opaqueClamp = opaque_distance * transform.lossyScale.magnitude / 2.0f;
@@ -42,8 +51,32 @@ public class Node : MonoBehaviour
 		//Calculate opacity
 		float opacity = Vector3.Distance (transform.position, cam.transform.position);
 		opacity = Mathf.Clamp (opacity, 0.0f, opaqueClamp) / opaqueClamp;
+
 		//Set opacity
-		Color color = new Color (rend.material.color.r, rend.material.color.b, rend.material.color.g, opacity);
+		Color color = rend.material.color;
+		color.a = opacity;
 		rend.material.color = color;
+//		Color color = new Color (rend.material.color.r, rend.material.color.b, rend.material.color.g, opacity);
+//		rend.material.color = color;
+	}
+
+	public void HighlightAsNeighbor () {
+		Color color = rend.material.color;
+		color.r = 0.9f;
+		color.g = 0.1f;
+		color.b = 0.1f;
+		rend.material.color = color;
+	}
+
+	public void HighlightAsMain(){
+		Color color = rend.material.color;
+		color.r = 0.1f;
+		color.g = 0.1f;
+		color.b = 0.9f;
+		rend.material.color = color;
+	}
+
+	public void HighlightDefault(){
+		rend.material.color = new Color (default_red, default_blue, default_green, rend.material.color.a);
 	}
 }
