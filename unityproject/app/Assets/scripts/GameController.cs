@@ -21,6 +21,8 @@ public class GameController : MonoBehaviour
 	private int edgeCount = 0;
 	private GameObject graphParent;
 
+	public bool[,] adjacenyList;
+
 	private IEnumerator loadLayout ()
 	{
 		string sourceFile;
@@ -36,13 +38,19 @@ public class GameController : MonoBehaviour
 		xmlDoc.LoadXml (textAsset.text);
 
 		XmlElement root = xmlDoc.FirstChild as XmlElement;
-		//find most connected element
-		float max_count = find_highest_connection (root);
+
+		//find count and most connected element
+		int nodeCount;
+		int max_count = find_count_and_highest_connection (root, out nodeCount);
+
+		//initialize adjacenyList with the nodeCount
+		adjacenyList = new bool[nodeCount, nodeCount];
 
 		//Building nodes and edges
 		for (int i = 0; i < root.ChildNodes.Count; i++) {
 			XmlElement xmlGraph = root.ChildNodes [i] as XmlElement;
 
+			int node_id = 0;
 			for (int j = 0; j < xmlGraph.ChildNodes.Count; j++) {
 				XmlElement xmlNode = xmlGraph.ChildNodes [j] as XmlElement;
 
@@ -54,17 +62,21 @@ public class GameController : MonoBehaviour
 
 					Node nodeObject = Instantiate (nodePrefab, new Vector3 (x, y, z), Quaternion.identity) as Node;
 					nodeObject.transform.parent = graphParent.transform;
-					nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " "));
+					nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " ")); //decode URL -> name
 					nodeObject.nodeText.fontSize = 250;
 					nodeObject.nodeText.transform.localScale = new Vector3 (0.018f, 0.018f, 0.018f);
-					nodeObject.id = xmlNode.Attributes ["id"].Value;
-					nodes.Add (nodeObject.id, nodeObject);
+					nodeObject.id = node_id;
+					nodeObject.id_string = xmlNode.Attributes ["id"].Value;
+					nodes.Add (nodeObject.id_string, nodeObject);
 					nodeObject.title = nodeObject.nodeText.text;
 					nodeObject.desc = "Loading ...";
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
 					//nodeObject.scale_size = 500/count; //Scale with count
 					nodeObject.scale_size = 1f;
 					nodeObject.transform.localScale = new Vector3 (nodeObject.scale_size, nodeObject.scale_size, nodeObject.scale_size);
+
+					//increment id for the next node
+					node_id ++;
 				}
 
 				//create edges
@@ -83,10 +95,15 @@ public class GameController : MonoBehaviour
 			}
 		}
 		// Map edges to nodes
+		// and fill in the adjacency list
 		foreach (string key in edges.Keys) {
 			Edge link = edges [key] as Edge;
 			link.source = nodes [link.sourceId] as Node;
 			link.target = nodes [link.targetId] as Node;
+
+			//both ways
+			adjacenyList [link.source.id ,link.target.id] = true;
+			adjacenyList [link.target.id ,link.source.id] = true;
 		}
 	}
 
@@ -100,9 +117,10 @@ public class GameController : MonoBehaviour
 	}
 
 
-	private float find_highest_connection (XmlElement root)
+	private int find_count_and_highest_connection (XmlElement root, out int nodeCount)
 	{
-		float max = 0;
+		nodeCount = 0;
+		int max = 0;
 		for (int i = 0; i < root.ChildNodes.Count; i++) {
 			XmlElement xmlGraph = root.ChildNodes [i] as XmlElement;
 
@@ -111,7 +129,8 @@ public class GameController : MonoBehaviour
 
 				//create nodes
 				if (xmlNode.Name == "node") {
-					float count = float.Parse (xmlNode.Attributes ["count"].Value);
+					nodeCount++;
+					int count = int.Parse (xmlNode.Attributes ["count"].Value);
 					if (count > max)
 						max = count;
 				}
