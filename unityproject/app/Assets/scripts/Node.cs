@@ -6,8 +6,8 @@ using System.Reflection;
 
 public class Node : MonoBehaviour
 {
-
-	public string id;
+	public int id;
+	public string id_string;
 	public int count;
 	public TextMesh nodeText;
 	public  string title = "EMTPY";
