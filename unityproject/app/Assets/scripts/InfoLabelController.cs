@@ -43,7 +43,6 @@ public class InfoLabelController : MonoBehaviour
 		//set and call render again
 		node.desc = desc;
 		setDescription (node.desc);
-		Debug.Log (desc);
 	}
 
 	private void setTitle (string title)

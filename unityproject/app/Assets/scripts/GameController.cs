@@ -15,10 +15,11 @@ public class GameController : MonoBehaviour
 	public Edge edgePrefab;
 
 	private Hashtable nodes;
+	private Hashtable nodesByID;
 	private Hashtable edges;
 
-	private int nodeCount = 0;
-	private int edgeCount = 0;
+	public int nodeCount;
+	public int edgeCount = 0;
 	private GameObject graphParent;
 
 	public bool[,] adjacenyList;
@@ -40,7 +41,6 @@ public class GameController : MonoBehaviour
 		XmlElement root = xmlDoc.FirstChild as XmlElement;
 
 		//find count and most connected element
-		int nodeCount;
 		int max_count = find_count_and_highest_connection (root, out nodeCount);
 
 		//initialize adjacenyList with the nodeCount
@@ -68,6 +68,7 @@ public class GameController : MonoBehaviour
 					nodeObject.id = node_id;
 					nodeObject.id_string = xmlNode.Attributes ["id"].Value;
 					nodes.Add (nodeObject.id_string, nodeObject);
+					nodesByID.Add (nodeObject.id, nodeObject);
 					nodeObject.title = nodeObject.nodeText.text;
 					nodeObject.desc = "Loading ...";
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
@@ -110,6 +111,7 @@ public class GameController : MonoBehaviour
 	void Start ()
 	{
 		nodes = new Hashtable ();
+		nodesByID = new Hashtable ();
 		edges = new Hashtable ();
 
 		graphParent = GameObject.FindGameObjectWithTag ("GraphParent");
@@ -169,6 +171,25 @@ public class GameController : MonoBehaviour
 				}
 			}
 		}
+	}
+		
+	public void HighlightNodes(int NodeId, bool Highlight){
+		Node main = nodesByID [NodeId] as Node;
+		if (Highlight)
+			main.HighlightAsMain (); 
+		else 
+			main.HighlightDefault ();
 
+		for (int i = 0; i < adjacenyList.GetLength(0); i++) {
+			if (adjacenyList [NodeId, i] && NodeId != i) {
+				//isNeighbor, but we only have int ID and hashmap uses String as hashValue (so it can build edges)
+				// solution: use another HashMap to save IDs reference to Node objects (memory vs speed tradeoff)
+				Node neighbor = nodesByID[i] as Node;
+				if (Highlight)
+					neighbor.HighlightAsNeighbor ();
+				else
+					neighbor.HighlightDefault ();
+			}	
+		}
 	}
 }

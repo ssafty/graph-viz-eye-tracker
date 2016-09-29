@@ -19,6 +19,13 @@ public class CameraController : MonoBehaviour
 
 	Vector3 offset = new Vector3 (0, 0, -20);
 
+	GameController gameController;
+	Node PreviousClickedNode;
+
+	void Start(){
+		gameController = FindObjectOfType (typeof(GameController)) as GameController;
+	}
+
 	void Update ()
 	{
 		//Handles the camera Position
@@ -50,19 +57,15 @@ public class CameraController : MonoBehaviour
 		}
 
 		//when clicked on a node, zoom in
-
 		Node targetNode = MouseClickUtil.checkMouseClick (MouseClickUtil.LEFT_BTN, 10000);
+
 		if (targetNode != null) {
-
-
 			Vector3 CameraToTargetVector = (transform.position - targetNode.transform.position);
 			CameraToTargetVector.y = 0; //get Point on the same Y level of the target
 			CameraToTargetVector = CameraToTargetVector.normalized;
 
-
 			targetPos = targetNode.transform.position + (CameraToTargetVector * 25f);
 			targetForward = (targetNode.transform.position - targetPos).normalized;
-
 
 			startTime = Time.time;
 			journeyLength = Vector3.Distance(transform.position, targetPos);
@@ -70,26 +73,16 @@ public class CameraController : MonoBehaviour
 
 			isCameraTransitionRunning = true;
 
-
-
-
-//
-//			//get Point on the same Z level of the target
-////					Vector3 CameraToTargetVector = (new Vector3(
-////						transform.position.x,
-////						transform.position.y,
-////						targetNode.transform.position.z) - targetNode.transform.position ).normalized;
-//			targetPos = targetNode.transform.position + offset;
-////					targetPos = targetNode.transform.position + CameraToTargetVector * 10f;
-//			startTime = Time.time;
-//			journeyLength = Vector3.Distance (transform.position, targetPos);
-//			journeyLengthForward = Vector3.Distance (transform.forward, targetNode.transform.position - transform.position);
-//			isCameraTransitionRunning = true;
-
+			//highlight nodes
+			if (PreviousClickedNode != null)
+				gameController.HighlightNodes (PreviousClickedNode.id, false);
+			PreviousClickedNode = targetNode;
+			gameController.HighlightNodes(targetNode.id, true);
 		}
 
 		//Rotation
 		transform.RotateAround (transform.position, new Vector3 (0, 1.0f, 0), rotationSpeed * Input.GetAxis ("Horizontal"));
+
 		//This up/down split is necessary, because the boundaries need to be different to avoid getting stuck because of rounding errors 
 		if (Input.GetKey (KeyCode.DownArrow)) {
 			if (transform.eulerAngles.x > 270 || transform.eulerAngles.x < 85) {
@@ -109,10 +102,5 @@ public class CameraController : MonoBehaviour
 			transform.position = new Vector3 (0, 1.0f, -10.0f);
 			transform.rotation = new Quaternion (0, 0, 0, 0);
 		}
-
-
 	}
-
-
-
 }
