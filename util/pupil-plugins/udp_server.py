@@ -66,17 +66,29 @@ class Udp_Server(Plugin):
             #self.conn.send(str(g['norm_pos']))
             #print g
             try:
-                print g['gaze_on_srf']
-                for x,y in g['gaze_on_srf']:
-                    print x,y
+                # print g['gaze_on_srf']
+                gaze_on_srf = []
+                for i in g['gaze_on_srf']:
+                    gaze_on_srf.append(i['norm_pos']) 
+                
+                # taking average of points in gaze_on_srf on a given event
+                # TODO research incremental averaging to avoid computation speed issues (yet functional lambda it should be fast enough)
+                x,y = tuple(map(lambda y: sum(y) / float(len(y)), zip(*gaze_on_srf)))
+                
+                # use the for loop if every single coordinate should be used
+                # for x,y in g['gaze_on_srf']:
+                print x,y
+                
+                # bound the x,y between 0 and 1 to get coordinates on the screen
+                # TODO fix the "Show Calibration" to understand the uncertainty areas more.
+                # TODO 2 If you managed to fix "Show Calibration", make a Pull Request to Pupil Labs -_-" 
+                lo,hi = 0,1
+                x = lo if x <= lo else hi if x>=hi else x
+                y = lo if y <= lo else hi if y>=hi else y
 
-                    lo,hi = 0,1
-                    x = lo if x <= lo else hi if x>=hi else x
-                    y = lo if y <= lo else hi if y>=hi else y
-
-                    print "(" + str(x) + "," + str(y) + ")"
-                    self.s.sendto((" + str(x) + "," + str(y) + "), (self.ip, self.port))
-                    # gf.write(g + '\n')
+                print "(" + str(x) + "," + str(y) + ")"
+                self.s.sendto((" + str(x) + "," + str(y) + "), (self.ip, self.port))
+                # gf.write(g + '\n')
             except Exception, e:
                 print "not on surface:" + str(e)
     #for key, value in g.iteritems():
