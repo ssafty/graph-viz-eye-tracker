@@ -21,7 +21,7 @@ class Udp_Server(Plugin):
     def init_gui(self):
         if self.g_pool.app == 'capture':
             self.menu = ui.Growing_Menu("UDP Broadcast Server")
-            self.g_pool.sidebar.append(self.menu)
+            self.g_pool.sidebar.insert(1, self.menu) 
 
         self.menu.append(ui.Button('Close', self.close))
         help_str = "UDP Message server"
