@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine.UI;
 using SimpleJSON;
+using System;
+using UnityEngine.Networking.NetworkSystem;
 
 public class InfoLabelController : MonoBehaviour
 {
@@ -9,7 +11,20 @@ public class InfoLabelController : MonoBehaviour
 	private GameObject header;
 	private GameObject desc;
 	public KeyCode dismissKey;
+	public Canvas canvas;
 
+
+	void Start ()
+	{
+		Vector3 old = transform.position;
+		GameObject marker = GameObject.FindGameObjectWithTag ("marker");
+		RectTransform trans = marker.GetComponent<RectTransform> ();
+
+		int offsetX = (int)(4.5 * Math.Abs (trans.rect.x * canvas.scaleFactor));
+		int offsetY = (int)(offsetX * 0.5);
+
+		transform.position = new Vector3 (old.x - offsetX, old.y - offsetY, old.z);
+	}
 
 
 	// Update is called once per frame
@@ -19,7 +34,8 @@ public class InfoLabelController : MonoBehaviour
 		if (node != null) {
 
 			setTitle (node.title);
-			if (node.desc == "Loading ...") StartCoroutine(parseDescription (node));
+			if (node.desc == "Loading ...")
+				StartCoroutine (parseDescription (node));
 			setDescription (node.desc);
 			toggle (true);
 		}
@@ -32,13 +48,14 @@ public class InfoLabelController : MonoBehaviour
 	}
 
 
-	private IEnumerator parseDescription(Node node){
-		string url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + node.title.Replace(" ","%20");
-		WWW www = new WWW(url);
+	private IEnumerator parseDescription (Node node)
+	{
+		string url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + node.title.Replace (" ", "%20");
+		WWW www = new WWW (url);
 		yield return www;
 
-		JSONNode N = JSON.Parse(www.text);
-		string desc = N["query"]["pages"][0]["extract"];
+		JSONNode N = JSON.Parse (www.text);
+		string desc = N ["query"] ["pages"] [0] ["extract"];
 
 		//set and call render again
 		node.desc = desc;
