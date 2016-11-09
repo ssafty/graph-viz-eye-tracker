@@ -109,7 +109,5 @@ public class CameraController : MonoBehaviour
 		if (Input.GetKeyUp (KeyCode.M)) {
 			mouseActive = !mouseActive;
 		}
-
-		print (Input.GetAxis ("Scroll"));
 	}
 }
