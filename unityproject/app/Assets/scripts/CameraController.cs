@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
 	public float sensitivity = 0.1f;
 	public float scrollSpeed = 4.0f;
 
-	private bool mouseActive = true;
+	private bool mouseActive = false;
 
 	bool isCameraTransitionRunning = false;
 	float CameraTransitionsmoothing = 5f;
@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour
 
 		//Handles the Camera Orientation
 		if (isCameraTransitionRunning && transform.forward != targetForward) {
-			Debug.Log ("inside loop");
+			
 			float distCovered = (Time.time - startTime) * 0.035f; //speed = 1.0f
 			float fracJourney = distCovered / journeyLengthForward;
 
