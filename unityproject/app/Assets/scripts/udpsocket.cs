@@ -12,11 +12,14 @@ public class udpsocket : MonoBehaviour
     public GameObject eyepointer;
     Vector2 LastEyeCoordinate;
     public GameObject camera;
+
     createMarker markerScript;
+    Bubble bubbleScript;
     RectTransform rect;
     void Start()
     {
         markerScript = camera.GetComponent<createMarker>();
+        bubbleScript = camera.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
         Client = new UdpClient(Port);
         try
@@ -31,7 +34,8 @@ public class udpsocket : MonoBehaviour
 
     void Update()
     {
-        rect.anchoredPosition = LastEyeCoordinate;
+        bubbleScript.calcBubble(LastEyeCoordinate);
+        //rect.anchoredPosition = LastEyeCoordinate;
     }
 
     private void recv(IAsyncResult res)
