@@ -4,6 +4,7 @@ using System.Xml;
 using System.IO;
 using System.Collections.Generic;
 using UnityEngine.Networking.Types;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class GameController : MonoBehaviour
 	private GameObject graphParent;
 
 	public bool[,] adjacenyList;
+	public bool showLabels = true;
 
 	private IEnumerator loadLayout ()
 	{
@@ -62,7 +64,12 @@ public class GameController : MonoBehaviour
 
 					Node nodeObject = Instantiate (nodePrefab, new Vector3 (x, y, z), Quaternion.identity) as Node;
 					nodeObject.transform.parent = graphParent.transform;
-					nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " ")); //decode URL -> name
+					if (showLabels) {
+						nodeObject.nodeText.text = WWW.UnEscapeURL (xmlNode.Attributes ["id"].Value.Replace ("_", " ")); //decode URL -> name
+					} else {
+						nodeObject.nodeText.text = "";
+					}
+
 					nodeObject.nodeText.fontSize = 250;
 					nodeObject.nodeText.transform.localScale = new Vector3 (0.018f, 0.018f, 0.018f);
 					nodeObject.id = node_id;
@@ -77,7 +84,7 @@ public class GameController : MonoBehaviour
 					nodeObject.transform.localScale = new Vector3 (nodeObject.scale_size, nodeObject.scale_size, nodeObject.scale_size);
 
 					//increment id for the next node
-					node_id ++;
+					node_id++;
 				}
 
 				//create edges
@@ -86,7 +93,7 @@ public class GameController : MonoBehaviour
 					edgeObject.id = xmlNode.Attributes ["id"].Value;
 					edgeObject.sourceId = xmlNode.Attributes ["source"].Value;
 					edgeObject.targetId = xmlNode.Attributes ["target"].Value;
-					if(!edges.ContainsKey(edgeObject.targetId + edgeObject.sourceId))
+					if (!edges.ContainsKey (edgeObject.targetId + edgeObject.sourceId))
 						edges.Add (edgeObject.sourceId + edgeObject.targetId, edgeObject);
 					edgeObject.transform.parent = graphParent.transform;
 				}
@@ -104,8 +111,8 @@ public class GameController : MonoBehaviour
 			link.target = nodes [link.targetId] as Node;
 
 			//both ways
-			adjacenyList [link.source.id ,link.target.id] = true;
-			adjacenyList [link.target.id ,link.source.id] = true;
+			adjacenyList [link.source.id, link.target.id] = true;
+			adjacenyList [link.target.id, link.source.id] = true;
 		}
 	}
 
@@ -173,34 +180,32 @@ public class GameController : MonoBehaviour
 			}
 		}
 	}
-		
-	public void HighlightNodes(int NodeId, bool Highlight){
+
+	public void HighlightNodes (int NodeId, bool Highlight)
+	{
 		Node main = nodesByID [NodeId] as Node;
 		if (Highlight)
-			main.HighlightAsMain (); 
-		else 
+			main.HighlightAsMain ();
+		else
 			main.HighlightDefault ();
 
-		for (int i = 0; i < adjacenyList.GetLength(0); i++) {
+		for (int i = 0; i < adjacenyList.GetLength (0); i++) {
 			if (adjacenyList [NodeId, i] && NodeId != i) {
 				//isNeighbor, but we only have int ID and hashmap uses String as hashValue (so it can build edges)
 				// solution: use another HashMap to save IDs reference to Node objects (memory vs speed tradeoff)
-				Node neighbor = nodesByID[i] as Node;
+				Node neighbor = nodesByID [i] as Node;
 
 				//get Edge from HashMap (stored as sourceId+targetId)
-				Edge forwardLink = edges[neighbor.id_string + main.id_string] as Edge;
-				Edge backwardLink = edges[main.id_string + neighbor.id_string] as Edge;
+				Edge forwardLink = edges [neighbor.id_string + main.id_string] as Edge;
+				Edge backwardLink = edges [main.id_string + neighbor.id_string] as Edge;
 
-				if (Highlight) 
-				{
+				if (Highlight) {
 					neighbor.HighlightAsNeighbor ();
 					if (forwardLink != null)
 						forwardLink.HighlightAsNeighbor ();
 					if (backwardLink != null)
 						backwardLink.HighlightAsNeighbor ();
-				}
-				else
-				{
+				} else {
 					neighbor.HighlightDefault ();
 					if (forwardLink != null)
 						forwardLink.HighlightDefault ();
