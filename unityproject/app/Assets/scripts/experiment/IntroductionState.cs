@@ -13,6 +13,8 @@ public class IntroductionState : ExperimentState
     GameObject marker;
     [SerializeField]
     GameObject eyepointer;
+    [SerializeField]
+    GameObject graph;
 
     bool next = false;
 
@@ -46,6 +48,7 @@ public class IntroductionState : ExperimentState
     {
         c.gameObject.SetActive(true);
         marker.gameObject.SetActive(false);
+        graph.gameObject.SetActive(false);
         eyepointer.gameObject.SetActive(false);
         text.text = "Hi and welcome to this experiment!";
 		Debug.Log ("Hi im now in the Introductionstate");

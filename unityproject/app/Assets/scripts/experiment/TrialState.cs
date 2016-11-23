@@ -8,7 +8,8 @@ public class TrialState : ExperimentState {
 	GameObject marker;
 	[SerializeField]
 	GameObject eyepointer;
-
+    [SerializeField]
+    GameObject graph;
     public override ExperimentState HandleInput(ExperimentController ec)
     {
         if(Input.GetKeyDown(KeyCode.Space))
@@ -29,6 +30,7 @@ public class TrialState : ExperimentState {
     {
 		marker.gameObject.SetActive(true);
 		eyepointer.gameObject.SetActive(true);
+        graph.gameObject.SetActive(true);
         MoveToExperimentTrial mttrial = ec.CurrentTrials[ec.CurrentTrialIndex] as MoveToExperimentTrial;
         if(mttrial != null)
         {
