@@ -8,6 +8,8 @@ public class ThanksState : ExperimentState {
     [SerializeField]
     Canvas c;
     [SerializeField]
+    GameObject panel;
+    [SerializeField]
     Text text;
     [SerializeField]
     Button nextButton;
@@ -15,6 +17,8 @@ public class ThanksState : ExperimentState {
 	GameObject marker;
 	[SerializeField]
 	GameObject eyepointer;
+    [SerializeField]
+    GameObject graph;
     public override ExperimentState HandleInput(ExperimentController ec)
     {
         if(Input.GetKeyDown(KeyCode.X))
@@ -32,8 +36,9 @@ public class ThanksState : ExperimentState {
     {
 		marker.gameObject.SetActive(false);
 		eyepointer.gameObject.SetActive(false);
+        graph.gameObject.SetActive(false);
         c.gameObject.SetActive(true);
-        nextButton.gameObject.SetActive(false);
+        panel.gameObject.SetActive(true);
         text.text = "Thanks for participating. Press X to close.";
     }
 }
