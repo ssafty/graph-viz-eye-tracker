@@ -15,5 +15,4 @@ public abstract class ExperimentTrial {
     {
         trialNum = _trialNum;
     }
-
 }
