@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System;
 
@@ -8,10 +9,15 @@ public class CalibrationState : ExperimentState
     
 	bool next = false;
 	[SerializeField]
+    Text text;
+	[SerializeField]
 	GameObject marker;
 	[SerializeField]
 	GameObject eyepointer;
-
+	[SerializeField]
+	GameObject c;
+	[SerializeField]
+    GameObject panel;
 	public bool Next
 	{
 		get
@@ -29,9 +35,8 @@ public class CalibrationState : ExperimentState
 	{
 		if(Next)
 		{
-			marker.gameObject.SetActive(true);
-			eyepointer.gameObject.SetActive(true);
-
+			panel.gameObject.SetActive(false);
+			c.gameObject.SetActive(false);
 			return nextState;
 		}
 		else
@@ -42,18 +47,10 @@ public class CalibrationState : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {
-        MoveToExperimentTrial mttrial = ec.CurrentTrials[ec.CurrentTrialIndex] as MoveToExperimentTrial;
-        if (mttrial != null)
-        {
-            Vector3 pos = mttrial.TargetPosition;
-            Vector3 scale = new Vector3().FromFloat(0.1f);
-            Debug.Log("Calibration in progess" + ec.CurrentTrialIndex);
-
-
-        }
-        else
-        {
-            throw new UnityException("couldn't cast trial as MoveToExperimentTrial");
-        }
+    	panel.gameObject.SetActive(true);
+    	marker.gameObject.SetActive(true);
+		eyepointer.gameObject.SetActive(false);
+		c.gameObject.SetActive(true);
+		text.text = "Please look in the middle of the screen.";
     }
 }
