@@ -181,38 +181,4 @@ public class GameController : MonoBehaviour
 		}
 	}
 
-	public void HighlightNodes (int NodeId, bool Highlight)
-	{
-		Node main = nodesByID [NodeId] as Node;
-		if (Highlight)
-			main.HighlightAsMain ();
-		else
-			main.HighlightDefault ();
-
-		for (int i = 0; i < adjacenyList.GetLength (0); i++) {
-			if (adjacenyList [NodeId, i] && NodeId != i) {
-				//isNeighbor, but we only have int ID and hashmap uses String as hashValue (so it can build edges)
-				// solution: use another HashMap to save IDs reference to Node objects (memory vs speed tradeoff)
-				Node neighbor = nodesByID [i] as Node;
-
-				//get Edge from HashMap (stored as sourceId+targetId)
-				Edge forwardLink = edges [neighbor.id_string + main.id_string] as Edge;
-				Edge backwardLink = edges [main.id_string + neighbor.id_string] as Edge;
-
-				if (Highlight) {
-					neighbor.HighlightAsNeighbor ();
-					if (forwardLink != null)
-						forwardLink.HighlightAsNeighbor ();
-					if (backwardLink != null)
-						backwardLink.HighlightAsNeighbor ();
-				} else {
-					neighbor.HighlightDefault ();
-					if (forwardLink != null)
-						forwardLink.HighlightDefault ();
-					if (backwardLink != null)
-						backwardLink.HighlightDefault ();
-				}
-			}	
-		}
-	}
 }

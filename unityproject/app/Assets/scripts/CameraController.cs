@@ -27,7 +27,8 @@ public class CameraController : MonoBehaviour
 	GameController gameController;
 	Node PreviousClickedNode;
 
-	void Start(){
+	void Start ()
+	{
 		gameController = FindObjectOfType (typeof(GameController)) as GameController;
 	}
 
@@ -73,16 +74,11 @@ public class CameraController : MonoBehaviour
 			targetForward = (targetNode.transform.position - targetPos).normalized;
 
 			startTime = Time.time;
-			journeyLength = Vector3.Distance(transform.position, targetPos);
-			journeyLengthForward = Vector3.Distance (transform.forward,  targetForward);
+			journeyLength = Vector3.Distance (transform.position, targetPos);
+			journeyLengthForward = Vector3.Distance (transform.forward, targetForward);
 
 			isCameraTransitionRunning = true;
 
-			//highlight nodes
-			if (PreviousClickedNode != null)
-				gameController.HighlightNodes (PreviousClickedNode.id, false);
-			PreviousClickedNode = targetNode;
-			gameController.HighlightNodes(targetNode.id, true);
 		}
 
 		//Rotation
@@ -90,14 +86,14 @@ public class CameraController : MonoBehaviour
 
 		if (transform.eulerAngles.x > 270 || transform.eulerAngles.x < 85) {
 			transform.Rotate (new Vector3 (-rotationSpeed * Input.GetAxis ("Vertical"), 0.0f, 0.0f));
-			transform.Rotate (new Vector3 (0.0f, sensitivity * Convert.ToInt32(mouseActive) *  Input.GetAxis ("Mouse X"), 0.0f));
+			transform.Rotate (new Vector3 (0.0f, sensitivity * Convert.ToInt32 (mouseActive) * Input.GetAxis ("Mouse X"), 0.0f));
 		}
 		if (transform.eulerAngles.x > 275 || transform.eulerAngles.x < 90) {
 			transform.Rotate (new Vector3 (-rotationSpeed * Input.GetAxis ("Vertical"), 0.0f, 0.0f));
-			transform.Rotate (new Vector3 (-sensitivity * Convert.ToInt32(mouseActive) *  Input.GetAxis ("Mouse Y"), 0.0f, 0.0f));
+			transform.Rotate (new Vector3 (-sensitivity * Convert.ToInt32 (mouseActive) * Input.GetAxis ("Mouse Y"), 0.0f, 0.0f));
 		}
 		// Strafing and Zooming
-		transform.Translate (new Vector3 (strafeSpeed * Input.GetAxis ("Horizontal2") , strafeSpeed * Input.GetAxis ("Vertical2"), zoomSpeed * Input.GetAxis ("Zoom")+ scrollSpeed * Convert.ToInt32(mouseActive) * Input.GetAxis ("Scroll")));
+		transform.Translate (new Vector3 (strafeSpeed * Input.GetAxis ("Horizontal2"), strafeSpeed * Input.GetAxis ("Vertical2"), zoomSpeed * Input.GetAxis ("Zoom") + scrollSpeed * Convert.ToInt32 (mouseActive) * Input.GetAxis ("Scroll")));
         
 		//Reset position and angle
 		if (Input.GetKey (KeyCode.R)) {
