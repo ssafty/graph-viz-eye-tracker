@@ -150,35 +150,6 @@ public class GameController : MonoBehaviour
 	}
 
 
-	void Update ()
-	{
-		if (Input.GetKey (KeyCode.LeftBracket)) {
-			RaycastHit hitPoint;
-			Ray ray = new Ray (Camera.main.transform.position, Camera.main.transform.forward);
-			if (Physics.Raycast (ray, out hitPoint, 50)) { //used 50 instead of Mathf.Infinity
-				Node l = (Node)hitPoint.transform.gameObject.GetComponent ("Node");
-				if (l != null) {
-					foreach (Node n in nodes.Values) {
-						//n.transform.RotateAround (Camera.main.ViewportToWorldPoint (new Vector3 (0.5f, 0.5f, hitPoint.distance)), Vector3.up, 20 * Time.deltaTime);
-						n.transform.RotateAround (l.transform.position, Vector3.up, 20 * Time.deltaTime);
-					}
-				}
-			}
-		}
 
-		if (Input.GetKey (KeyCode.RightBracket)) {
-			RaycastHit hitPoint;
-			Ray ray = new Ray (Camera.main.transform.position, Camera.main.transform.forward);
-			if (Physics.Raycast (ray, out hitPoint, 50)) {
-				Node l = (Node)hitPoint.transform.gameObject.GetComponent ("Node");
-				if (l != null) {
-					foreach (Node n in nodes.Values) {
-						//n.transform.RotateAround (Camera.main.ViewportToWorldPoint (new Vector3 (0.5f, 0.5f, hitPoint.distance)), -Vector3.up, 20 * Time.deltaTime);
-						n.transform.RotateAround (l.transform.position, -Vector3.up, 20 * Time.deltaTime);
-					}
-				}
-			}
-		}
-	}
 
 }
