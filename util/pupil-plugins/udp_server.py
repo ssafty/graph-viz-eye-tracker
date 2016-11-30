@@ -2,6 +2,9 @@ from plugin import Plugin
 import socket
 import os
 from pyglui import ui
+import traceback
+import math
+from operator import itemgetter
 
 # This file has to be copied to pupil/capture_settings/plugins/
 
@@ -14,14 +17,14 @@ class Udp_Server(Plugin):
     def __init__(self, g_pool):
         super(Udp_Server, self).__init__(g_pool)
         self.order = .9
-        self.ip = '192.168.0.2' #change to unity IP
+        self.ip = '127.0.0.1' #change to unity IP
         self.port = 5007        #change to unity port
         self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def init_gui(self):
         if self.g_pool.app == 'capture':
             self.menu = ui.Growing_Menu("UDP Broadcast Server")
-            self.g_pool.sidebar.insert(1, self.menu) 
+            self.g_pool.sidebar.insert(1, self.menu)
 
         self.menu.append(ui.Button('Close', self.close))
         help_str = "UDP Message server"
@@ -66,32 +69,33 @@ class Udp_Server(Plugin):
             #self.conn.send(str(g['norm_pos']))
             #print g
             try:
-                # print g['gaze_on_srf']
                 gaze_on_srf = []
                 for i in g['gaze_on_srf']:
-                    gaze_on_srf.append(i['norm_pos']) 
-                
-                # taking average of points in gaze_on_srf on a given event
-                # TODO research incremental averaging to avoid computation speed issues (yet functional lambda it should be fast enough)
-                if gaze_on_srf:
-                    x,y = tuple(map(lambda y: sum(y) / float(len(y)), zip(*gaze_on_srf)))
-                
-                    # use the for loop if every single coordinate should be used
-                    # for x,y in g['gaze_on_srf']:
-                    print x,y
-                
-                    # bound the x,y between 0 and 1 to get coordinates on the screen
-                    # TODO fix the "Show Calibration" to understand the uncertainty areas more.
-                    # TODO 2 If you managed to fix "Show Calibration", make a Pull Request to Pupil Labs -_-" 
-                    lo,hi = 0,1
-                    x = lo if x <= lo else hi if x>=hi else x
-                    y = lo if y <= lo else hi if y>=hi else y
+                    gaze_on_srf.append(i['norm_pos'])
 
-                    print "(" + str(x) + "," + str(y) + ")"
-                    self.s.sendto((" + str(x) + "," + str(y) + "), (self.ip, self.port))
+                # strict to surface
+                gaze_on_srf = [(x,y) for x,y in gaze_on_srf if x > 0 and x < 1 and y > 0 and y < 1]
+
+                if gaze_on_srf:
+                    # calculate center of the gaze coordinates
+                    x_avg,y_avg = tuple(map(lambda y: sum(y) / float(len(y)), zip(*gaze_on_srf)))
+
+                    # get distance from each point and the centeroid
+                    x_y_distanceFromCenteroid = [(x,y,math.hypot(x - x_avg, y - y_avg)) for x,y in gaze_on_srf]
+
+                    #sort and get closest 75%
+                    x_y_distanceFromCenteroid = sorted(x_y_distanceFromCenteroid, key=itemgetter(2))
+                    x_y_distanceFromCenteroid = x_y_distanceFromCenteroid[: - int(len(x_y_distanceFromCenteroid)* 0.25 )]
+
+                    # recalculate average without outliers
+                    x,y,_ = tuple(map(lambda y: sum(y) / float(len(y)), zip(*x_y_distanceFromCenteroid)))
+
+                    print "sending (" + str(x) + "," + str(y) + ")"
+                    self.s.sendto("(" + str(x) + "," + str(y) + ")", (self.ip, self.port))
                     # gf.write(g + '\n')
             except Exception, e:
                 print "not on surface:" + str(e)
+                traceback.print_exc()
     #for key, value in g.iteritems():
     #self.conn.send( key+":"+str(value)+'\n' )
 
@@ -100,4 +104,7 @@ class Udp_Server(Plugin):
 
     #self.conn.send("Hello, World")
     #conn.close()
+#[(0.20899205628408357, -0.98328468349377229), (0.21040174508226522, -0.97922400841248292), (0.21048129564469328, -0.98082618370819175), (0.20997948134166367, -0.97962481424446379)]
+#0.209963644588 -0.980739922465
+#sending (0.209963644588,0)
 
