@@ -27,10 +27,9 @@ public class Bubble : MonoBehaviour
 			if (newPos != Vector3.zero && bubble != null) {
 				start = true;
 				bubble.transform.position = newPos;
-
-
-
 			}
+		} else if (Input.anyKeyDown) {
+			start = false;
 		}
 
 	}
@@ -46,11 +45,13 @@ public class Bubble : MonoBehaviour
 	{
 		if (start) {	
 
-			Vector3 pos = bubble.transform.position - new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - 20);
+			Vector3 pos = new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - stop);
 			camera.transform.position = Vector3.MoveTowards (camera.transform.position, pos, speed * Time.deltaTime);
+			RotateToBubble ();
 			if (camera.transform.position == pos) {
 				start = false;
 			}
+
 		}
 	}
 
