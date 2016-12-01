@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
 	Vector3 offset = new Vector3 (0, 0, -20);
 
 	GameController gameController;
-	Node PreviousClickedNode;
+
 
 	void Start ()
 	{
@@ -34,52 +34,7 @@ public class CameraController : MonoBehaviour
 
 	void Update ()
 	{
-		//Handles the camera Position
-		if (isCameraTransitionRunning && transform.position != targetPos) {
-			float distCovered = (Time.time - startTime) * 2.0f; //speed = 1.0f
-			float fracJourney = distCovered / journeyLength;
-			transform.position = Vector3.Lerp (transform.position, targetPos, fracJourney);
 
-			if ((transform.position - targetPos).magnitude < 0.01 && (transform.forward - targetForward).magnitude < 0.01) {
-				isCameraTransitionRunning = false;
-			}
-		}
-
-		//Handles the Camera Orientation
-		if (isCameraTransitionRunning && transform.forward != targetForward) {
-			
-			float distCovered = (Time.time - startTime) * 0.035f; //speed = 1.0f
-			float fracJourney = distCovered / journeyLengthForward;
-
-			transform.forward = (new Vector3 (
-				Mathf.LerpAngle (transform.forward.x, targetForward.x, fracJourney),
-				Mathf.LerpAngle (transform.forward.y, targetForward.y, fracJourney),
-				Mathf.LerpAngle (transform.forward.z, targetForward.z, fracJourney)
-			));
-
-			if ((transform.position - targetPos).magnitude < 0.01 && (transform.forward - targetForward).magnitude < 0.01) {
-				isCameraTransitionRunning = false;
-			}
-		}
-
-		//when clicked on a node, zoom in
-		Node targetNode = MouseClickUtil.checkMouseClick (MouseClickUtil.LEFT_BTN, 10000);
-
-		if (targetNode != null) {
-			Vector3 CameraToTargetVector = (transform.position - targetNode.transform.position);
-			CameraToTargetVector.y = 0; //get Point on the same Y level of the target
-			CameraToTargetVector = CameraToTargetVector.normalized;
-
-			targetPos = targetNode.transform.position + (CameraToTargetVector * 25f);
-			targetForward = (targetNode.transform.position - targetPos).normalized;
-
-			startTime = Time.time;
-			journeyLength = Vector3.Distance (transform.position, targetPos);
-			journeyLengthForward = Vector3.Distance (transform.forward, targetForward);
-
-			isCameraTransitionRunning = true;
-
-		}
 
 		//Rotation
 		transform.RotateAround (transform.position, new Vector3 (0, 1.0f, 0), rotationSpeed * Input.GetAxis ("Horizontal"));

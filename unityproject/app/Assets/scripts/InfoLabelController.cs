@@ -30,21 +30,21 @@ public class InfoLabelController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Node node = MouseClickUtil.checkMouseClick (0, 10000);
-		if (node != null) {
-
-			setTitle (node.title);
-			if (node.desc == "Loading ...")
-				StartCoroutine (parseDescription (node));
-			setDescription (node.desc);
-			toggle (true);
-		}
-
-		if (Input.GetKeyDown (dismissKey)) {
-			toggle (false);
-			setTitle ("");
-			setDescription ("");
-		}
+//		GameObject node = MouseClickUtil.checkMouseClick (0, 10000);
+//		if (node != null && node is Node) {
+//			Node n = node as Node;
+//			setTitle (n.title);
+//			if (n.desc == "Loading ...")
+//				StartCoroutine (parseDescription (n));
+//			setDescription (n.desc);
+//			toggle (true);
+//		}
+//
+//		if (Input.GetKeyDown (dismissKey)) {
+//			toggle (false);
+//			setTitle ("");
+//			setDescription ("");
+//		}
 	}
 
 

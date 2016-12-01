@@ -24,7 +24,6 @@ public class HighlightNode : MonoBehaviour
 
 	private void ChangeColorTo (Collider other, Color color)
 	{
-		Debug.Log (other + "  " + other.tag);
 		bool ok = other.tag == "Bubble";
 		if (ok) {
 			gameObject.GetComponent<Renderer> ().material.color = color;
