@@ -2,15 +2,16 @@
 using System.Collections;
 using System.Runtime.ConstrainedExecution;
 using System.Collections.Generic;
+using System;
 
 public class HighlightNode : MonoBehaviour
 {
 
-	public Color highlightColor = Color.green;
+	public static Color highlightColor = Color.green;
 	private Color white = Color.white;
 	private bool highlighted = false;
 
-	void OnTriggerStay (Collider other)
+	void OnTriggerEnter (Collider other)
 	{
 		ChangeColorTo (other, highlightColor);
 	}
@@ -27,7 +28,7 @@ public class HighlightNode : MonoBehaviour
 		bool ok = other.tag == "Bubble";
 		if (ok) {
 			gameObject.GetComponent<Renderer> ().material.color = color;
-			highlighted = gameObject.GetComponent<Renderer> ().material.color == highlightColor;
+			highlighted = gameObject.GetComponent<Renderer> ().material.color != Color.white;
 		}
 	}
 
@@ -40,6 +41,18 @@ public class HighlightNode : MonoBehaviour
 				selected.Add (n);
 			}
 		}
-		return selected;
+        selected.Sort(new myReverserClass());
+        return selected;
 	}
+
+}
+public class myReverserClass : IComparer<GameObject>
+{
+    public int Compare(GameObject x, GameObject y)
+    {
+        GameObject nodex = (GameObject) x;
+        GameObject nodey = (GameObject) y;
+        return nodex.GetComponent<Node>().id.CompareTo(nodey.GetComponent<Node>().id);
+    }
+
 }
