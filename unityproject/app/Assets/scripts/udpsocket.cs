@@ -10,7 +10,7 @@ public class udpsocket : MonoBehaviour
     public int Port;
     UdpClient Client;
     public GameObject eyepointer;
-    Vector2 LastEyeCoordinate;
+    public Vector2 LastEyeCoordinate;
     public GameObject camera;
 
     createMarker markerScript;

@@ -11,19 +11,59 @@ public class Bubble : MonoBehaviour
 	public float rotationSpeed = 2f;
 	public float stop = 10f;
 	private bool start = false;
-
-	void Start ()
+    public float jitterMax = 10.0f;
+    public float jitterMin = -10.0f;
+    public float dwellTime = 0.3f;
+    public float interval = 0.1f;
+    public GameObject eyepointer;
+    private Vector3 lastHit;
+    private int dwellCount;
+    void Start ()
 	{
-		camera = Camera.main;
+        lastHit = Vector3.zero;
+        camera = Camera.main;
+        dwellCount = 0;
+        InvokeRepeating("doRayCast",0.0f, interval);
 	}
-	
-	// Update is called once per frame
-	void Update ()
+	void doRayCast()
+    {
+        
+        Vector2 temp = Input.mousePosition;
+        Vector2 neu = new Vector2(temp.x + UnityEngine.Random.Range(jitterMin, jitterMax), temp.y + UnityEngine.Random.Range(jitterMin, jitterMax));
+        eyepointer.GetComponent<RectTransform>().anchoredPosition = new Vector2(neu.x-394.5f,neu.y-299f);
+        Vector3 newPos = bestBubble(neu);
+        if (newPos != Vector3.zero)
+        {
+            Debug.Log(newPos + " : " + lastHit);
+            if (newPos == lastHit)
+            {
+                dwellCount++;
+                lastHit = newPos;
+                Debug.Log("increasing dwell counter to " + dwellCount);
+            }
+            else
+            {
+                dwellCount = 0;
+                lastHit = newPos;
+                Debug.Log("resetting dwell counter");
+            }
+            if (dwellCount >= (dwellTime / interval) && newPos != Vector3.zero && bubble != null)
+            {
+                Debug.Log("drawing bubble to" + newPos);
+                start = true;
+                bubble.transform.position = newPos;
+                dwellCount = 0;
+            }
+        }
+    }
+
+    // Update is called once per frame
+    void Update ()
 	{
-		ZoomToBubble ();
+		//ZoomToBubble ();
 		if (Input.GetMouseButtonDown (0)) {
 			
-			Vector3 newPos = bestBubble ();
+			Vector3 newPos = bestBubble (Input.mousePosition);
 			if (newPos != Vector3.zero && bubble != null) {
 				start = true;
 				bubble.transform.position = newPos;
@@ -58,7 +98,7 @@ public class Bubble : MonoBehaviour
 	public void calcBubble (Vector2 pos)
 	{
 
-		Vector3 newPos = bestBubble ();
+		Vector3 newPos = bestBubble (pos);
 		if (newPos != Vector3.zero) {
 			bubble.transform.position = newPos;
 		}
@@ -90,10 +130,10 @@ public class Bubble : MonoBehaviour
 		return (positionSum / Mathf.Max (1, hits.Length));
 	}
 
-	Vector3 bestBubble ()
+	Vector3 bestBubble (Vector2 pos)
 	{
 		RaycastHit[] hits;
-		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		Ray ray = Camera.main.ScreenPointToRay (pos);
 		hits = Physics.RaycastAll (ray);
 		Vector3 positionSum = Vector3.zero;
 		float bestShotDistance = float.MaxValue;
