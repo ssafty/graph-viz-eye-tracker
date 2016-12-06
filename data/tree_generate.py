@@ -55,11 +55,20 @@ def write_xml(graph, layout, prefix):
     tree = ElementTree(root)
     tree.write("{}.xml".format(prefix))
 
+g, l = tree(50, 3, 0.5)
+write_xml(g, l, "tree_50")
+
 g, l = tree(150, 4, 0.5)
-write_xml(g, l, "tree")
+write_xml(g, l, "tree_150")
 
-g, l = bipartite(100, 350, 0.8)
-write_xml(g, l, "bip")
+g, l = tree(300, 4, 0.5)
+write_xml(g, l, "tree_300")
 
-g, l = random_geometric(150, 15, 5)
-write_xml(g, l, "sphere")
+g, l = tree(450, 8, 0.5)
+write_xml(g, l, "tree_450")
+
+g, l = tree(450, 8, 0.5)
+write_xml(g, l, "tree_450")
+
+g, l = tree(900, 10, 0.2)
+write_xml(g, l, "tree_900")
