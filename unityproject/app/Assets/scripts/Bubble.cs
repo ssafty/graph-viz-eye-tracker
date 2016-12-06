@@ -32,11 +32,10 @@ public class Bubble : MonoBehaviour
         Vector2 neu = Camera.main.GetComponent<udpsocket>().LastEyeCoordinate;
         neu.x = neu.x + (Screen.width / 2);
         neu.y = neu.y + (Screen.height / 2);
-        Debug.LogWarning("LastEyeCoordinate:" +neu + "MousePosition:" + Input.mousePosition);
+        //neu = Input.mousePosition;
         //Vector2 neu = new Vector2(temp.x + UnityEngine.Random.Range(jitterMin, jitterMax), temp.y + UnityEngine.Random.Range(jitterMin, jitterMax));
         //eyepointer.GetComponent<RectTransform>().anchoredPosition = new Vector2(neu.x-394.5f,neu.y-299f);
         Vector3 newPos = bestBubble(neu);
-        Debug.LogWarning("newpos"+newPos);
         if (newPos != Vector3.zero)
         {
 
@@ -128,7 +127,6 @@ public class Bubble : MonoBehaviour
 		Vector3 positionSum = Vector3.zero;
 		for (int i = 0; i < hits.Length; i++) {
 			RaycastHit hit = hits [i];
-			Debug.Log (hit);
 			if (hit.collider.gameObject.tag == "Node") {
 				positionSum = positionSum + hit.collider.gameObject.transform.position;
 			}
@@ -143,13 +141,10 @@ public class Bubble : MonoBehaviour
 
 		hits = Physics.RaycastAll (ray);
 		Vector3 positionSum = Vector3.zero;
-		 Debug.LogWarning("raycast shot");
 		float bestShotDistance = float.MaxValue;
 		GameObject bestShotNode = null;
 		for (int i = 0; i < hits.Length; i++) {
 			RaycastHit hit = hits [i];
-			
-			Debug.LogWarning("raycast hit");
 			if (hit.collider.gameObject.tag == "Node") {
 				Debug.LogWarning("Node");
 				float distance = Vector2.Distance (new Vector2 (hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y), new Vector2 (hit.point.x, hit.point.y));

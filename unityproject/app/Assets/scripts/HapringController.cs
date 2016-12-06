@@ -19,7 +19,7 @@ public class HapringController : MonoBehaviour {
                 currentIndex = nodes[0].GetComponent<Node>().id;
             }
            int index = nodes.FindIndex(c => c.GetComponent<Node>().id == currentIndex);
-            Debug.Log("lastIndex =" + index);
+           Debug.Log("lastIndex =" + index);
            if (index + 2 > nodes.Count)
            {
                 foreach (GameObject g in nodes)
