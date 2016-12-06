@@ -11,9 +11,9 @@ public class Bubble : MonoBehaviour
 	public float rotationSpeed = 2f;
 	public float stop = 10f;
 	private bool start = false;
-    	public float jitterMax = 10.0f;
-    	public float jitterMin = -10.0f;
-    public float dwellTime = 0.1f;
+    public float jitterMax = 10.0f;
+    public float jitterMin = -10.0f;
+    public float dwellTime = 0.3f;
     public float interval = 0.1f;
     public GameObject eyepointer;
     private Vector3 lastHit;
@@ -29,18 +29,14 @@ public class Bubble : MonoBehaviour
 	}
 	void doRayCast()
     {
+        
         Vector2 neu = Camera.main.GetComponent<udpsocket>().LastEyeCoordinate;
-        neu.x = neu.x + (Screen.width / 2);
-        neu.y = neu.y + (Screen.height / 2);
-        Debug.LogWarning("LastEyeCoordinate:" +neu + "MousePosition:" + Input.mousePosition);
         //Vector2 neu = new Vector2(temp.x + UnityEngine.Random.Range(jitterMin, jitterMax), temp.y + UnityEngine.Random.Range(jitterMin, jitterMax));
         //eyepointer.GetComponent<RectTransform>().anchoredPosition = new Vector2(neu.x-394.5f,neu.y-299f);
         Vector3 newPos = bestBubble(neu);
-        Debug.LogWarning("newpos"+newPos);
         if (newPos != Vector3.zero)
         {
-
-            Debug.Log("test"+ newPos + " : " + lastHit);
+            Debug.Log(newPos + " : " + lastHit);
             if (newPos == lastHit)
             {
                 dwellCount++;
@@ -140,18 +136,15 @@ public class Bubble : MonoBehaviour
 	{
 		RaycastHit[] hits;
 		Ray ray = Camera.main.ScreenPointToRay (pos);
-
 		hits = Physics.RaycastAll (ray);
 		Vector3 positionSum = Vector3.zero;
-		 Debug.LogWarning("raycast shot");
 		float bestShotDistance = float.MaxValue;
 		GameObject bestShotNode = null;
 		for (int i = 0; i < hits.Length; i++) {
 			RaycastHit hit = hits [i];
-			
-			Debug.LogWarning("raycast hit");
+			Debug.Log (hit);
+
 			if (hit.collider.gameObject.tag == "Node") {
-				Debug.LogWarning("Node");
 				float distance = Vector2.Distance (new Vector2 (hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y), new Vector2 (hit.point.x, hit.point.y));
 
 				if (distance < bestShotDistance) {

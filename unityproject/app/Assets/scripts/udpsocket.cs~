@@ -35,7 +35,7 @@ public class udpsocket : MonoBehaviour
     void Update()
     {
         //bubbleScript.calcBubble(LastEyeCoordinate);
-        rect.anchoredPosition = LastEyeCoordinate;
+        //rect.anchoredPosition = LastEyeCoordinate;
     }
 
     private void recv(IAsyncResult res)
