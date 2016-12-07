@@ -34,11 +34,8 @@ public class TrialState : ExperimentState {
         MoveToExperimentTrial mttrial = ec.CurrentTrials[ec.CurrentTrialIndex] as MoveToExperimentTrial;
         if(mttrial != null)
         {
-            Vector3 pos = mttrial.TargetPosition;
-            Vector3 scale = new Vector3().FromFloat(0.1f);
             Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
-
-
+            mttrial.initialze();
         }
         else
         {

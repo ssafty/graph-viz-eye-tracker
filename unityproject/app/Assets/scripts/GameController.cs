@@ -26,12 +26,12 @@ public class GameController : MonoBehaviour
 	public bool[,] adjacenyList;
 	public bool showLabels = true;
 
-	private IEnumerator loadLayout ()
+	private IEnumerator loadLayout (string name)
 	{
 		string sourceFile;
 
 		if (loadDataset) {
-			sourceFile = datasetName;
+			sourceFile = name;
 		} else {
 			sourceFile = "sample_output";
 		}
@@ -122,10 +122,17 @@ public class GameController : MonoBehaviour
 		nodesByID = new Hashtable ();
 		edges = new Hashtable ();
 
-		graphParent = GameObject.FindGameObjectWithTag ("GraphParent");
-		StartCoroutine (loadLayout ());
+		
 	}
-
+    public void createGraph(string name)
+    {
+        graphParent = GameObject.FindGameObjectWithTag("GraphParent");
+        foreach (Transform child in graphParent.transform)
+        {
+            GameObject.Destroy(child.gameObject);
+        }
+        StartCoroutine(loadLayout(name));
+    }
 
 	private int find_count_and_highest_connection (XmlElement root, out int nodeCount)
 	{
