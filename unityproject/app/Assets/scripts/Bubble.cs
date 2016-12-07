@@ -4,7 +4,7 @@ using System;
 
 public class Bubble : MonoBehaviour
 {
-
+	public static Vector3 REST_POS = new Vector3(9999,9999,9999);
 	private Camera camera;
 	public GameObject bubble;
 	public float speed = 10f;
@@ -32,14 +32,10 @@ public class Bubble : MonoBehaviour
         Vector2 neu = Camera.main.GetComponent<udpsocket>().LastEyeCoordinate;
         neu.x = neu.x + (Screen.width / 2);
         neu.y = neu.y + (Screen.height / 2);
-        //neu = Input.mousePosition;
-        //Vector2 neu = new Vector2(temp.x + UnityEngine.Random.Range(jitterMin, jitterMax), temp.y + UnityEngine.Random.Range(jitterMin, jitterMax));
-        //eyepointer.GetComponent<RectTransform>().anchoredPosition = new Vector2(neu.x-394.5f,neu.y-299f);
         Vector3 newPos = bestBubble(neu);
         if (newPos != Vector3.zero)
         {
 
-            Debug.Log("test"+ newPos + " : " + lastHit);
             if (newPos == lastHit)
             {
                 dwellCount++;
@@ -65,7 +61,9 @@ public class Bubble : MonoBehaviour
     // Update is called once per frame
     void Update ()
 	{
-		//ZoomToBubble ();
+		if (start) {
+			ZoomToBubble ();
+		}
 		if (Input.GetMouseButtonDown (0)) {
 			
 			Vector3 newPos = bestBubble (Input.mousePosition);
@@ -86,17 +84,17 @@ public class Bubble : MonoBehaviour
 		camera.transform.localRotation = Quaternion.Lerp (camera.transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
 	}
 
-	private void ZoomToBubble ()
+	public bool ZoomToBubble ()
 	{
-		if (start) {	
+		Vector3 pos = new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - stop);
+		if (camera.transform.position != pos && bubble.transform.position != REST_POS) {	
 
-			Vector3 pos = new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - stop);
+
 			camera.transform.position = Vector3.MoveTowards (camera.transform.position, pos, speed * Time.deltaTime);
 			RotateToBubble ();
-			if (camera.transform.position == pos) {
-				start = false;
-			}
-
+			return false;
+		} else {
+			return true;
 		}
 	}
 
