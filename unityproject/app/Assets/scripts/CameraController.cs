@@ -50,11 +50,7 @@ public class CameraController : MonoBehaviour
 		// Strafing and Zooming
 		transform.Translate (new Vector3 (strafeSpeed * Input.GetAxis ("Horizontal2"), strafeSpeed * Input.GetAxis ("Vertical2"), zoomSpeed * Input.GetAxis ("Zoom") + scrollSpeed * Convert.ToInt32 (mouseActive) * Input.GetAxis ("Scroll")));
         
-		//Reset position and angle
-		if (Input.GetKey (KeyCode.R)) {
-			transform.position = new Vector3 (0, 1.0f, -10.0f);
-			transform.rotation = new Quaternion (0, 0, 0, 0);
-		}
+
 
 		//Toggle Mouse
 		if (Input.GetKeyUp (KeyCode.M)) {

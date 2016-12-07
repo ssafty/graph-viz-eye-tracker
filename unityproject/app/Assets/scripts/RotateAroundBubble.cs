@@ -5,10 +5,10 @@ using UnityEngine.Networking.Match;
 public class RotateAroundBubble : MonoBehaviour
 {
 
-	public KeyCode rotateLeftKey;
-	public KeyCode rotateRightKey;
-	public KeyCode rotateUpKey;
-	public KeyCode rotateDownKey;
+	public KeyCode rotateLeftKey = KeyCode.Q;
+	public KeyCode rotateRightKey = KeyCode.W;
+	public KeyCode rotateUpKey = KeyCode.X;
+	public KeyCode rotateDownKey = KeyCode.Y;
 	public Camera main;
 
 	void Start ()
