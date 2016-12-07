@@ -4,7 +4,7 @@ using System;
 
 public class Bubble : MonoBehaviour
 {
-	private Vector3 bubbleRestPos = new Vector3(9999,9999,9999);
+	public static Vector3 REST_POS = new Vector3(9999,9999,9999);
 	private Camera camera;
 	public GameObject bubble;
 	public float speed = 10f;
@@ -36,7 +36,6 @@ public class Bubble : MonoBehaviour
         if (newPos != Vector3.zero)
         {
 
-            Debug.Log("test"+ newPos + " : " + lastHit);
             if (newPos == lastHit)
             {
                 dwellCount++;
@@ -62,7 +61,9 @@ public class Bubble : MonoBehaviour
     // Update is called once per frame
     void Update ()
 	{
-		ZoomToBubble ();
+		if (start) {
+			ZoomToBubble ();
+		}
 		if (Input.GetMouseButtonDown (0)) {
 			
 			Vector3 newPos = bestBubble (Input.mousePosition);
@@ -86,7 +87,7 @@ public class Bubble : MonoBehaviour
 	public bool ZoomToBubble ()
 	{
 		Vector3 pos = new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - stop);
-		if (camera.transform.position != pos && bubble.transform.position != bubbleRestPos && start) {	
+		if (camera.transform.position != pos && bubble.transform.position != REST_POS) {	
 
 
 			camera.transform.position = Vector3.MoveTowards (camera.transform.position, pos, speed * Time.deltaTime);
