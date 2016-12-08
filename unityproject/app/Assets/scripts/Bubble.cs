@@ -39,22 +39,22 @@ public class Bubble : MonoBehaviour
         if (newPos != Vector3.zero)
         {
 
-            Debug.Log("test"+ newPos + " : " + lastHit);
+            //Debug.Log("test"+ newPos + " : " + lastHit);
             if (newPos == lastHit)
             {
                 dwellCount++;
                 lastHit = newPos;
-                Debug.Log("increasing dwell counter to " + dwellCount);
+                //Debug.Log("increasing dwell counter to " + dwellCount);
             }
             else
             {
                 dwellCount = 0;
                 lastHit = newPos;
-                Debug.Log("resetting dwell counter");
+                //Debug.Log("resetting dwell counter");
             }
             if (dwellCount >= (dwellTime / interval) && newPos != Vector3.zero && bubble != null)
             {
-                Debug.Log("drawing bubble to" + newPos);
+                //Debug.Log("drawing bubble to" + newPos);
                 start = true;
                 bubble.transform.position = newPos;
                 dwellCount = 0;

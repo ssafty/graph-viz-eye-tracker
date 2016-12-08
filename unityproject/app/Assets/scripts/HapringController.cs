@@ -32,69 +32,39 @@ public class HapringController : MonoBehaviour {
     }
         
     void switchNode(Direction direction)
-    {
-        if (direction == Direction.right)
-        {
-            nodes = HighlightNode.GetAllHighlighted();
-            if (currentIndex == -1 && nodes.Count > 0)
-            {
-                Debug.Log("first assigned");
-                currentIndex = nodes[0].GetComponent<Node>().id;
-            }
-            int index = nodes.FindIndex(c => c.GetComponent<Node>().id == currentIndex);
-            Debug.Log("lastIndex =" + index);
-            if (nodes.Count > 0 && index + 2 > nodes.Count)
-            {
-                Debug.Log("nodesCount was smaller than 2+index");
-                foreach (GameObject g in nodes)
-                {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
-                }
-                currentIndex = nodes[0].GetComponent<Node>().id;
-                nodes[0].GetComponent<Renderer>().material.color = highlightColor;
-            }
-            else if (nodes.Count > 0)
-            {
-                Debug.Log((2 + index) + " was not bigger than" + nodes.Count);
-                foreach (GameObject g in nodes)
-                {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
-                }
-                currentIndex = nodes[index + 1].GetComponent<Node>().id;
-                nodes[index + 1].GetComponent<Renderer>().material.color = highlightColor;
+	{
+		// get the highlighted nodes
+		List<GameObject> nodes = HighlightNode.GetAllHighlighted();
 
-            }
-        }
-        else if(direction == Direction.left)
-        {
-            nodes = HighlightNode.GetAllHighlighted();
-            if (currentIndex == -1 && nodes.Count > 0)
-            {
-                Debug.Log("first assigned");
-                currentIndex = nodes[0].GetComponent<Node>().id;
-            }
-            int index = nodes.FindIndex(c => c.GetComponent<Node>().id == currentIndex);
-            Debug.Log("lastIndex =" + index);
-            if (nodes.Count > 0 && (index - 1) >= 0)
-            {
-                foreach (GameObject g in nodes)
-                {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
-                }
-                currentIndex = nodes[index - 1].GetComponent<Node>().id;
-                nodes[index - 1].GetComponent<Renderer>().material.color = highlightColor;
-            }
-            else if (nodes.Count > 0)
-            {
-                foreach (GameObject g in nodes)
-                {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
-                }
-                currentIndex = nodes[nodes.Count-1].GetComponent<Node>().id;
-                nodes[nodes.Count-1].GetComponent<Renderer>().material.color = highlightColor;
+		// if no highlighted nodes exit
+		if (nodes.Count == 0) return;
+			
+		// check if current index in range
+		if (currentIndex >= nodes.Count) currentIndex = 0;
+		if (currentIndex == -1) currentIndex = nodes.Count-1;
 
-            }
-        }
+		// check for operation next or previous
+		if (direction == Direction.right) {
+			currentIndex += 1;
+		} else if (direction == Direction.left) {
+			currentIndex -= 1;
+		} else if (direction == Direction.up) {
+			// select the node
+			nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.red;
+			return;
+		}
+
+		// check if next index in range
+		if (currentIndex >= nodes.Count) currentIndex = 0;
+		if (currentIndex == -1) currentIndex = nodes.Count-1;
+
+		// reset color of all nodes
+		foreach (GameObject n in nodes){
+			n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
+		}
+
+		// highlight the node
+		nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.yellow;
     }
     enum Direction { up, down, left, right};
 
