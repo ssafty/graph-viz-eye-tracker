@@ -13,7 +13,7 @@ public class MoveToExperimentController : ExperimentController {
 
     // Use this for initialization
     void Start () {
-        FillTrials();        
+        FillTrials();
 	}
 
     // Update is called once per frame
@@ -34,7 +34,7 @@ public class MoveToExperimentController : ExperimentController {
         graphList.Add(new Graph("200_nodes"));
         graphList.Add(new Graph("500_nodes"));
         graphList.Add(new Graph("1000_nodes"));
-        ShuffleList<Graph>(graphList);
+        graphList = ShuffleList<Graph>(graphList);
 
         int k = 0;
         for (int i = 0; i < (graphList.Count - 1); i++)
@@ -44,7 +44,7 @@ public class MoveToExperimentController : ExperimentController {
                 CurrentTrials.Add(new MoveToExperimentTrial(k, graphList[i]));
             }
         }
-        ShuffleList(currentTrials);     
+        currentTrials = ShuffleList(currentTrials);
     }
 
     //http://www.vcskicks.com/randomize_array.php
