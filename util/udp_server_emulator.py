@@ -25,3 +25,4 @@ while True:
     y = np.random.random()
 
     broadcast_frequency(x, y, count_per_second= 30)
+
