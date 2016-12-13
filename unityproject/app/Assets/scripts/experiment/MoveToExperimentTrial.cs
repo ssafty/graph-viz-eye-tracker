@@ -7,6 +7,8 @@ public class MoveToExperimentTrial : ExperimentTrial
     bool first = true;
     bool currentlyHighlighted = false;
     bool graphCreated = false;
+    public static Color colorDesAuserwaehlten = new Color(1.0f, 0.0f, 0.0f);
+    Node selectedNode;
     public Graph Graph
     {
         get
@@ -31,11 +33,26 @@ public class MoveToExperimentTrial : ExperimentTrial
             currentlyHighlighted = true;
             highlight();
         }
+        else if(currentlyHighlighted && selectedNode.gotHit)
+        {
+            selectedNode.derAuserwaehlte = false;
+            Bubble.moveTo(Bubble.REST_POS);
+            selectedNode = null;
+            highlight();
+            
+        }
+        if(selectedNode != null)
+        {
+            selectedNode.Highlight(colorDesAuserwaehlten);
+        }
         
     }
     private void highlight()
     {
-        Node.GetNodeWithId(Random.Range(0, Graph.NumNodes)).Highlight(new Color(1.0f, 0.0f, 0.0f));
+        Node node = Node.GetNodeWithId(Random.Range(0, Graph.NumNodes));
+        node.Highlight(colorDesAuserwaehlten);
+        selectedNode = node;
+        node.derAuserwaehlte = true;
     }
     private void createGraph()
     {

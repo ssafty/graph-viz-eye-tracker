@@ -29,14 +29,14 @@ public class MoveToExperimentController : ExperimentController {
 
         graphList = new List<Graph>();
         graphList.Add(new Graph("Tree_50",50));
-        graphList.Add(new Graph("Tree_150",150));
-        graphList.Add(new Graph("Tree_450",450));
-        graphList.Add(new Graph("200_nodes",200));
-        graphList.Add(new Graph("500_nodes",500));
+        //graphList.Add(new Graph("Tree_150",150));
+        //graphList.Add(new Graph("Tree_450",450));
+        //graphList.Add(new Graph("200_nodes",200));
+        //graphList.Add(new Graph("500_nodes",500));
         graphList = ShuffleList<Graph>(graphList);
 
         int k = 0;
-        for (int i = 0; i < (graphList.Count - 1); i++)
+        for (int i = 0; i < (graphList.Count); i++)
         {
             for (int j = 0; j < numberOfTrialsForEveryGraph; j++) {
                 k++;

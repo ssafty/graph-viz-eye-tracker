@@ -24,6 +24,8 @@ public class Node : MonoBehaviour
 	private float default_red;
 	private float default_blue;
 	private float default_green;
+    public bool gotHit = false;
+    public bool derAuserwaehlte = false;
     public Color neighborColor = new Color(0.9f, 0.1f, 0.1f);
     public Color mainColor = new Color(0.1f, 0.1f, 0.9f);
     void Start ()

@@ -155,4 +155,8 @@ public class Bubble : MonoBehaviour
 		}
 		return bestShotNode == null ? Vector3.zero : bestShotNode.transform.position;
 	}
+    public static void moveTo(Vector3 pos) {
+        GameObject bubble = GameObject.FindGameObjectWithTag("Bubble");
+        bubble.transform.position = pos;
+    }
 }
