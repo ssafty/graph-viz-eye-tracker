@@ -37,6 +37,9 @@ public class HapringController : MonoBehaviour {
         
     void switchNode(Direction direction)
     {
+		if (direction == Direction.up) {
+			chooseSelectedNode();
+		}
         if (direction == Direction.right)
         {
             nodes = HighlightNode.GetAllHighlighted();
