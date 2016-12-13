@@ -12,14 +12,20 @@ using System.Threading;
 public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 {
 
+	public GameObject goalNode;
 	private int currentIndex = -1;
 	private bool joyNeutral = true;	//Has the joystick been neutral in the meantime
+	private bool bNeutral = true;	//Has the joystick been neutral in the meantime
 	private Vector3 lastRotRing;
 	private Vector3 lastRotGraph;
 	private Quaternion lastRingQuad;
 	private Quaternion lastGraphQuad;
 
-	private Vector3 startPosition;
+	//private Vector3 startPosition;
+
+	//History stuff. Stacks would be simpler thatn lists
+	private Stack<Vector3> camPosHistory;
+	private Stack<Quaternion> camRotHistory;
 
 	public GameObject pivot;
 
@@ -95,9 +101,12 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		lastRotRing = rot.eulerAngles;
 		lastRotGraph = pivot.transform.rotation.eulerAngles;
-		startPosition = graph.transform.position;
+		//startPosition = graph.transform.position;
 		lastGraphQuad = pivot.transform.rotation;
 		lastRingQuad = rot;
+
+		camPosHistory = new Stack<Vector3>();
+		camRotHistory = new Stack<Quaternion>();
 	}
 
 	void OnDestroy()
@@ -138,12 +147,27 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		// rotate around bubble
 		rotateTargetObject();
+
+		//History WIP
+		if (Input.GetKeyUp (KeyCode.H) && camPosHistory.Count > 0)
+		{
+			mainCamera.transform.position = camPosHistory.Pop();
+			mainCamera.transform.rotation = camRotHistory.Pop();
+		}
+
+		Debug.Log(camPosHistory.Count);
+
+		Debug.Log(bNeutral);
 	}
 	// code for selecting the nodes
 	void nodeSelection()
 	{
 		// get the highlighted nodes
 		List<GameObject> nodes = HighlightNode.GetAllHighlighted();
+		if (!checkButtonBStatus ()) {
+			bNeutral = true;
+			stopVibration ();
+		}
 
 		// if no highlighted nodes exit
 		if (nodes.Count == 0) return;
@@ -165,12 +189,18 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			Debug.Log ("NODE BROWSING DOWN");
 			currentIndex -= 1;
 			joyNeutral = false;
-		} else if (checkButtonBStatus ()) {
+		} else if (checkButtonBStatus () && bNeutral) {
 			// select the node
 			Debug.Log ("NODE SELECTION");
+			bNeutral = false;
 			nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.red;
+			//if (nodes [currentIndex] = goalNode)
 			startVibration();
-			Invoke ("stopVibration", 0.5f);
+			//Invoke ("stopVibration", 1.0f);
+
+			//History stuff:
+			camPosHistory.Push(mainCamera.transform.position);
+			camRotHistory.Push(mainCamera.transform.rotation);
 			return;
 		} else {
 			return;
@@ -194,7 +224,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	public void rotateTargetObject()
 	{
 		if (checkButtonAStatus()) {
-
 			/*
 			// This has intuitive axes but a gimbal lock problem
 			mainCamera.transform.SetParent (pivot.transform);
@@ -210,7 +239,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			pivot.transform.rotation = lastGraphQuad * diff;
 
 		} else {
-			stopVibration ();
 			mainCamera.transform.parent = mainCameraParentTransform;
 			lastRotRing = rot.eulerAngles;
 			lastRotGraph = pivot.transform.rotation.eulerAngles;
