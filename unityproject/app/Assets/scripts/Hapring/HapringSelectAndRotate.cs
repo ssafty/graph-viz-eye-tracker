@@ -16,7 +16,9 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	private bool joyNeutral = true;	//Has the joystick been neutral in the meantime
 	private Vector3 lastRot;
 
-	public Vector3 pivot = Vector3.zero;
+	private Vector3 startPosition;
+
+	public GameObject pivot;
 
 	public enum BUTTON_DATA
 	{
@@ -89,6 +91,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		zDeg = settings.zDeg;
 
 		lastRot = rot.eulerAngles;
+		startPosition = graph.transform.position;
 	}
 
 	void OnDestroy()
@@ -129,14 +132,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		// rotate around bubble
 		rotateTargetObject();
-
-		//Prototypes!
-		if (Input.GetKeyUp (KeyCode.T)) {
-			graph.transform.RotateAround (pivot, new Vector3 (0.0f, 1.0f, 0.0f), 5);
-
-		}
 	}
-
 	// code for selecting the nodes
 	void nodeSelection()
 	{
@@ -191,18 +187,15 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	// code for rotating object
 	public void rotateTargetObject()
 	{
-		//graph.transform.localRotation = rot;
 		if (checkButtonAStatus()) {
-			Vector3 deltaRot = rot.eulerAngles - lastRot;
-			graph.transform.RotateAround (pivot, new Vector3 (1.0f, 0.0f, 0.0f), deltaRot.x);
-			graph.transform.RotateAround (pivot, new Vector3 (0.0f, 1.0f, 0.0f), deltaRot.y);
-			graph.transform.RotateAround (pivot, new Vector3 (0.0f, 0.0f, 1.0f), deltaRot.z);
-			//startVibration();
-			//mainCamera.transform.position = bubble.transform.position + (Vector3.forward * 100.0f);
-			//mainCamera.transform.LookAt (bubble.transform);
+			mainCamera.transform.SetParent (pivot.transform);
+			Vector3 temp = rot.eulerAngles;
 
-			//mainCamera.transform.SetParent (bubble.transform);
-			//bubble.transform.localRotation = rot;
+
+			Quaternion newAngles = Quaternion.Euler(temp.x, temp.z, 0);
+			pivot.transform.localRotation = newAngles;
+			//pivot.transform.localRotation = rot;
+
 		} else {
 			stopVibration ();
 			mainCamera.transform.parent = mainCameraParentTransform;
