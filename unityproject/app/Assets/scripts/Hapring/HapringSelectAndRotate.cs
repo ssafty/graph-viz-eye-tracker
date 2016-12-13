@@ -14,7 +14,10 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	private int currentIndex = -1;
 	private bool joyNeutral = true;	//Has the joystick been neutral in the meantime
-	private Vector3 lastRot;
+	private Vector3 lastRotRing;
+	private Vector3 lastRotGraph;
+	private Quaternion lastRingQuad;
+	private Quaternion lastGraphQuad;
 
 	private Vector3 startPosition;
 
@@ -90,8 +93,11 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		yDeg = settings.yDeg;
 		zDeg = settings.zDeg;
 
-		lastRot = rot.eulerAngles;
+		lastRotRing = rot.eulerAngles;
+		lastRotGraph = pivot.transform.rotation.eulerAngles;
 		startPosition = graph.transform.position;
+		lastGraphQuad = pivot.transform.rotation;
+		lastRingQuad = rot;
 	}
 
 	void OnDestroy()
@@ -188,19 +194,29 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	public void rotateTargetObject()
 	{
 		if (checkButtonAStatus()) {
+
+			/*
+			// This has intuitive axes but a gimbal lock problem
 			mainCamera.transform.SetParent (pivot.transform);
-			Vector3 temp = rot.eulerAngles;
+			Vector3 deltaRing = lastRotRing - rot.eulerAngles;
 
+			Quaternion newRot = Quaternion.Euler(lastRotGraph.x + deltaRing.x, lastRotGraph.y + deltaRing.z, lastRotGraph.z);
+			pivot.transform.localRotation = newRot;
+			*/
 
-			Quaternion newAngles = Quaternion.Euler(temp.x, temp.z, 0);
-			pivot.transform.localRotation = newAngles;
-			//pivot.transform.localRotation = rot;
+			// This does not have gimbal lock, but the axes are less intuitive
+			mainCamera.transform.SetParent (pivot.transform);
+			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
+			pivot.transform.rotation = lastGraphQuad * diff;
 
 		} else {
 			stopVibration ();
 			mainCamera.transform.parent = mainCameraParentTransform;
+			lastRotRing = rot.eulerAngles;
+			lastRotGraph = pivot.transform.rotation.eulerAngles;
+			lastGraphQuad = pivot.transform.rotation;
+			lastRingQuad = rot;
 		}
-		lastRot = rot.eulerAngles;
 	}
 	private void saveSettings()
 	{
