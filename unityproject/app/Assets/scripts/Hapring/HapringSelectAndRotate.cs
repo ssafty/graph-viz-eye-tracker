@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
@@ -13,6 +13,10 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 {
 
 	private int currentIndex = -1;
+	private bool joyNeutral = true;	//Has the joystick been neutral in the meantime
+	private Vector3 lastRot;
+
+	public Vector3 pivot = Vector3.zero;
 
 	public enum BUTTON_DATA
 	{
@@ -55,6 +59,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	Coroutine c;
 	Thread workerThread;
 
+	public GameObject graph;
 	public GameObject bubble;
 	public Camera mainCamera;
 	private Transform mainCameraParentTransform;
@@ -82,6 +87,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		xDeg = settings.xDeg;
 		yDeg = settings.yDeg;
 		zDeg = settings.zDeg;
+
+		lastRot = rot.eulerAngles;
 	}
 
 	void OnDestroy()
@@ -113,7 +120,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		} else {
 			mainCameraParentTransform = mainCamera.transform.parent;
 		}
-
 	}
 
 	void Update()
@@ -123,6 +129,12 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		// rotate around bubble
 		rotateTargetObject();
+
+		//Prototypes!
+		if (Input.GetKeyUp (KeyCode.T)) {
+			graph.transform.RotateAround (pivot, new Vector3 (0.0f, 1.0f, 0.0f), 5);
+
+		}
 	}
 
 	// code for selecting the nodes
@@ -138,13 +150,19 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		if (currentIndex >= nodes.Count) currentIndex = 0;
 		if (currentIndex == -1) currentIndex = nodes.Count-1;
 
+		if (checkNoJoystickEvent ()) {	//unblock iteration
+			joyNeutral = true;
+		}
+
 		// check for operation next or previous
-		if (checkIncreaseJoystickEvent ()) {
+		if (checkIncreaseJoystickEvent () && joyNeutral) {
 			Debug.Log ("NODE BROWSING UP");
 			currentIndex += 1;
-		} else if (checkDecreaseJoystickEvent ()) {
+			joyNeutral = false;
+		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
 			Debug.Log ("NODE BROWSING DOWN");
 			currentIndex -= 1;
+			joyNeutral = false;
 		} else if (checkButtonBStatus ()) {
 			// select the node
 			Debug.Log ("NODE SELECTION");
@@ -173,18 +191,23 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	// code for rotating object
 	public void rotateTargetObject()
 	{
-
 		//graph.transform.localRotation = rot;
 		if (checkButtonAStatus()) {
-			startVibration();
+			Vector3 deltaRot = rot.eulerAngles - lastRot;
+			graph.transform.RotateAround (pivot, new Vector3 (1.0f, 0.0f, 0.0f), deltaRot.x);
+			graph.transform.RotateAround (pivot, new Vector3 (0.0f, 1.0f, 0.0f), deltaRot.y);
+			graph.transform.RotateAround (pivot, new Vector3 (0.0f, 0.0f, 1.0f), deltaRot.z);
+			//startVibration();
 			//mainCamera.transform.position = bubble.transform.position + (Vector3.forward * 100.0f);
 			//mainCamera.transform.LookAt (bubble.transform);
-			mainCamera.transform.SetParent (bubble.transform);
-			bubble.transform.localRotation = rot;
+
+			//mainCamera.transform.SetParent (bubble.transform);
+			//bubble.transform.localRotation = rot;
 		} else {
 			stopVibration ();
 			mainCamera.transform.parent = mainCameraParentTransform;
 		}
+		lastRot = rot.eulerAngles;
 	}
 	private void saveSettings()
 	{
@@ -382,6 +405,17 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		return false;
 	}
 
+	public bool checkNoJoystickEvent()
+	{
+		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.NONE)
+		{
+			//lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
+			return true;
+		}
+
+		return false;
+	}
+
 	public void startVibration()
 	{
 		doRequest(90);
@@ -409,3 +443,4 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
+
