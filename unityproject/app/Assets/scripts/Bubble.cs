@@ -40,7 +40,7 @@ public class Bubble : MonoBehaviour
             {
                 dwellCount++;
                 lastHit = newPos;
-                Debug.Log("increasing dwell counter to " + dwellCount);
+                //Debug.Log("increasing dwell counter to " + dwellCount);
             }
             else
             {
@@ -144,7 +144,7 @@ public class Bubble : MonoBehaviour
 		for (int i = 0; i < hits.Length; i++) {
 			RaycastHit hit = hits [i];
 			if (hit.collider.gameObject.tag == "Node") {
-				Debug.LogWarning("Node");
+
 				float distance = Vector2.Distance (new Vector2 (hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y), new Vector2 (hit.point.x, hit.point.y));
 
 				if (distance < bestShotDistance) {

@@ -28,12 +28,11 @@ public class MoveToExperimentController : ExperimentController {
         currentTrials = new List<ExperimentTrial>();
 
         graphList = new List<Graph>();
-        graphList.Add(new Graph("Tree_50"));
-        graphList.Add(new Graph("Tree_150"));
-        graphList.Add(new Graph("Tree_450"));
-        graphList.Add(new Graph("200_nodes"));
-        graphList.Add(new Graph("500_nodes"));
-        graphList.Add(new Graph("1000_nodes"));
+        graphList.Add(new Graph("Tree_50",50));
+        graphList.Add(new Graph("Tree_150",150));
+        graphList.Add(new Graph("Tree_450",450));
+        graphList.Add(new Graph("200_nodes",200));
+        graphList.Add(new Graph("500_nodes",500));
         graphList = ShuffleList<Graph>(graphList);
 
         int k = 0;
@@ -68,8 +67,10 @@ public class MoveToExperimentController : ExperimentController {
 public class Graph
 {
     private string _name;
-    public Graph(string name)
+    private int _numNodes;
+    public Graph(string name, int nodes)
     {
+        _numNodes = nodes;
         _name = name;
     }
     public string Name
@@ -77,6 +78,13 @@ public class Graph
         get
         {
             return _name;
+        }
+    }
+    public int NumNodes
+    {
+        get
+        {
+            return _numNodes;
         }
     }
 }

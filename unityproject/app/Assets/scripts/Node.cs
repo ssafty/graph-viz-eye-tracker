@@ -24,13 +24,14 @@ public class Node : MonoBehaviour
 	private float default_red;
 	private float default_blue;
 	private float default_green;
-
-	void Start ()
+    public Color neighborColor = new Color(0.9f, 0.1f, 0.1f);
+    public Color mainColor = new Color(0.1f, 0.1f, 0.9f);
+    void Start ()
 	{
 		cam = GameObject.Find ("Main Camera");
-		rend = GetComponent<Renderer>();
+        rend = GetComponent<Renderer>();
 
-		default_red = rend.material.color.r;
+        default_red = rend.material.color.r;
 		default_blue = rend.material.color.b;
 		default_green = rend.material.color.g;
 
@@ -59,24 +60,34 @@ public class Node : MonoBehaviour
 //		Color color = new Color (rend.material.color.r, rend.material.color.b, rend.material.color.g, opacity);
 //		rend.material.color = color;
 	}
-
+    public void Highlight(Color color)
+    {
+        rend = GetComponent<Renderer>();
+        rend.material.color = color;
+    }
 	public void HighlightAsNeighbor () {
-		Color color = rend.material.color;
-		color.r = 0.9f;
-		color.g = 0.1f;
-		color.b = 0.1f;
-		rend.material.color = color;
-	}
+        Highlight(neighborColor);
+    }
 
 	public void HighlightAsMain(){
-		Color color = rend.material.color;
-		color.r = 0.1f;
-		color.g = 0.1f;
-		color.b = 0.9f;
-		rend.material.color = color;
+        Highlight(mainColor);
 	}
 
 	public void HighlightDefault(){
 		rend.material.color = new Color (default_red, default_blue, default_green, rend.material.color.a);
 	}
+
+    public static Node GetNodeWithId(int id)
+    {
+        GameObject[] nodes = GameObject.FindGameObjectsWithTag("Node");
+        foreach(GameObject node in nodes)
+        {
+            if(node.GetComponent<Node>().id == id)
+            {
+                return node.GetComponent<Node>();
+            }
+        }
+        return nodes[0].GetComponent<Node>();
+    }
+     
 }

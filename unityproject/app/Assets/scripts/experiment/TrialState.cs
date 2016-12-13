@@ -36,6 +36,7 @@ public class TrialState : ExperimentState {
         {
             Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
             mttrial.initialze();
+            mttrial.update();
         }
         else
         {
