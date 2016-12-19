@@ -23,10 +23,14 @@ public class MoveToExperimentTrial : ExperimentTrial
     {
         if (first)
         {
+
             Bubble.changeBubbleSize(_graph.BubbleSize);
             first = false;
             createGraph();
+            experimentLogger.getLogger().currentGraph = _graph.Name;
+            experimentLogger.getLogger().bubbleSize = _graph.BubbleSize.ToString();
             graphCreated = true;
+
         }
     }
 
@@ -69,6 +73,7 @@ public class MoveToExperimentTrial : ExperimentTrial
         node.Highlight(colorDesAuserwaehlten);
         selectedNode = node;
         node.derAuserwaehlte = true;
+        experimentLogger.getLogger().currentHighlightedNode = node.id_string;
     }
     private void createGraph()
     {

@@ -123,6 +123,14 @@ public class HapringController : MonoBehaviour {
     }
     public void chooseSelectedNode()
     {
+        if(currentSelectNode.GetComponent<Node>().derAuserwaehlte)
+        {
+            experimentLogger.getLogger().correctNodehit = "t";
+        }
+        else
+        {
+            experimentLogger.getLogger().correctNodehit = "f";
+        }
         currentSelectNode.GetComponent<Node>().gotHit = true;
         
     }

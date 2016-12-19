@@ -1,0 +1,9 @@
+eyetrackerdaten
+position der bubble
+zeit zum suchen
+verweildauer der Bubble
+Zeitpunkt vom erzeugen der Bubble und Zeitpunkt des selects
+Richtung des Haprings
+Metadaten Graph
+keypresses keyboard + mouseclicks
+
