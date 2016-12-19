@@ -8,7 +8,7 @@ public class MoveToExperimentController : ExperimentController {
     [SerializeField]
     Vector3 targetPosition;
     [SerializeField]
-    int numberOfTrialsForEveryGraph = 2;
+    int numberOfTrialsForEveryGraph = 1;
     List<Graph> graphList;
 
     // Use this for initialization
@@ -28,22 +28,19 @@ public class MoveToExperimentController : ExperimentController {
         currentTrials = new List<ExperimentTrial>();
 
         graphList = new List<Graph>();
-        graphList.Add(new Graph("Tree_50",50));
-        //graphList.Add(new Graph("Tree_150",150));
-        //graphList.Add(new Graph("Tree_450",450));
-        //graphList.Add(new Graph("200_nodes",200));
-        //graphList.Add(new Graph("500_nodes",500));
+        graphList.Add(new Graph("Tree_50",50,1));
+        graphList.Add(new Graph("Tree_150",150,1));
+        //graphList.Add(new Graph("Tree_450",450,5));
+        //graphList.Add(new Graph("200_nodes",200,5));
+        //graphList.Add(new Graph("500_nodes",500,5));
         graphList = ShuffleList<Graph>(graphList);
 
         int k = 0;
         for (int i = 0; i < (graphList.Count); i++)
         {
-            for (int j = 0; j < numberOfTrialsForEveryGraph; j++) {
-                k++;
-                CurrentTrials.Add(new MoveToExperimentTrial(k, graphList[i]));
-            }
+            k++;
+            CurrentTrials.Add(new MoveToExperimentTrial(k, graphList[i]));
         }
-        currentTrials = ShuffleList(currentTrials);
     }
 
     //http://www.vcskicks.com/randomize_array.php
@@ -68,16 +65,25 @@ public class Graph
 {
     private string _name;
     private int _numNodes;
-    public Graph(string name, int nodes)
+    private int _numberHighlightedNodes;
+    public Graph(string name, int nodes, int numberOfHighlightedNodes)
     {
         _numNodes = nodes;
         _name = name;
+        _numberHighlightedNodes = numberOfHighlightedNodes;
     }
     public string Name
     {
         get
         {
             return _name;
+        }
+    }
+    public int NumberHighlightedNodes
+    {
+        get
+        {
+            return _numberHighlightedNodes;
         }
     }
     public int NumNodes

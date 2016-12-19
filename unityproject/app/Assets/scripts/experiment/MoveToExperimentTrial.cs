@@ -6,9 +6,12 @@ public class MoveToExperimentTrial : ExperimentTrial
     private Graph _graph;
     bool first = true;
     bool currentlyHighlighted = false;
+    int hightlightCounter = 0;
     bool graphCreated = false;
     public static Color colorDesAuserwaehlten = new Color(1.0f, 0.0f, 0.0f);
     Node selectedNode;
+    public bool done = false;
+    
     public Graph Graph
     {
         get
@@ -30,15 +33,27 @@ public class MoveToExperimentTrial : ExperimentTrial
     {
         if(!currentlyHighlighted && graphCreated)
         {
-            currentlyHighlighted = true;
-            highlight();
+            if(hightlightCounter < _graph.NumberHighlightedNodes) { 
+                currentlyHighlighted = true;
+                highlight();
+            }
         }
         else if(currentlyHighlighted && selectedNode.gotHit)
         {
-            selectedNode.derAuserwaehlte = false;
-            Bubble.moveTo(Bubble.REST_POS);
-            selectedNode = null;
-            highlight();
+                selectedNode.derAuserwaehlte = false;
+                Bubble.moveTo(Bubble.REST_POS);
+                selectedNode = null;
+                hightlightCounter++;
+
+            if (hightlightCounter < _graph.NumberHighlightedNodes)
+            {
+                highlight();
+            }
+
+            else
+            {
+                done = true;
+            }
             
         }
         if(selectedNode != null)

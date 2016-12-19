@@ -28,7 +28,10 @@ public class GameController : MonoBehaviour
 
 	private void loadLayout (string name)
 	{
-		string sourceFile;
+        nodes = new Hashtable();
+        nodesByID = new Hashtable();
+        edges = new Hashtable();
+        string sourceFile;
 
 		if (loadDataset) {
 			sourceFile = name;
@@ -118,9 +121,7 @@ public class GameController : MonoBehaviour
 
 	void Start ()
 	{
-		nodes = new Hashtable ();
-		nodesByID = new Hashtable ();
-		edges = new Hashtable ();
+		
 
 		
 	}
