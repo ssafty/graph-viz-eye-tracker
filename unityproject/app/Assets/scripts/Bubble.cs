@@ -159,4 +159,14 @@ public class Bubble : MonoBehaviour
         GameObject bubble = GameObject.FindGameObjectWithTag("Bubble");
         bubble.transform.position = pos;
     }
+    public static void changeBubbleSize(Vector3 scale)
+    {
+        GameObject bubble = GameObject.FindGameObjectWithTag("Bubble");
+        bubble.transform.localScale = scale;
+    }
+    public static void changeBubbleSize(float scale)
+    {
+        Vector3 vec = new Vector3(scale, scale, scale);
+        changeBubbleSize(vec);
+    }
 }

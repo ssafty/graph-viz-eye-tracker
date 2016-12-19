@@ -23,6 +23,7 @@ public class MoveToExperimentTrial : ExperimentTrial
     {
         if (first)
         {
+            Bubble.changeBubbleSize(_graph.BubbleSize);
             first = false;
             createGraph();
             graphCreated = true;

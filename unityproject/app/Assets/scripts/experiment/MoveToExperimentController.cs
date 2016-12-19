@@ -28,8 +28,8 @@ public class MoveToExperimentController : ExperimentController {
         currentTrials = new List<ExperimentTrial>();
 
         graphList = new List<Graph>();
-        graphList.Add(new Graph("Tree_50",50,1));
-        graphList.Add(new Graph("Tree_150",150,1));
+        graphList.Add(new Graph("Tree_50",50,1, 5.0f));
+        graphList.Add(new Graph("Tree_150",150,1, 10.0f));
         //graphList.Add(new Graph("Tree_450",450,5));
         //graphList.Add(new Graph("200_nodes",200,5));
         //graphList.Add(new Graph("500_nodes",500,5));
@@ -66,17 +66,26 @@ public class Graph
     private string _name;
     private int _numNodes;
     private int _numberHighlightedNodes;
-    public Graph(string name, int nodes, int numberOfHighlightedNodes)
+    private float _bubbleSize;
+    public Graph(string name, int nodes, int numberOfHighlightedNodes, float bubblesize)
     {
         _numNodes = nodes;
         _name = name;
         _numberHighlightedNodes = numberOfHighlightedNodes;
+        _bubbleSize = bubblesize;
     }
     public string Name
     {
         get
         {
             return _name;
+        }
+    }
+    public float BubbleSize
+    {
+        get
+        {
+            return _bubbleSize;
         }
     }
     public int NumberHighlightedNodes
