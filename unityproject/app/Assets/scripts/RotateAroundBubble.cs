@@ -10,11 +10,11 @@ public class RotateAroundBubble : MonoBehaviour
 	public KeyCode rotateUpKey = KeyCode.X;
 	public KeyCode rotateDownKey = KeyCode.Y;
 
-	public Camera main;
+	public GameObject main;
 
 	void Start ()
 	{
-		main = Camera.main;
+		//main = Camera.main;
 	}
 
 
