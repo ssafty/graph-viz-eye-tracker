@@ -26,9 +26,12 @@ public class GameController : MonoBehaviour
 	public bool[,] adjacenyList;
 	public bool showLabels = true;
 
-	private IEnumerator loadLayout (string name)
+	private void loadLayout (string name)
 	{
-		string sourceFile;
+        nodes = new Hashtable();
+        nodesByID = new Hashtable();
+        edges = new Hashtable();
+        string sourceFile;
 
 		if (loadDataset) {
 			sourceFile = name;
@@ -99,8 +102,8 @@ public class GameController : MonoBehaviour
 				}
 
 				//every 100 cycles return control to unity?? I guess to avoid fps lags
-				if (j % 100 == 0)
-					yield return true;
+				//if (j % 100 == 0)
+				//	yield return true;
 			}
 		}
 		// Map edges to nodes
@@ -118,9 +121,7 @@ public class GameController : MonoBehaviour
 
 	void Start ()
 	{
-		nodes = new Hashtable ();
-		nodesByID = new Hashtable ();
-		edges = new Hashtable ();
+		
 
 		
 	}
@@ -131,7 +132,7 @@ public class GameController : MonoBehaviour
         {
             GameObject.Destroy(child.gameObject);
         }
-        StartCoroutine(loadLayout(name));
+        loadLayout(name);
     }
 
 	private int find_count_and_highest_connection (XmlElement root, out int nodeCount)

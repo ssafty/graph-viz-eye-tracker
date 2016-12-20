@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class HapringController : MonoBehaviour {
     public Color highlightColor = Color.red;
     private List<GameObject> nodes;
+    private GameObject currentSelectNode;
     private int currentIndex = -1;
     void Start () {
 	
@@ -12,7 +13,10 @@ public class HapringController : MonoBehaviour {
 
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            chooseSelectedNode();
+        }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             switchNode(Direction.up);
@@ -33,6 +37,9 @@ public class HapringController : MonoBehaviour {
         
     void switchNode(Direction direction)
     {
+		if (direction == Direction.up) {
+			chooseSelectedNode();
+		}
         if (direction == Direction.right)
         {
             nodes = HighlightNode.GetAllHighlighted();
@@ -48,21 +55,30 @@ public class HapringController : MonoBehaviour {
                 Debug.Log("nodesCount was smaller than 2+index");
                 foreach (GameObject g in nodes)
                 {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    if (!g.GetComponent<Node>().derAuserwaehlte)
+                    {
+                        g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    }
+                    g.GetComponent<Node>().gotHit = false;
                 }
                 currentIndex = nodes[0].GetComponent<Node>().id;
                 nodes[0].GetComponent<Renderer>().material.color = highlightColor;
+                currentSelectNode = nodes[0];
             }
             else if (nodes.Count > 0)
             {
                 Debug.Log((2 + index) + " was not bigger than" + nodes.Count);
                 foreach (GameObject g in nodes)
                 {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    if (!g.GetComponent<Node>().derAuserwaehlte)
+                    {
+                        g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    }
+                    g.GetComponent<Node>().gotHit = false;
                 }
                 currentIndex = nodes[index + 1].GetComponent<Node>().id;
                 nodes[index + 1].GetComponent<Renderer>().material.color = highlightColor;
-
+                currentSelectNode = nodes[index + 1];
             }
         }
         else if(direction == Direction.left)
@@ -79,23 +95,46 @@ public class HapringController : MonoBehaviour {
             {
                 foreach (GameObject g in nodes)
                 {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    if (!g.GetComponent<Node>().derAuserwaehlte)
+                    {
+                        g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    }
+                    g.GetComponent<Node>().gotHit = false;
                 }
                 currentIndex = nodes[index - 1].GetComponent<Node>().id;
                 nodes[index - 1].GetComponent<Renderer>().material.color = highlightColor;
+                currentSelectNode = nodes[index - 1];
             }
             else if (nodes.Count > 0)
             {
                 foreach (GameObject g in nodes)
                 {
-                    g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    if(!g.GetComponent<Node>().derAuserwaehlte)
+                    {
+                        g.GetComponent<Renderer>().material.color = HighlightNode.highlightColor;
+                    }
+                    g.GetComponent<Node>().gotHit = false;
                 }
                 currentIndex = nodes[nodes.Count-1].GetComponent<Node>().id;
                 nodes[nodes.Count-1].GetComponent<Renderer>().material.color = highlightColor;
-
+                currentSelectNode = nodes[nodes.Count - 1];
             }
         }
     }
+    public void chooseSelectedNode()
+    {
+        if(currentSelectNode.GetComponent<Node>().derAuserwaehlte)
+        {
+            experimentLogger.getLogger().correctNodehit = "t";
+        }
+        else
+        {
+            experimentLogger.getLogger().correctNodehit = "f";
+        }
+        currentSelectNode.GetComponent<Node>().gotHit = true;
+        
+    }
+    
     enum Direction { up, down, left, right};
 
 }

@@ -12,11 +12,7 @@ public class TrialState : ExperimentState {
     GameObject graph;
     public override ExperimentState HandleInput(ExperimentController ec)
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            ec.CurrentTrialIndex++;
-        }
-        if(ec.CurrentTrialIndex>= ec.CurrentTrials.Count)
+        if(ec.CurrentTrialIndex >= ec.CurrentTrials.Count)
         {
             return nextState;
         }
@@ -36,6 +32,11 @@ public class TrialState : ExperimentState {
         {
             Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
             mttrial.initialze();
+            mttrial.update();
+            if(mttrial.done)
+            {
+                ec.CurrentTrialIndex++;
+            }
         }
         else
         {

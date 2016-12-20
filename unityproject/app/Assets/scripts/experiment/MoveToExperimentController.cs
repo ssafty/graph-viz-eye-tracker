@@ -8,12 +8,12 @@ public class MoveToExperimentController : ExperimentController {
     [SerializeField]
     Vector3 targetPosition;
     [SerializeField]
-    int numberOfTrialsForEveryGraph = 2;
+    int numberOfTrialsForEveryGraph = 1;
     List<Graph> graphList;
 
     // Use this for initialization
     void Start () {
-        FillTrials();        
+        FillTrials();
 	}
 
     // Update is called once per frame
@@ -28,23 +28,19 @@ public class MoveToExperimentController : ExperimentController {
         currentTrials = new List<ExperimentTrial>();
 
         graphList = new List<Graph>();
-        graphList.Add(new Graph("Tree_50"));
-        graphList.Add(new Graph("Tree_150"));
-        graphList.Add(new Graph("Tree_450"));
-        graphList.Add(new Graph("200_nodes"));
-        graphList.Add(new Graph("500_nodes"));
-        graphList.Add(new Graph("1000_nodes"));
-        ShuffleList<Graph>(graphList);
+        graphList.Add(new Graph("Tree_50",50,1, 5.0f));
+        graphList.Add(new Graph("Tree_150",150,1, 10.0f));
+        //graphList.Add(new Graph("Tree_450",450,5));
+        //graphList.Add(new Graph("200_nodes",200,5));
+        //graphList.Add(new Graph("500_nodes",500,5));
+        graphList = ShuffleList<Graph>(graphList);
 
         int k = 0;
-        for (int i = 0; i < (graphList.Count - 1); i++)
+        for (int i = 0; i < (graphList.Count); i++)
         {
-            for (int j = 0; j < numberOfTrialsForEveryGraph; j++) {
-                k++;
-                CurrentTrials.Add(new MoveToExperimentTrial(k, graphList[i]));
-            }
+            k++;
+            CurrentTrials.Add(new MoveToExperimentTrial(k, graphList[i]));
         }
-        ShuffleList(currentTrials);     
     }
 
     //http://www.vcskicks.com/randomize_array.php
@@ -68,15 +64,42 @@ public class MoveToExperimentController : ExperimentController {
 public class Graph
 {
     private string _name;
-    public Graph(string name)
+    private int _numNodes;
+    private int _numberHighlightedNodes;
+    private float _bubbleSize;
+    public Graph(string name, int nodes, int numberOfHighlightedNodes, float bubblesize)
     {
+        _numNodes = nodes;
         _name = name;
+        _numberHighlightedNodes = numberOfHighlightedNodes;
+        _bubbleSize = bubblesize;
     }
     public string Name
     {
         get
         {
             return _name;
+        }
+    }
+    public float BubbleSize
+    {
+        get
+        {
+            return _bubbleSize;
+        }
+    }
+    public int NumberHighlightedNodes
+    {
+        get
+        {
+            return _numberHighlightedNodes;
+        }
+    }
+    public int NumNodes
+    {
+        get
+        {
+            return _numNodes;
         }
     }
 }
