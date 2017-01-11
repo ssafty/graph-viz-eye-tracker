@@ -17,6 +17,8 @@ public class StereoScript : MonoBehaviour {
 		camRight.transform.Translate(new Vector3(0.5f * stereoDist, 0, 0));
 		camLeft.transform.Rotate(new Vector3(0, stereoConv, 0));
 		camRight.transform.Rotate(new Vector3(0, stereoConv, 0));
+
+		GetComponent<createMarker>().update_markers();
 	}
 	
 	// Update is called once per frame
