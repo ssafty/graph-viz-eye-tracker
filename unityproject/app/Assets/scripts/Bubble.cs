@@ -165,7 +165,7 @@ public class Bubble : MonoBehaviour
     }
     public static void changeBubbleSize(float scale)
     {
-        Vector3 vec = new Vector3(scale, scale, scale);
+        Vector3 vec = new Vector3(scale * StereoScript.X_DISTORTION, scale, scale);
         changeBubbleSize(vec);
     }
 }
