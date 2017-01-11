@@ -16,12 +16,12 @@ public class createMarker : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        //update_markers();
+		
 	}
 
 	public void update_markers()
 	{
-		float screenWidth = Screen.width * 0.5f;
+		float screenWidth = Screen.width * StereoScript.X_DISTORTION;
         float screenHeight = Screen.height;
 		Debug.Log (screenWidth + "x" + screenHeight);
         //screenWidth = 3840; 797
@@ -74,23 +74,26 @@ public class createMarker : MonoBehaviour {
             }
         }
 
-        for(int i = 0; i < markers.Length; i++)
-        {
-        	Vector2 new_pos = markers [i].GetComponent<RectTransform> ().anchoredPosition;
-        	GameObject duplicate = GameObject.Instantiate(markers [i]);
-        	duplicate.transform.parent = marker_object.transform;
-        	Vector2 pos_dup = new_pos + new Vector2(Screen.width * 0.25f, 0);
-        	new_pos -= new Vector2(Screen.width * 0.25f, 0);
-        	markers [i].GetComponent<RectTransform> ().anchoredPosition = new_pos;
-        	duplicate.GetComponent<RectTransform> ().anchoredPosition = pos_dup;
-        }
+		if(StereoScript.X_DISTORTION != 1)
+		{
+	        for(int i = 0; i < markers.Length; i++)
+	        {
+	        	Vector2 new_pos = markers [i].GetComponent<RectTransform> ().anchoredPosition;
+	        	GameObject duplicate = GameObject.Instantiate(markers [i]);
+	        	duplicate.transform.parent = marker_object.transform;
+	        	Vector2 pos_dup = new_pos + new Vector2(Screen.width * 0.25f, 0);
+	        	new_pos -= new Vector2(Screen.width * 0.25f, 0);
+	        	markers [i].GetComponent<RectTransform> ().anchoredPosition = new_pos;
+	        	duplicate.GetComponent<RectTransform> ().anchoredPosition = pos_dup;
+	        }
 
-		Rect inner_marker = GameObject.Find ("marker_1").GetComponent<RectTransform> ().rect;
-		SurfaceBottomLeft -= new Vector2 (inner_marker.width/2, inner_marker.height/2);
-		SurfaceTopRight += new Vector2 (inner_marker.width/2, inner_marker.height/2);
+			Rect inner_marker = GameObject.Find ("marker_1").GetComponent<RectTransform> ().rect;
+			SurfaceBottomLeft -= new Vector2 (inner_marker.width/2, inner_marker.height/2);
+			SurfaceTopRight += new Vector2 (inner_marker.width/2, inner_marker.height/2);
 
-		newScreen = new Vector2 (SurfaceTopRight.x - SurfaceBottomLeft.x, SurfaceTopRight.y - SurfaceBottomLeft.y);
-		Debug.Log (newScreen);
+			newScreen = new Vector2 (SurfaceTopRight.x - SurfaceBottomLeft.x, SurfaceTopRight.y - SurfaceBottomLeft.y);
+			Debug.Log (newScreen);
+		}
 	}
 
 	

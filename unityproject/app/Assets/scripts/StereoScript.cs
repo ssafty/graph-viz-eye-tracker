@@ -9,26 +9,27 @@ public class StereoScript : MonoBehaviour {
 	public float stereoDist;
 	public float stereoConv;
 
-	private Camera camLeft;
-	private Camera camRight;
 	// Use this for initialization
 	void Start () {
+
+		Camera camLeft = GameObject.Find ("CamLeft").GetComponent<Camera>();
+		Camera camRight = GameObject.Find ("CamRight").GetComponent<Camera>();
+
 		if(stereoscopic3D)
 		{
-			camLeft = GameObject.Find ("CamLeft").GetComponent<Camera>();
-			camRight = GameObject.Find ("CamRight").GetComponent<Camera>();
-
 			camLeft.transform.Translate(new Vector3(- (0.5f * stereoDist), 0, 0));
 			camRight.transform.Translate(new Vector3(0.5f * stereoDist, 0, 0));
 			camLeft.transform.Rotate(new Vector3(0, stereoConv, 0));
 			camRight.transform.Rotate(new Vector3(0, stereoConv, 0));
-
-			GetComponent<createMarker>().update_markers();
 		}
 		else
 		{
+			camLeft.rect = new Rect(0,0,1,1);
+			camRight.gameObject.SetActive(false);
 			X_DISTORTION = 1;
 		}
+
+		GetComponent<createMarker>().update_markers();
 	}
 	
 	// Update is called once per frame
