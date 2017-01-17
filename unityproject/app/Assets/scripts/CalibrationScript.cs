@@ -68,7 +68,7 @@ public class CalibrationScript : MonoBehaviour {
 
 				marker.transform.SetParent(CenterMarker.transform.parent);
 				marker.GetComponent<RectTransform>().position = pos;
-				print(marker.GetComponent<RectTransform>().position);
+				//print(marker.GetComponent<RectTransform>().position);
 			}
 		}
 	}
