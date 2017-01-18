@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
+
+using MatrixMath;
 
 public class CalibrationScript : MonoBehaviour {
 
+    public int recording_length;    //In Frames!
     public int layers;
 	public float distance_ratio;
 	public GameObject Canvas;
@@ -17,6 +21,11 @@ public class CalibrationScript : MonoBehaviour {
     private GameObject current_marker;
     private int current_marker_num;
 
+    private bool recording = false;
+    private List<Vector2> recording_accumulation;
+    private Vector2 gaze_average = Vector2.zero;
+    private int recording_progress = 0;
+
     // Use this for initialization
     void Start () {
 		MarkerPositions = new Vector2[layers,3,3];
@@ -25,12 +34,14 @@ public class CalibrationScript : MonoBehaviour {
 
 		setUpMarkers(distance_ratio);
         layers--;
+
+        recording_accumulation = new List<Vector2>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
         //print(current_marker.GetComponent<Image>().color);
-        if (Input.GetKeyUp(KeyCode.R))
+        if (Input.GetKeyUp(KeyCode.R))      //Record Data for current marker
 		{
             current_marker.GetComponent<Image>().color = Color.green;
             MarkerPositions[current_distance, current_marker_num % 3, current_marker_num/3] 
@@ -45,7 +56,7 @@ public class CalibrationScript : MonoBehaviour {
             }
         }
 
-		if(Input.GetKeyUp(KeyCode.N))
+		if(Input.GetKeyUp(KeyCode.N))   //Switch to next layer
 		{
             if (current_distance < layers)
             {
@@ -55,6 +66,30 @@ public class CalibrationScript : MonoBehaviour {
             {
                 print("Done");
             }
+        }
+
+        if (Input.GetKeyUp(KeyCode.A))  //Start average recording
+        {
+            record();
+        }
+
+        //Recording Gaze Vector
+        if (recording)
+        {
+            //print("hi");
+            recording_accumulation.Add(Vector2.one);  //TODO Insert real position
+            recording_progress++;
+        }
+        if  (gaze_average == Vector2.zero && recording_progress >= recording_length)    
+        {
+            Vector2 sum = Vector2.zero;     //Sum of all recorded gaze values
+            foreach (Vector2 vec in recording_accumulation)
+            {
+                sum += vec;
+            }
+            gaze_average = sum / recording_length;
+            recording = false;
+            calc_covariance();
         }
 	}
 
@@ -99,4 +134,25 @@ public class CalibrationScript : MonoBehaviour {
         current_marker.GetComponent<Image>().color = Color.red;
 
     }
+
+    public void record()
+    {
+        recording = true;
+        recording_progress = 0;
+        recording_accumulation = new List<Vector2>(); ;
+    }
+
+    private void calc_covariance()
+    {
+        //Building parsing String:
+        string m_string = "";
+        foreach (Vector2 vec in recording_accumulation)
+        {
+            m_string += (vec.x - gaze_average.x).ToString() + " " + (vec.y - gaze_average.y).ToString() + "\r\n";
+        }
+        Matrix P = Matrix.Parse(m_string);
+
+        Matrix C = P * Matrix.Transpose(P);
+    }
+
 }
