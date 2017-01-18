@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class CalibrationScript : MonoBehaviour {
 
+    public int layers;
 	public float distance_ratio;
 	public GameObject Canvas;
 	public GameObject CenterMarker;
@@ -11,49 +13,70 @@ public class CalibrationScript : MonoBehaviour {
 	private Vector2[, ,] EyeTrackerPositions;
 	private Vector2[, ,] HeadTrackerPositions;
 
-	private int currentDistance = 0;
+	private int current_distance = 0;
+    private GameObject current_marker;
+    private int current_marker_num;
 
-	// Use this for initialization
-	void Start () {
-		MarkerPositions = new Vector2[2,3,3];
-		EyeTrackerPositions = new Vector2[2, 3,3];
-		HeadTrackerPositions = new Vector2[2, 3,3];
+    // Use this for initialization
+    void Start () {
+		MarkerPositions = new Vector2[layers,3,3];
+		EyeTrackerPositions = new Vector2[layers, 3,3];
+		HeadTrackerPositions = new Vector2[layers, 3,3];
 
 		setUpMarkers(distance_ratio);
+        layers--;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		int current_marker = 0;
-		if(Input.GetKeyUp(KeyCode.R))
+        //print(current_marker.GetComponent<Image>().color);
+        if (Input.GetKeyUp(KeyCode.R))
 		{
-			MarkerPositions[currentDistance, current_marker%3, current_marker/3] 
-				= GameObject.Find(current_marker.ToString()).GetComponent<RectTransform>().position; //TODO
+            current_marker.GetComponent<Image>().color = Color.green;
+            MarkerPositions[current_distance, current_marker_num % 3, current_marker_num/3] 
+				= current_marker.GetComponent<RectTransform>().position; //TODO
 
-			current_marker++;
-		}
+            if (current_marker_num < 8)
+            {
+                current_marker_num++;
+                current_marker = GameObject.Find(current_marker_num.ToString());
+
+                current_marker.GetComponent<Image>().color = Color.red;
+            }
+        }
 
 		if(Input.GetKeyUp(KeyCode.N))
 		{
-			next_distance();
-		}
+            if (current_distance < layers)
+            {
+                next_distance();
+            }
+            else
+            {
+                print("Done");
+            }
+        }
 	}
 
 	public void next_distance()
 	{
-		currentDistance++;
-		setUpMarkers(Mathf.Lerp(distance_ratio, 1, 0.5f));
+		current_distance++;
+        distance_ratio = Mathf.Lerp(distance_ratio, 1, 0.5f);
+        setUpMarkers(distance_ratio);
 	}
 
 	private void setUpMarkers(float spread)
 	{
+        current_marker_num = 0;
 		GameObject[] markers = GameObject.FindGameObjectsWithTag("marker");
 		for(int i = 0; i < markers.Length; ++i)
 		{
-			Destroy(markers[i]);
+            markers[i].name = "INVALID";
+            Destroy(markers[i]);
 		}
 
-		spread = Mathf.Clamp01(spread);
+        GameObject marker = null;
+        spread = Mathf.Clamp01(spread);
 		for(int x = 0; x < 3; x++)
 		{
 			for(int y = 0; y < 3; y++)
@@ -62,7 +85,7 @@ public class CalibrationScript : MonoBehaviour {
 				pos.x += CenterMarker.GetComponent<RectTransform>().position.x;
 				pos.y += CenterMarker.GetComponent<RectTransform>().position.y;
 
-				GameObject marker = Instantiate(CenterMarker);
+				 marker = Instantiate(CenterMarker);
 				marker.name = (x+y*3).ToString();
 				marker.tag = "marker";
 
@@ -71,5 +94,9 @@ public class CalibrationScript : MonoBehaviour {
 				//print(marker.GetComponent<RectTransform>().position);
 			}
 		}
-	}
+
+        current_marker = GameObject.Find("0");
+        current_marker.GetComponent<Image>().color = Color.red;
+
+    }
 }
