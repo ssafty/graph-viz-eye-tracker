@@ -32,3 +32,5 @@ sysinfo.txt
 
 # .app for mac users
 *.app
+
+unityproject/app/ExperimentLogFolder/*
