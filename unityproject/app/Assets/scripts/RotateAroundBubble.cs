@@ -10,7 +10,8 @@ public class RotateAroundBubble : MonoBehaviour
 	public KeyCode rotateUpKey = KeyCode.X;
 	public KeyCode rotateDownKey = KeyCode.Y;
 
-	public GameObject main;
+	public GameObject left;
+	public GameObject right;
 
 	void Start ()
 	{
@@ -33,10 +34,11 @@ public class RotateAroundBubble : MonoBehaviour
 		} 
 
 		GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
-		Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position ;
-		if (l != null && direction != Vector3.zero ) {
+		Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
+		if (l != null && direction != Vector3.zero) {
 
-			main.transform.RotateAround (pos, direction, 1);
+			left.transform.RotateAround (pos, direction, 1);
+			right.transform.RotateAround (pos, direction, 1);
 
 
 

@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class createMarker : MonoBehaviour
 {
 
 	public float scale;
 	public int rows, columns;
-	private GameObject[] markers;
+
 	public float offset = 1.0f;
 	Vector2 SurfaceBottomLeft = Vector2.zero;
 	Vector2 SurfaceTopRight = Vector2.zero;
@@ -23,9 +24,10 @@ public class createMarker : MonoBehaviour
 	}
 
 
-	public void update_markers ()
+	public GameObject[] update_markers (string canvasTag, string markerTag, float dist)
 	{
-		float screenWidth = Screen.width * StereoScript.X_DISTORTION;
+		List<GameObject> created = new List<GameObject> ();
+		float screenWidth = Screen.width * dist;
 		float screenHeight = Screen.height;
 		Debug.Log (screenWidth + "x" + screenHeight);
 		//screenWidth = 3840; 797
@@ -34,9 +36,9 @@ public class createMarker : MonoBehaviour
 		float vStepsize = screenHeight / (rows - 1);
 		float hStepsize = screenWidth / (columns - 1);
 		int lastMarker = 0;
-		markers = GameObject.FindGameObjectsWithTag ("marker");
+		GameObject[] markers = GameObject.FindGameObjectsWithTag (markerTag);
 
-		GameObject marker_object = GameObject.Find ("markers");
+		GameObject marker_object = GameObject.Find (canvasTag);
 
 		offset = offset * ((0.5f + scale) / (scale * 0.85f) - 0.8f);
 
@@ -83,7 +85,7 @@ public class createMarker : MonoBehaviour
 			}
 		}
 
-		if (StereoScript.X_DISTORTION != 1) {
+		if (dist != 1) {
 			for (int i = 0; i < markers.Length; i++) {
 				Vector2 new_pos = markers [i].GetComponent<RectTransform> ().anchoredPosition;
 				GameObject duplicate = GameObject.Instantiate (markers [i]);
@@ -92,6 +94,7 @@ public class createMarker : MonoBehaviour
 				new_pos -= new Vector2 (Screen.width * 0.25f, 0);
 				markers [i].GetComponent<RectTransform> ().anchoredPosition = new_pos;
 				duplicate.GetComponent<RectTransform> ().anchoredPosition = pos_dup;
+				created.Add (duplicate);
 			}
 
 			Rect inner_marker = GameObject.Find ("marker_1").GetComponent<RectTransform> ().rect;
@@ -101,6 +104,8 @@ public class createMarker : MonoBehaviour
 			newScreen = new Vector2 (SurfaceTopRight.x - SurfaceBottomLeft.x, SurfaceTopRight.y - SurfaceBottomLeft.y);
 			Debug.Log (newScreen);
 		}
+		created.AddRange (markers);
+		return created.ToArray ();
 	}
 
 	
