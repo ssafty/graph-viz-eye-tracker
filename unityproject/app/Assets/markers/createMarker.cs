@@ -14,9 +14,6 @@ public class createMarker : MonoBehaviour
 	public Vector2 newScreen;
 
 
-	private int marker_size;
-	//(100 - scale) * marker_size * 0.5f
-
 	// Use this for initialization
 	void Start ()
 	{
@@ -24,14 +21,13 @@ public class createMarker : MonoBehaviour
 	}
 
 
-	public GameObject[] update_markers (string canvasTag, string markerTag, float dist)
+	public GameObject[] update_markers (string canvasTag, string markerTag, float wDist, float hDist)
 	{
 		List<GameObject> created = new List<GameObject> ();
-		float screenWidth = Screen.width * dist;
-		float screenHeight = Screen.height;
+		float screenWidth = Screen.width * wDist;
+		float screenHeight = Screen.height * hDist;
 		Debug.Log (screenWidth + "x" + screenHeight);
-		//screenWidth = 3840; 797
-		//screenHeight = 2160; 393
+
 		float aspectRatio = screenHeight / screenWidth;
 		float vStepsize = screenHeight / (rows - 1);
 		float hStepsize = screenWidth / (columns - 1);
@@ -85,13 +81,13 @@ public class createMarker : MonoBehaviour
 			}
 		}
 
-		if (dist != 1) {
+		if (wDist != 1) {
 			for (int i = 0; i < markers.Length; i++) {
 				Vector2 new_pos = markers [i].GetComponent<RectTransform> ().anchoredPosition;
 				GameObject duplicate = GameObject.Instantiate (markers [i]);
 				duplicate.transform.parent = marker_object.transform;
-				Vector2 pos_dup = new_pos + new Vector2 (Screen.width * 0.25f, 0);
-				new_pos -= new Vector2 (Screen.width * 0.25f, 0);
+				Vector2 pos_dup = new_pos + new Vector2 (Screen.width * 0.25f, 0f);
+				new_pos -= new Vector2 (Screen.width * 0.25f, 0f);
 				markers [i].GetComponent<RectTransform> ().anchoredPosition = new_pos;
 				duplicate.GetComponent<RectTransform> ().anchoredPosition = pos_dup;
 				created.Add (duplicate);
