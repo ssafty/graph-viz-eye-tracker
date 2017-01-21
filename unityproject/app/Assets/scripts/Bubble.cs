@@ -5,6 +5,7 @@ using System;
 public class Bubble : MonoBehaviour
 {
 	public static Vector3 REST_POS = new Vector3 (9999, 9999, 9999);
+    public GameObject camParent;
 	public GameObject camLeft;
 	public GameObject camRight;
 	public GameObject bubble;
@@ -28,9 +29,12 @@ public class Bubble : MonoBehaviour
 		InvokeRepeating ("doRayCast", 0.0f, interval);
 	}
 
-	void doRayCast ()
-	{
-		Vector2 neu = camLeft.GetComponent<udpsocket> ().LastEyeCoordinate;
+   
+    void doRayCast()
+    {
+
+        /*
+		Vector2 neu = camParent.GetComponent<udpsocket> ().LastEyeCoordinate;
 		neu.x = neu.x + (Screen.width / 2);
 		neu.y = neu.y + (Screen.height / 2);
 		Vector3 newPos = bestBubble (neu);
@@ -52,7 +56,8 @@ public class Bubble : MonoBehaviour
 				dwellCount = 0;
 			}
 		}
-	}
+	*/
+    }
 
 	// Update is called once per frame
 	void Update ()
