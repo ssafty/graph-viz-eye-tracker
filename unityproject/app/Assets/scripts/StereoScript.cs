@@ -42,6 +42,7 @@ public class StereoScript : MonoBehaviour
 	{
 		if (stereo) {
 			camRight.gameObject.SetActive (true);
+			camLeft.rect = new Rect (0, 0, 0.5f, 1);
 			camLeft.transform.Translate (new Vector3 (-(0.5f * stereoDist), 0, 0));
 			camRight.transform.Translate (new Vector3 (0.5f * stereoDist, 0, 0));
 	
