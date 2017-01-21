@@ -27,8 +27,8 @@ public class StereoScript : MonoBehaviour
 		camLeft = GameObject.Find ("CamLeft").GetComponent<Camera> ();
 		camRight = GameObject.Find ("CamRight").GetComponent<Camera> ();
 
-		GetComponent<createMarker> ().update_markers ("markers", "marker", 1f);
-		GetComponent<createMarker> ().update_markers ("markers_stereo", "marker_stereo", 0.5f);
+		GetComponent<createMarker> ().update_markers ("markers", "marker", 1f, 1f);
+		GetComponent<createMarker> ().update_markers ("markers_stereo", "marker_stereo", 0.473f, 0.95f);
 
 		markers2d =	GameObject.FindGameObjectsWithTag ("marker");
 		markers3d = GameObject.FindGameObjectsWithTag ("marker_stereo");
@@ -47,7 +47,7 @@ public class StereoScript : MonoBehaviour
 	
 			camLeft.transform.Rotate (new Vector3 (0, stereoConv, 0));
 			camRight.transform.Rotate (new Vector3 (0, stereoConv, 0));
-			X_DISTORTION = 0.5f;
+			X_DISTORTION = 0.45f;
 		} else {
 			camLeft.rect = new Rect (0, 0, 1, 1);
 			camRight.gameObject.SetActive (false);
