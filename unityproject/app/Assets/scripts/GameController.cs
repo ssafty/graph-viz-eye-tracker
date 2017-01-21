@@ -84,7 +84,7 @@ public class GameController : MonoBehaviour
 					float count = float.Parse (xmlNode.Attributes ["count"].Value);
 					//nodeObject.scale_size = 500/count; //Scale with count
 					nodeObject.scale_size = 1f;
-					nodeObject.transform.localScale = new Vector3 (nodeObject.scale_size, nodeObject.scale_size, nodeObject.scale_size);
+					nodeObject.transform.localScale = new Vector3 (nodeObject.scale_size * StereoScript.X_DISTORTION, nodeObject.scale_size, nodeObject.scale_size);
 
 					//increment id for the next node
 					node_id++;

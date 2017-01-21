@@ -30,7 +30,7 @@ public class Node : MonoBehaviour
     public Color mainColor = new Color(0.1f, 0.1f, 0.9f);
     void Start ()
 	{
-		cam = GameObject.Find ("Main Camera");
+		cam = GameObject.Find ("MainCamera");
         rend = GetComponent<Renderer>();
 
         default_red = rend.material.color.r;
