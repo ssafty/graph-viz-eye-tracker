@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using System.Linq;
 
 using MatrixMath;
 
@@ -17,7 +19,7 @@ public class CalibrationScript : MonoBehaviour {
 	private Vector2[, ,] EyeTrackerPositions;
 	private Vector2[, ,] HeadTrackerPositions;
 
-	private int current_distance = 0;
+	private int layer_id = 0;
     private GameObject current_marker;
     private int current_marker_num;
 
@@ -40,27 +42,13 @@ public class CalibrationScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //print(current_marker.GetComponent<Image>().color);
-        if (Input.GetKeyUp(KeyCode.R))      //Record Data for current marker
-		{
-            current_marker.GetComponent<Image>().color = Color.green;
-            MarkerPositions[current_distance, current_marker_num % 3, current_marker_num/3] 
-				= current_marker.GetComponent<RectTransform>().position; //TODO
 
-            if (current_marker_num < 8)
+
+        if (Input.GetKeyUp(KeyCode.N))   //Switch to next layer
+        {
+            if (layer_id < layers)
             {
-                current_marker_num++;
-                current_marker = GameObject.Find(current_marker_num.ToString());
-
-                current_marker.GetComponent<Image>().color = Color.red;
-            }
-        }
-
-		if(Input.GetKeyUp(KeyCode.N))   //Switch to next layer
-		{
-            if (current_distance < layers)
-            {
-                next_distance();
+                next_layer();
             }
             else
             {
@@ -68,20 +56,37 @@ public class CalibrationScript : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.A))  //Start average recording
+
+        if (Input.inputString == "1" || Input.inputString == "2" || Input.inputString == "3" || Input.inputString == "4" || Input.inputString == "5" || Input.inputString == "6" || Input.inputString == "7" || Input.inputString == "8" || Input.inputString == "9")
         {
-            record();
+            current_marker_num = Int32.Parse(Input.inputString) - 1;
+            current_marker = GameObject.Find(current_marker_num.ToString());
+            current_marker.GetComponent<Image>().color = Color.red;
+            
+            record(); //Start average recording
         }
+
+        
 
         //Recording Gaze Vector
         if (recording)
         {
+            Debug.Log("Gathering points .....");
             //print("hi");
             recording_accumulation.Add(Vector2.one);  //TODO Insert real position
             recording_progress++;
         }
-        if  (gaze_average == Vector2.zero && recording_progress >= recording_length)    
+
+        if  (recording_progress >= recording_length || Input.GetKeyUp(KeyCode.S))    
         {
+            if (!recording || current_marker == null)
+            {
+                Debug.Log("Cannot stop recording as you have not started recording yet .... Please select the marker with num keys from 1 to 9!!!");
+                return;
+            }
+            
+            Debug.Log("Stopped recording .....");
+
             Vector2 sum = Vector2.zero;     //Sum of all recorded gaze values
             foreach (Vector2 vec in recording_accumulation)
             {
@@ -89,20 +94,31 @@ public class CalibrationScript : MonoBehaviour {
             }
             gaze_average = sum / recording_length;
             recording = false;
-            calc_covariance();
-        }
-	}
+            recording_progress = 0;
 
-	public void next_distance()
+            //Averaging
+            //
+            //la_calculations();
+
+            // display status
+            current_marker.GetComponent<Image>().color = Color.green;
+            MarkerPositions[layer_id, current_marker_num % 3, current_marker_num / 3]
+                = current_marker.GetComponent<RectTransform>().position; //TODO
+            EyeTrackerPositions[layer_id, current_marker_num % 3, current_marker_num / 3]
+                = gaze_average;
+        }
+        
+    }
+
+	public void next_layer()
 	{
-		current_distance++;
+		layer_id++;
         distance_ratio = Mathf.Lerp(distance_ratio, 1, 0.5f);
         setUpMarkers(distance_ratio);
 	}
 
 	private void setUpMarkers(float spread)
 	{
-        current_marker_num = 0;
 		GameObject[] markers = GameObject.FindGameObjectsWithTag("marker");
 		for(int i = 0; i < markers.Length; ++i)
 		{
@@ -130,8 +146,9 @@ public class CalibrationScript : MonoBehaviour {
 			}
 		}
 
-        current_marker = GameObject.Find("0");
-        current_marker.GetComponent<Image>().color = Color.red;
+        current_marker_num = -99;
+        //current_marker = GameObject.Find("0");
+        //current_marker.GetComponent<Image>().color = Color.red;
 
     }
 
@@ -142,17 +159,31 @@ public class CalibrationScript : MonoBehaviour {
         recording_accumulation = new List<Vector2>(); ;
     }
 
-    private void calc_covariance()
+    private void la_calculations()
     {
+        /*
         //Building parsing String:
         string m_string = "";
+        
         foreach (Vector2 vec in recording_accumulation)
         {
             m_string += (vec.x - gaze_average.x).ToString() + " " + (vec.y - gaze_average.y).ToString() + "\r\n";
         }
-        Matrix P = Matrix.Parse(m_string);
+         Matrix P = Matrix.Parse(m_string);
 
         Matrix C = P * Matrix.Transpose(P);
+
+        // list to matrix
+        //Meta.Num
+
+        // eigen
+        //Matrix vector;
+        //Matrix values;
+        //Matrix.Eigen(MatrixName, out values, out vector);
+        */
+
+
+
     }
 
 }
