@@ -111,7 +111,7 @@ namespace Pupil
     [Serializable]
     public class GazeOnSrf
     {
-        public double[] norm_pos = new double[] { 0, 0, 0 };
+        public float[] norm_pos = new float[] { 0, 0, 0 };
         public string topic;
         public BaseData base_data = new BaseData();
         public bool on_srf;
@@ -388,15 +388,15 @@ public class PupilGazeTracker:MonoBehaviour
                             lock (_dataLock)
                             {
                                 _pupilGazeOnSurface = JsonUtility.FromJson<Pupil.PupilGazeOnSurface>(mmap.ToString());
-                                Debug.Log(_pupilGazeOnSurface);
-                                Debug.Log(mmap.ToString());
+                             
+                                //Debug.Log(mmap.ToString());
                                 foreach (Pupil.GazeOnSrf gazeData in _pupilGazeOnSurface.gaze_on_srf)
                                 {
-                                    Debug.Log("confidence: " + gazeData.confidence);
+                                    //Debug.Log("confidence: " + gazeData.confidence);
                                     if (gazeData.confidence > 0.5f && gazeData.on_srf)
                                     {
                                         Vector2 norm= new Vector2((float)gazeData.norm_pos[0], (float)gazeData.norm_pos[1]);
-                                        Debug.Log("norm pos: " + norm);
+                                        //Debug.Log("norm pos: " + norm);
                                         udpsocketScript.processingList.Add(norm);
                                     }
                                 }

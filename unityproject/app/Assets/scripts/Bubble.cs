@@ -15,7 +15,7 @@ public class Bubble : MonoBehaviour
 	private bool start = false;
 	public float jitterMax = 10.0f;
 	public float jitterMin = -10.0f;
-	public float dwellTime = 0.1f;
+	public float dwellTime = 0.2f;
 	public float interval = 0.1f;
 	public GameObject eyepointer;
 	private Vector3 lastHit;
@@ -32,15 +32,15 @@ public class Bubble : MonoBehaviour
    
     void doRayCast()
     {
-
-        /*
 		Vector2 neu = camParent.GetComponent<udpsocket> ().LastEyeCoordinate;
 		neu.x = neu.x + (Screen.width / 2);
 		neu.y = neu.y + (Screen.height / 2);
 		Vector3 newPos = bestBubble (neu);
-		if (newPos != Vector3.zero) {
+        
+        
+        if (newPos != Vector3.zero) {
 
-			if (newPos == lastHit) {
+            if (newPos == lastHit) {
 				dwellCount++;
 				lastHit = newPos;
 				//Debug.Log("increasing dwell counter to " + dwellCount);
@@ -49,14 +49,14 @@ public class Bubble : MonoBehaviour
 				lastHit = newPos;
 				Debug.Log ("resetting dwell counter");
 			}
-			if (dwellCount >= (dwellTime / interval) && newPos != Vector3.zero && bubble != null) {
+			if (dwellCount >= (dwellTime / interval)  && bubble != null) {
 				Debug.Log ("drawing bubble to" + newPos);
 				start = true;
 				bubble.transform.position = newPos;
 				dwellCount = 0;
+               
 			}
-		}
-	*/
+        }
     }
 
 	// Update is called once per frame
