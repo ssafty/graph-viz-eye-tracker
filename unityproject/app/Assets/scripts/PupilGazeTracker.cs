@@ -62,12 +62,79 @@ namespace Pupil
 		public double model_birth_timestamp;
 		public Circle3d circle_3d = new Circle3d();
 		public Ellipse ellipese = new Ellipse();
-	}
+    }
+    [Serializable]
+    public class GazeNormals3d
+    {
+        public List<double> __invalid_name__0 { get; set; }
+        public List<double> __invalid_name__1 { get; set; }
+    }
+    [Serializable]
+    public class EyeCenters3d
+    {
+        public List<double> __invalid_name__0 { get; set; }
+        public List<double> __invalid_name__1 { get; set; }
+    }
+    [Serializable]
+    public class BaseData2
+    {
+        public int model_id { get; set; }
+        public Circle3d circle_3d { get; set; }
+        public string method { get; set; }
+        public double timestamp { get; set; }
+        public List<double> norm_pos { get; set; }
+        public double diameter_3d { get; set; }
+        public double confidence { get; set; }
+        public Sphere sphere { get; set; }
+        public double phi { get; set; }
+        public double model_birth_timestamp { get; set; }
+        public string topic { get; set; }
+        public double diameter { get; set; }
+        public double model_confidence { get; set; }
+        public double theta { get; set; }
+        public ProjectedSphere projected_sphere { get; set; }
+        public int id { get; set; }
+        public Ellipse ellipse { get; set; }
+    }
+    [Serializable]
+    public class BaseData
+    {
+        public GazeNormals3d gaze_normals_3d { get; set; }
+        public string topic { get; set; }
+        public EyeCenters3d eye_centers_3d { get; set; }
+        public double timestamp { get; set; }
+        public List<double> norm_pos { get; set; }
+        public double confidence { get; set; }
+        public List<double> gaze_point_3d { get; set; }
+        public List<BaseData2> base_data { get; set; }
+    }
+    [Serializable]
+    public class GazeOnSrf
+    {
+        public List<double> norm_pos { get; set; }
+        public string topic { get; set; }
+        public BaseData base_data { get; set; }
+        public bool on_srf { get; set; }
+        public double confidence { get; set; }
+    }
+    [Serializable]
+    public class PupilGazeOnSurface
+    {
+        public List<List<double>> m_from_screen { get; set; }
+        public string name { get; set; }
+        public string uid { get; set; }
+        public double timestamp { get; set; }
+        public List<List<double>> m_to_screen { get; set; }
+        public List<List<double>> camera_pose_3d { get; set; }
+        public List<GazeOnSrf> gaze_on_srf { get; set; }
+    }
 }
 
 public class PupilGazeTracker:MonoBehaviour
 {
 	static PupilGazeTracker _Instance;
+    public GameObject camera;
+    private udpsocket udpsocketScript;
 	public static PupilGazeTracker Instance
 	{
 		get{
@@ -128,6 +195,7 @@ public class PupilGazeTracker:MonoBehaviour
 	Thread _serviceThread;
 	bool _isDone=false;
 	Pupil.PupilData3D _pupilData;
+    Pupil.PupilGazeOnSurface _pupilGazeOnSurface;
 
 	public delegate void OnCalibrationStartedDeleg(PupilGazeTracker manager);
 	public delegate void OnCalibrationDoneDeleg(PupilGazeTracker manager);
@@ -231,8 +299,8 @@ public class PupilGazeTracker:MonoBehaviour
 		rightEye= new EyeData (SamplesCount);
 
 		_dataLock = new object ();
-
-		_serviceThread = new Thread(NetMQClient);
+        udpsocketScript = camera.GetComponent<udpsocket>();
+        _serviceThread = new Thread(NetMQClient);
 		_serviceThread.Start();
 
 	}
@@ -274,6 +342,7 @@ public class PupilGazeTracker:MonoBehaviour
 
 	void NetMQClient()
 	{
+        Debug.Log("Inside NetMQClient");
 		//thanks for Yuta Itoh sample code to connect via NetMQ with Pupil Service
 		string IPHeader = ">tcp://" + ServerIP + ":";
 		var timeout = new System.TimeSpan(0, 0, 1); //1sec
@@ -299,9 +368,11 @@ public class PupilGazeTracker:MonoBehaviour
 			var subscriberSocket = new SubscriberSocket( IPHeader + subport);
 			subscriberSocket.Subscribe("gaze"); //subscribe for gaze data
 			subscriberSocket.Subscribe("notify."); //subscribe for all notifications
-			_setStatus(EStatus.ProcessingGaze);
+            subscriberSocket.Subscribe("surface"); //subscribe to gaze on surface
+            _setStatus(EStatus.ProcessingGaze);
 			var msg = new NetMQMessage();
-			while ( _isDone == false)
+
+            while ( _isDone == false)
 			{
 				_isconnected = subscriberSocket.TryReceiveMultipartMessage(timeout,ref(msg));
 				if (_isconnected)
@@ -310,12 +381,35 @@ public class PupilGazeTracker:MonoBehaviour
 					{
 						string msgType=msg[0].ConvertToString();
 						Debug.Log(msgType);
+                        if(msgType=="surface")
+                        {
+                            var message = MsgPack.Unpacking.UnpackObject(msg[1].ToByteArray());
+                            MsgPack.MessagePackObject mmap = message.Value;
+                            lock (_dataLock)
+                            {
+                                _pupilGazeOnSurface = JsonUtility.FromJson<Pupil.PupilGazeOnSurface>(mmap.ToString());
+                                Debug.Log(_pupilGazeOnSurface);
+
+                                foreach (Pupil.GazeOnSrf gazeData in _pupilGazeOnSurface.gaze_on_srf)
+                                {
+                                    if (gazeData.confidence > 0.5f && gazeData.on_srf)
+                                    {
+                                        Vector2 norm= new Vector2((float)gazeData.norm_pos[0], (float)gazeData.norm_pos[1]);
+
+                                        udpsocketScript.processingList.Add(norm);
+                                    }
+                                }
+                            }
+                        }
+                        // TODO use gaze for HMD
+                        /* 
 						if(msgType=="gaze")
 						{
 							var message = MsgPack.Unpacking.UnpackObject(msg[1].ToByteArray());
 							MsgPack.MessagePackObject mmap = message.Value;
 							lock (_dataLock)
 							{
+                                
 								_pupilData = JsonUtility.FromJson<Pupil.PupilData3D>(mmap.ToString());
 								Debug.Log(_pupilData);
 								if(_pupilData.confidence>0.5f)
@@ -323,7 +417,7 @@ public class PupilGazeTracker:MonoBehaviour
 									OnPacket(_pupilData);
 								}
 							}
-						}
+						} */
 						//Debug.Log(message);
 					}
 					catch

@@ -18,7 +18,7 @@ public class udpsocket : MonoBehaviour
     Bubble bubbleScript;
     RectTransform rect;
 
-	private List<Vector2> processingList; 
+	public List<Vector2> processingList; 
     
 	void Start()
     {
@@ -26,7 +26,7 @@ public class udpsocket : MonoBehaviour
         markerScript = camera.GetComponent<createMarker>();
         bubbleScript = camera.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
-        Client = new UdpClient(Port);
+        /* Client = new UdpClient(Port);
         try
         {
             Client.BeginReceive(new AsyncCallback(recv), null);
@@ -34,7 +34,7 @@ public class udpsocket : MonoBehaviour
         catch (Exception e)
         {
             Debug.Log(e.ToString());
-        }
+        } */
     }
 
     void Update()
@@ -50,7 +50,7 @@ public class udpsocket : MonoBehaviour
         rect.anchoredPosition = LastEyeCoordinate;
     }
 
-    private void recv(IAsyncResult res)
+    /* private void recv(IAsyncResult res)
     {
 		IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port);
         byte[] received = Client.EndReceive(res, ref RemoteIpEndPoint);
@@ -86,12 +86,12 @@ public class udpsocket : MonoBehaviour
 				y *= markerScript.newScreen.y;
 
 				//Debug.Log("x" + x + " ;y" + y);
-				Debug.Log("GETTING INPUT FROM UDP SERVER");
+				//Debug.Log("GETTING INPUT FROM UDP SERVER");
 				outputVec.Add(new Vector2(((float)x - (markerScript.newScreen.x / 2)), (float)y - (markerScript.newScreen.y / 2)));
             }
         }
 		return outputVec;
-    }
+    } */
 
 	Vector2 FilterGazeCoordinates(List<Vector2> processingList){
 		Double x_sum = 0;
