@@ -12,6 +12,7 @@ using NetMQ.Sockets;
 using System;
 using System.IO;
 using MsgPack.Serialization;
+using UnityEditor;
 
 namespace Pupil
 {
@@ -232,6 +233,7 @@ public class PupilGazeTracker:MonoBehaviour
 	public float CanvasWidth = 640;
 	public float CanvasHeight=480;
 
+	private Boolean isVRmode;
 
 	int _gazeFPS = 0;
 	int _currentFps = 0;
@@ -297,6 +299,8 @@ public class PupilGazeTracker:MonoBehaviour
 			PupilGazeTracker._Instance = this;
 		leftEye = new EyeData (SamplesCount);
 		rightEye= new EyeData (SamplesCount);
+
+		isVRmode = PlayerSettings.virtualRealitySupported;
 
 		_dataLock = new object ();
         udpsocketScript = camera.GetComponent<udpsocket>();
@@ -380,15 +384,15 @@ public class PupilGazeTracker:MonoBehaviour
 					try
 					{
 						string msgType=msg[0].ConvertToString();
-						
-                        if(msgType=="surface")
+
+                        if(msgType=="surface" && !isVRmode)
                         {
                             var message = MsgPack.Unpacking.UnpackObject(msg[1].ToByteArray());
                             MsgPack.MessagePackObject mmap = message.Value;
                             lock (_dataLock)
                             {
                                 _pupilGazeOnSurface = JsonUtility.FromJson<Pupil.PupilGazeOnSurface>(mmap.ToString());
-                             
+
                                 //Debug.Log(mmap.ToString());
                                 foreach (Pupil.GazeOnSrf gazeData in _pupilGazeOnSurface.gaze_on_srf)
                                 {
@@ -402,15 +406,13 @@ public class PupilGazeTracker:MonoBehaviour
                                 }
                             }
                         }
-                        // TODO use gaze for HMD
-                        /* 
-						if(msgType=="gaze")
+						if(msgType=="gaze" && isVRmode)
 						{
 							var message = MsgPack.Unpacking.UnpackObject(msg[1].ToByteArray());
 							MsgPack.MessagePackObject mmap = message.Value;
 							lock (_dataLock)
 							{
-                                
+
 								_pupilData = JsonUtility.FromJson<Pupil.PupilData3D>(mmap.ToString());
 								Debug.Log(_pupilData);
 								if(_pupilData.confidence>0.5f)
@@ -418,7 +420,7 @@ public class PupilGazeTracker:MonoBehaviour
 									OnPacket(_pupilData);
 								}
 							}
-						} */
+						}
 						//Debug.Log(message);
 					}
 					catch
