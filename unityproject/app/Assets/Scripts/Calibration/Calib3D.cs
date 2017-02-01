@@ -1,5 +1,5 @@
 ﻿#define USE_LEFT_EYE
-//#define USE_RIGHT_EYE
+#define USE_RIGHT_EYE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +12,8 @@ using System.Collections;
 
 
 public class Calib3D : MonoBehaviour {
+
+    public PupilGazeTracker gaze;
 
 	// config for full calib setup
 	public const int NUM_LAYERS = 1;
@@ -354,7 +356,8 @@ public class Calib3D : MonoBehaviour {
 
 	public void acquire_data()
 	{
-		// fake pupil eye with mouse
+        // fake pupil eye with mouse
+        /*
 		#if USE_LEFT_EYE
 		this.current_left_pupil_x = Input.mousePosition.x;
 		this.current_left_pupil_y = Input.mousePosition.y;
@@ -363,9 +366,18 @@ public class Calib3D : MonoBehaviour {
 		this.current_right_pupil_x = Input.mousePosition.x;
 		this.current_right_pupil_y = Input.mousePosition.y;
 		#endif
-	}
+        */
+        #if USE_LEFT_EYE
+                this.current_left_pupil_x = gaze.LeftEyePos.x;
+                this.current_left_pupil_y = gaze.LeftEyePos.y;
+        #endif
+        #if USE_RIGHT_EYE
+                this.current_right_pupil_x = gaze.RightEyePos.x;
+                this.current_right_pupil_y = gaze.RightEyePos.y;
+        #endif
+    }
 
-	public void populate_data(int index)
+    public void populate_data(int index)
 	{
 		CalibRound calib = this.participant.layers[this.current_layer].markers[this.current_marker].calib_rounds[this.current_calib_round];
 

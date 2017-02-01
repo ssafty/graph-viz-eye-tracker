@@ -5,7 +5,9 @@ using System;
 public class CameraController : MonoBehaviour
 {
 
-	public float zoomSpeed = 3f;
+    public Camera camLeft, camRight;
+
+    public float zoomSpeed = 3f;
 	public float rotationSpeed = 1.5f;
 	public float strafeSpeed = 0.6f;
 
@@ -18,7 +20,7 @@ public class CameraController : MonoBehaviour
 	float CameraTransitionsmoothing = 5f;
 	Vector3 targetPos;
 	Vector3 targetForward = new Vector3 (0, 0, 1);
-	private Camera camLeft, camRight;
+	//private Camera camLeft, camRight;
 
 	Vector3 offset = new Vector3 (0, 0, -20);
 
@@ -28,16 +30,15 @@ public class CameraController : MonoBehaviour
 	void Start ()
 	{
 		gameController = FindObjectOfType (typeof(GameController)) as GameController;
-		camLeft = GameObject.Find ("CamLeft").GetComponent<Camera> ();
-		camRight = GameObject.Find ("CamRight").GetComponent<Camera> ();
-	}
+		//camLeft = GameObject.Find ("CamLeft").GetComponent<Camera> ();
+		//camRight = GameObject.Find ("CamRight").GetComponent<Camera> ();
+    }
 
 	void Update ()
 	{
 
-
-		//Rotation
-		transform.RotateAround (transform.position, new Vector3 (0, 1.0f, 0), rotationSpeed * Input.GetAxis ("Horizontal"));
+        //Rotation
+        transform.RotateAround (transform.position, new Vector3 (0, 1.0f, 0), rotationSpeed * Input.GetAxis ("Horizontal"));
 
 		if (transform.eulerAngles.x > 270 || transform.eulerAngles.x < 85) {
 			camLeft.transform.Rotate (new Vector3 (-rotationSpeed * Input.GetAxis ("Vertical"), 0.0f, 0.0f));
