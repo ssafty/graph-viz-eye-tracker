@@ -318,23 +318,33 @@ public class PupilGazeTracker:MonoBehaviour
 
 	NetMQMessage _sendRequestMessage(Dictionary<string,object> data)
 	{
-		NetMQMessage m = new NetMQMessage ();
-		m.Append ("notify."+data["subject"]);
+        try
+        {
+            NetMQMessage m = new NetMQMessage();
+            m.Append("notify." + data["subject"]);
 
-		using (var byteStream = new MemoryStream ()) {
-			var ctx=new SerializationContext();
-			ctx.CompatibilityOptions.PackerCompatibilityOptions = MsgPack.PackerCompatibilityOptions.None;
-			var ser= MessagePackSerializer.Get<object>(ctx);
-			ser.Pack (byteStream, data);
-			m.Append (byteStream.ToArray ());
-		}
+            using (var byteStream = new MemoryStream())
+            {
+                var ctx = new SerializationContext();
+                ctx.CompatibilityOptions.PackerCompatibilityOptions = MsgPack.PackerCompatibilityOptions.None;
+                var ser = MessagePackSerializer.Get<object>(ctx);
+                ser.Pack(byteStream, data);
+                m.Append(byteStream.ToArray());
+            }
 
-		_requestSocket.SendMultipartMessage (m);
+            _requestSocket.SendMultipartMessage(m);
 
-		NetMQMessage recievedMsg;
-		recievedMsg=_requestSocket.ReceiveMultipartMessage ();
+            NetMQMessage recievedMsg;
+            recievedMsg = _requestSocket.ReceiveMultipartMessage();
 
-		return recievedMsg;
+            return recievedMsg;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("NO MQ CONNECTION " + e.Message);
+            
+            return null;
+        }
 	}
 
 	float GetPupilTimestamp()
