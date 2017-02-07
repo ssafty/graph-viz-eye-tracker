@@ -17,7 +17,8 @@ public class Bubble : MonoBehaviour
 	public float jitterMin = -10.0f;
 	public float dwellTime = 0.2f;
 	public float interval = 0.1f;
-	public GameObject eyepointer;
+    public GameObject currentBubbleCenter;
+    public GameObject eyepointer;
 	private Vector3 lastHit;
 	private int dwellCount;
 
@@ -35,11 +36,12 @@ public class Bubble : MonoBehaviour
 		Vector2 neu = camParent.GetComponent<udpsocket> ().LastEyeCoordinate;
 		neu.x = neu.x + (Screen.width / 2);
 		neu.y = neu.y + (Screen.height / 2);
-		Vector3 newPos = bestBubble (neu);
-        
-        
-        if (newPos != Vector3.zero) {
+        GameObject go = bestBubble(neu);
+        Vector3 newPos = getPosition(go);
 
+
+        if (go != null) {
+            currentBubbleCenter = go;
             if (newPos == lastHit) {
 				dwellCount++;
 				lastHit = newPos;
@@ -66,11 +68,13 @@ public class Bubble : MonoBehaviour
 			ZoomToBubble ();
 		}
 		if (Input.GetMouseButtonDown (0)) {
-			
-			Vector3 newPos = bestBubble (Input.mousePosition);
-			if (newPos != Vector3.zero && bubble != null) {
+
+            GameObject go = bestBubble(Input.mousePosition);
+            Vector3 newPos = getPosition(go);
+            if (go != null && bubble != null) {
 				start = true;
-				bubble.transform.position = newPos;
+                currentBubbleCenter = go;
+                bubble.transform.position = newPos;
 			}
 		} else if (Input.anyKeyDown) {
 			start = false;
@@ -103,10 +107,11 @@ public class Bubble : MonoBehaviour
 
 	public void calcBubble (Vector2 pos)
 	{
-
-		Vector3 newPos = bestBubble (pos);
-		if (newPos != Vector3.zero) {
-			bubble.transform.position = newPos;
+        GameObject go = bestBubble(pos);
+		Vector3 newPos = getPosition(go);
+        if (go != null) { 
+            currentBubbleCenter = go;
+            bubble.transform.position = newPos;
 		}
 	}
 
@@ -134,8 +139,11 @@ public class Bubble : MonoBehaviour
 		}
 		return (positionSum / Mathf.Max (1, hits.Length));
 	}
-
-	Vector3 bestBubble (Vector2 pos)
+    Vector3 getPosition(GameObject go)
+    {
+        return go != null ? go.transform.position : Vector3.zero;
+    }
+	GameObject bestBubble (Vector2 pos)
 	{
 		RaycastHit[] hits;
 		Ray ray = Camera.main.ScreenPointToRay (pos);
@@ -156,7 +164,8 @@ public class Bubble : MonoBehaviour
 				}
 			}
 		}
-		return bestShotNode == null ? Vector3.zero : bestShotNode.transform.position;
+        
+		return bestShotNode;
 	}
 
 	public static void moveTo (Vector3 pos)

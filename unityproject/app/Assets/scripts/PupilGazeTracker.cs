@@ -273,11 +273,11 @@ public class PupilGazeTracker:MonoBehaviour
 	}
 	public Vector2 LeftEyePos
 	{
-		get{ return leftEye.gaze; }
+		get{ return leftEye.gaze == null ? Vector2.zero : leftEye.gaze; }
 	}
 	public Vector2 RightEyePos
 	{
-		get{ return rightEye.gaze; }
+		get{ return rightEye.gaze == null ? Vector2.zero : rightEye.gaze; }
 	}
 
 	public Vector2 GetEyeGaze(GazeSource s)

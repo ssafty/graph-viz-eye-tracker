@@ -30,21 +30,28 @@ public class MoveToExperimentTrial : ExperimentTrial
             experimentLogger.getLogger().currentGraph = _graph.Name;
             experimentLogger.getLogger().bubbleSize = _graph.BubbleSize.ToString();
             graphCreated = true;
+            Vector3 pos = Node.GetNodeWithId(0).transform.position;
+            Camera.main.transform.position = new Vector3(pos.x, pos.y, pos.z -20);
+            Camera.main.transform.LookAt(pos);
 
         }
+       
     }
 
     public void update()
     {
-        if(!currentlyHighlighted && graphCreated)
+        //set first red node
+        if (!currentlyHighlighted && graphCreated)
         {
+
             if(hightlightCounter < _graph.NumberHighlightedNodes) { 
                 currentlyHighlighted = true;
                 highlight();
             }
         }
-        else if(currentlyHighlighted && selectedNode.gotHit)
+        else if(currentlyHighlighted && selectedNode.gotHit && graphCreated)
         {
+            Debug.Log("Auserwählter = false");
                 selectedNode.derAuserwaehlte = false;
                 Bubble.moveTo(Bubble.REST_POS);
                 selectedNode = null;
@@ -69,6 +76,7 @@ public class MoveToExperimentTrial : ExperimentTrial
     }
     private void highlight()
     {
+        Debug.Log("highlight new Auserwählten");
         Node node = Node.GetNodeWithId(Random.Range(0, Graph.NumNodes));
         node.Highlight(colorDesAuserwaehlten);
         selectedNode = node;

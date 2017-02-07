@@ -30,7 +30,7 @@ public class TrialState : ExperimentState {
         MoveToExperimentTrial mttrial = ec.CurrentTrials[ec.CurrentTrialIndex] as MoveToExperimentTrial;
         if(mttrial != null)
         {
-            Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
+           // Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
             mttrial.initialze();
             mttrial.update();
             if(mttrial.done)

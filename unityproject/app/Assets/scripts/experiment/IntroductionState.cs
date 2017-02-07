@@ -17,8 +17,10 @@ public class IntroductionState : ExperimentState
 	GameObject graph;
 	[SerializeField]
 	GameObject panel;
+    [SerializeField]
+    KeyCode skip = KeyCode.End;
 
-	bool next = false;
+    bool next = false;
 
 	public bool Next {
 		get {
@@ -32,7 +34,7 @@ public class IntroductionState : ExperimentState
 
 	public override ExperimentState HandleInput (ExperimentController ec)
 	{
-		if (Next) {
+		if (Next || Input.GetKeyDown(skip)) {
 			panel.gameObject.SetActive (false);
 			c.gameObject.SetActive (false);
 			return nextState;
@@ -49,7 +51,7 @@ public class IntroductionState : ExperimentState
 		eyepointer.gameObject.SetActive (false);
 		panel.gameObject.SetActive (true);
 		text.text = "Hi and welcome to this experiment!";
-		Debug.Log ("Hi im now in the Introductionstate");
+		//Debug.Log ("Hi im now in the Introductionstate");
 
 	}
 }
