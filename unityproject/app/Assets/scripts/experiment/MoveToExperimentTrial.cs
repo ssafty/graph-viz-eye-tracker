@@ -9,6 +9,7 @@ public class MoveToExperimentTrial : ExperimentTrial
     int hightlightCounter = 0;
     bool graphCreated = false;
     public static Color colorDesAuserwaehlten = new Color(1.0f, 0.0f, 0.0f);
+    public static Color colorDesGefundenenAuserwaehlten = new Color(1.0f, 1.0f, 0.0f);
     Node selectedNode;
     public bool done = false;
     
@@ -19,11 +20,18 @@ public class MoveToExperimentTrial : ExperimentTrial
             return _graph;
         }
     }
-    public void initialze()
+    public void initialze(GameObject gameController)
     {
         if (first)
         {
-
+            if (Graph.ExperimentType == experimentType.EYE)
+            {
+                gameController.GetComponent<Bubble>().rayCastAllowed = true;
+            }
+            else if (Graph.ExperimentType == experimentType.MOUSE)
+            {
+                gameController.GetComponent<Bubble>().rayCastAllowed = false;
+            }
             Bubble.changeBubbleSize(_graph.BubbleSize);
             first = false;
             createGraph();
@@ -49,7 +57,7 @@ public class MoveToExperimentTrial : ExperimentTrial
                 highlight();
             }
         }
-        else if(currentlyHighlighted && selectedNode.gotHit && graphCreated)
+        else if(currentlyHighlighted && selectedNode.gotHit)
         {
             Debug.Log("Auserwählter = false");
                 selectedNode.derAuserwaehlte = false;
@@ -70,8 +78,13 @@ public class MoveToExperimentTrial : ExperimentTrial
         }
         if(selectedNode != null)
         {
-            selectedNode.Highlight(colorDesAuserwaehlten);
-        }
+            if (selectedNode.GetComponent<Node>().id != GameObject.FindGameObjectWithTag("GameController").GetComponent<HapringController>().currentIndex) {
+                selectedNode.Highlight(colorDesAuserwaehlten);
+            } else
+            {
+                selectedNode.Highlight(colorDesGefundenenAuserwaehlten);
+            }
+            }
         
     }
     private void highlight()

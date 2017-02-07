@@ -28,8 +28,8 @@ public class MoveToExperimentController : ExperimentController {
         currentTrials = new List<ExperimentTrial>();
 
         graphList = new List<Graph>();
-        graphList.Add(new Graph("Tree_50",50,1, 5.0f));
-        graphList.Add(new Graph("Tree_150",150,1, 10.0f));
+        graphList.Add(new Graph("Tree_50",50,1, 5.0f,experimentType.EYE));
+        graphList.Add(new Graph("Tree_150",150,1, 10.0f, experimentType.MOUSE));
         //graphList.Add(new Graph("Tree_450",450,5));
         //graphList.Add(new Graph("200_nodes",200,5));
         //graphList.Add(new Graph("500_nodes",500,5));
@@ -60,19 +60,32 @@ public class MoveToExperimentController : ExperimentController {
         return randomList; //return the new random list
     }
 }
-
+public enum experimentType
+{
+    MOUSE, EYE, HMD
+}
 public class Graph
 {
     private string _name;
     private int _numNodes;
     private int _numberHighlightedNodes;
     private float _bubbleSize;
-    public Graph(string name, int nodes, int numberOfHighlightedNodes, float bubblesize)
+    private experimentType _experimentType;
+    
+    public Graph(string name, int nodes, int numberOfHighlightedNodes, float bubblesize, experimentType type)
     {
         _numNodes = nodes;
         _name = name;
         _numberHighlightedNodes = numberOfHighlightedNodes;
         _bubbleSize = bubblesize;
+        _experimentType = type;
+    }
+    public experimentType ExperimentType
+    {
+        get
+        {
+            return _experimentType;
+        }
     }
     public string Name
     {

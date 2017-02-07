@@ -21,7 +21,7 @@ public class Bubble : MonoBehaviour
     public GameObject eyepointer;
 	private Vector3 lastHit;
 	private int dwellCount;
-
+    public bool rayCastAllowed = false;
 	void Start ()
 	{
 	
@@ -30,34 +30,43 @@ public class Bubble : MonoBehaviour
 		InvokeRepeating ("doRayCast", 0.0f, interval);
 	}
 
-   
+
     void doRayCast()
     {
-		Vector2 neu = camParent.GetComponent<udpsocket> ().LastEyeCoordinate;
-		neu.x = neu.x + (Screen.width / 2);
-		neu.y = neu.y + (Screen.height / 2);
-        GameObject go = bestBubble(neu);
-        Vector3 newPos = getPosition(go);
+        if (rayCastAllowed)
+        {
+            Vector2 neu = camParent.GetComponent<udpsocket>().LastEyeCoordinate;
+            neu.x = neu.x + (Screen.width / 2);
+            neu.y = neu.y + (Screen.height / 2);
+            GameObject go = bestBubble(neu);
+            Vector3 newPos = getPosition(go);
 
 
-        if (go != null) {
-            currentBubbleCenter = go;
-            if (newPos == lastHit) {
-				dwellCount++;
-				lastHit = newPos;
-				//Debug.Log("increasing dwell counter to " + dwellCount);
-			} else {
-				dwellCount = 0;
-				lastHit = newPos;
-				Debug.Log ("resetting dwell counter");
-			}
-			if (dwellCount >= (dwellTime / interval)  && bubble != null) {
-				Debug.Log ("drawing bubble to" + newPos);
-				start = true;
-				bubble.transform.position = newPos;
-				dwellCount = 0;
-               
-			}
+            if (go != null)
+            {
+                
+                if (newPos == lastHit)
+                {
+                    dwellCount++;
+                    lastHit = newPos;
+                    //Debug.Log("increasing dwell counter to " + dwellCount);
+                }
+                else
+                {
+                    dwellCount = 0;
+                    lastHit = newPos;
+                    Debug.Log("resetting dwell counter");
+                }
+                if (dwellCount >= (dwellTime / interval) && bubble != null)
+                {
+                    Debug.Log("drawing bubble to" + newPos);
+                    currentBubbleCenter = go;
+                    start = true;
+                    bubble.transform.position = newPos;
+                    dwellCount = 0;
+
+                }
+            }
         }
     }
 
@@ -68,7 +77,7 @@ public class Bubble : MonoBehaviour
 			ZoomToBubble ();
 		}
 		if (Input.GetMouseButtonDown (0)) {
-
+            
             GameObject go = bestBubble(Input.mousePosition);
             Vector3 newPos = getPosition(go);
             if (go != null && bubble != null) {

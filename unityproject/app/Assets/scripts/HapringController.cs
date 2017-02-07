@@ -3,26 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class HapringController : MonoBehaviour {
-    public Color highlightColor = Color.red;
+    private Color highlightColor = Color.magenta;
     private List<GameObject> nodes;
     private GameObject currentSelectNode;
     public int currentIndex = -1;
     void Start () {
 	
 	}
-
+    bool isInBubble(int index)
+    {
+        List<GameObject> hightlightedNodes;
+        hightlightedNodes = HighlightNode.GetAllHighlighted();
+        foreach(GameObject g in hightlightedNodes)
+        {
+            if (g.GetComponent<Node>().id == index) { return true; }
+        }
+        return false;
+    }
     void Update()
     {
+        
 
-        if (currentIndex == -1)
+        if (!isInBubble(currentIndex))
         {
-            Debug.Log(GetComponent<Bubble>().currentBubbleCenter);
+            //Debug.Log(GetComponent<Bubble>().currentBubbleCenter);
             
             if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
             {
                 Debug.Log("first assigned");
                 currentIndex = GetComponent<Bubble>().currentBubbleCenter.GetComponent<Node>().id;
                 currentSelectNode = GetComponent<Bubble>().currentBubbleCenter;
+                GetComponent<Bubble>().currentBubbleCenter.GetComponent<Renderer>().material.color = highlightColor;
             }
         }
         if (Input.GetKeyDown(KeyCode.Return))

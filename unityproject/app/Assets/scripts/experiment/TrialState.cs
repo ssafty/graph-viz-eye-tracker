@@ -10,6 +10,8 @@ public class TrialState : ExperimentState {
 	GameObject eyepointer;
     [SerializeField]
     GameObject graph;
+    [SerializeField]
+    GameObject GameController;
     public override ExperimentState HandleInput(ExperimentController ec)
     {
         if(ec.CurrentTrialIndex >= ec.CurrentTrials.Count)
@@ -28,10 +30,12 @@ public class TrialState : ExperimentState {
 		eyepointer.gameObject.SetActive(true);
         graph.gameObject.SetActive(true);
         MoveToExperimentTrial mttrial = ec.CurrentTrials[ec.CurrentTrialIndex] as MoveToExperimentTrial;
-        if(mttrial != null)
+        
+        if (mttrial != null)
         {
-           // Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
-            mttrial.initialze();
+
+            // Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
+            mttrial.initialze(GameController);
             mttrial.update();
             if(mttrial.done)
             {
