@@ -7,6 +7,8 @@ using System;
 
 public class TestAfterCalib3D : MonoBehaviour {
 
+    public bool use_left_eye;
+    public bool use_right_eye;
     public PupilGazeTracker gaze;
 
     // participant details
@@ -22,23 +24,18 @@ public class TestAfterCalib3D : MonoBehaviour {
 
 	// object that holds all participant data
 	private Calib3D.Participant participant;
-
-	#if USE_LEFT_EYE
+    
 	private float current_left_pupil_x;
 	private float current_left_pupil_y;
-	#endif
-	#if USE_RIGHT_EYE
+
 	private float current_right_pupil_x;
 	private float current_right_pupil_y;
-	#endif
-	#if USE_LEFT_EYE
+
 	private float calibrated_left_pupil_x;
 	private float calibrated_left_pupil_y;
-	#endif
-	#if USE_RIGHT_EYE
+
 	private float calibrated_right_pupil_x;
 	private float calibrated_right_pupil_y;
-	#endif
 
 	// Use this for initialization
 	void Start ()
@@ -94,27 +91,30 @@ public class TestAfterCalib3D : MonoBehaviour {
 
 	public void OnGUI()
 	{
-		#if USE_LEFT_EYE
-		GUI.Box(new Rect(this.calibrated_left_pupil_x - 15, Screen.height - this.calibrated_left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
-		GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[O]"));
-		#endif
-		#if USE_RIGHT_EYE
-		GUI.Box(new Rect(this.calibrated_right_pupil_x - 15, Screen.height - this.calibrated_right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
-		GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[O]"));
-		#endif
+		if(use_left_eye)
+        {
+            GUI.Box(new Rect(this.calibrated_left_pupil_x - 15, Screen.height - this.calibrated_left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
+            GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[O]"));
+        }
+        if (use_right_eye)
+        {
+            GUI.Box(new Rect(this.calibrated_right_pupil_x - 15, Screen.height - this.calibrated_right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
+            GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[O]"));
+        }
 	}
 
 	public void acquire_data()
 	{
-		// fake pupil eye with mouse
-		#if USE_LEFT_EYE
-		this.current_left_pupil_x = gaze.LeftEyePos.x;
-		this.current_left_pupil_y = gaze.LeftEyePos.y;
-#endif
-#if USE_RIGHT_EYE
-		this.current_right_pupil_x = gaze.RightEyePos.x;
-		this.current_right_pupil_y = gaze.RightEyePos.y;
-#endif
+        if (use_left_eye)
+        {
+            this.current_left_pupil_x = gaze.LeftEyePos.x;
+            this.current_left_pupil_y = gaze.LeftEyePos.y;
+        }
+        if (use_right_eye)
+        {
+            this.current_right_pupil_x = gaze.RightEyePos.x;
+            this.current_right_pupil_y = gaze.RightEyePos.y;
+        }
     }
 
     public void ReadXML()

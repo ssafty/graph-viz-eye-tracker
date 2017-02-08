@@ -1,22 +1,21 @@
-﻿#define USE_LEFT_EYE
-#define USE_RIGHT_EYE
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Xml.Serialization;
 using System.IO;
-using UnityEngine;
-using System.Collections;
+//using UnityEngine;
+//using System.Collections;
 
 
 public class Calib3D : MonoBehaviour {
 
     public PupilGazeTracker gaze;
+    public bool use_left_eye;
+    public bool use_right_eye;
 
-	// config for full calib setup
-	public const int NUM_LAYERS = 1;
+    // config for full calib setup
+    public const int NUM_LAYERS = 1;
 	public const int MARKERS_PER_LAYER = 9;
 	public const int CALIBRATION_ROUNDS = 5;
 
@@ -50,14 +49,11 @@ public class Calib3D : MonoBehaviour {
 	private bool wait_for_user_to_switch_calib_round = true;
 	private bool wait_for_user_to_switch_layer = true;
 	private bool calib_done = false;
-	#if USE_LEFT_EYE
+
 	private float current_left_pupil_x;
 	private float current_left_pupil_y;
-	#endif
-	#if USE_RIGHT_EYE
 	private float current_right_pupil_x;
 	private float current_right_pupil_y;
-	#endif
 
 	// Use this for initialization
 	void Start () {
@@ -103,14 +99,16 @@ public class Calib3D : MonoBehaviour {
 
 					for (int l = 0; l<Calib3D.READINGS_PER_CALIBRATION; l++)
 					{
-						#if USE_LEFT_EYE
-						this.participant.layers[i].markers[j].calib_rounds[k].left_x[l] = -9999.0f;
-						this.participant.layers[i].markers[j].calib_rounds[k].left_y[l] = -9999.0f;
-						#endif
-						#if USE_RIGHT_EYE
-						this.participant.layers[i].markers[j].calib_rounds[k].right_x[l] = -9999.0f;
-						this.participant.layers[i].markers[j].calib_rounds[k].right_y[l] = -9999.0f;
-						#endif
+                        if (use_left_eye)
+                        {
+                            this.participant.layers[i].markers[j].calib_rounds[k].left_x[l] = -9999.0f;
+                            this.participant.layers[i].markers[j].calib_rounds[k].left_y[l] = -9999.0f;
+                        }
+                        if (use_right_eye)
+                        {
+                            this.participant.layers[i].markers[j].calib_rounds[k].right_x[l] = -9999.0f;
+                            this.participant.layers[i].markers[j].calib_rounds[k].right_y[l] = -9999.0f;
+                        }
 					}
 				}
 			}
@@ -296,14 +294,11 @@ public class Calib3D : MonoBehaviour {
 			for (int j = 0; j < Calib3D.MARKERS_PER_LAYER; j++)
 			{
 				Calib3D.Marker marker = layer.markers[j];
-				#if USE_LEFT_EYE
-				float calib_left_x = 0.0f;
-				float calib_left_y = 0.0f;
-				#endif
-				#if USE_RIGHT_EYE
-				float calib_right_x = 0.0f;
-				float calib_right_y = 0.0f;
-				#endif
+                float calib_left_x = 0.0f;
+                float calib_left_y = 0.0f;
+
+                float calib_right_x = 0.0f;
+                float calib_right_y = 0.0f;
 
 				for (int k = 0; k < Calib3D.CALIBRATION_ROUNDS; k++)
 				{
@@ -311,24 +306,28 @@ public class Calib3D : MonoBehaviour {
 
 					for (int l = 0; l < Calib3D.READINGS_PER_CALIBRATION; l++)
 					{
-						#if USE_LEFT_EYE
-						calib_left_x += calib_rnd.left_x[l];
-						calib_left_y += calib_rnd.left_y[l];
-						#endif
-						#if USE_RIGHT_EYE
-						calib_right_x += calib_rnd.right_x[l];
-						calib_right_y += calib_rnd.right_y[l];
-						#endif
+                        if (use_left_eye)
+                        {
+                            calib_left_x += calib_rnd.left_x[l];
+                            calib_left_y += calib_rnd.left_y[l];
+                        }
+                        if (use_right_eye)
+                        {
+                            calib_right_x += calib_rnd.right_x[l];
+                            calib_right_y += calib_rnd.right_y[l];
+                        }
 					}
 				}
-				#if USE_LEFT_EYE
-				marker.calib_mean_left_x = calib_left_x / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-				marker.calib_mean_left_y = calib_left_y / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-				#endif
-				#if USE_RIGHT_EYE
-				marker.calib_mean_right_x = calib_right_x / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-				marker.calib_mean_right_y = calib_right_y / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-				#endif
+                if (use_left_eye)
+                {
+                    marker.calib_mean_left_x = calib_left_x / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
+                    marker.calib_mean_left_y = calib_left_y / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
+                }
+                if (use_right_eye)
+                {
+                    marker.calib_mean_right_x = calib_right_x / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
+                    marker.calib_mean_right_y = calib_right_y / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
+                }
 			}
 		}
 	}
@@ -346,12 +345,14 @@ public class Calib3D : MonoBehaviour {
 
 	public void OnGUI()
 	{
-		#if USE_LEFT_EYE
-		GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[X]"));
-		#endif
-		#if USE_RIGHT_EYE
-		GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
-		#endif
+        if (use_left_eye)
+        {
+            GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[X]"));
+        }
+        if (use_right_eye)
+        {
+            GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
+        }
 	}
 
 	public void acquire_data()
@@ -367,29 +368,33 @@ public class Calib3D : MonoBehaviour {
 		this.current_right_pupil_y = Input.mousePosition.y;
 		#endif
         */
-        #if USE_LEFT_EYE
-                this.current_left_pupil_x = gaze.LeftEyePos.x;
-                this.current_left_pupil_y = gaze.LeftEyePos.y;
-        #endif
-        #if USE_RIGHT_EYE
-                this.current_right_pupil_x = gaze.RightEyePos.x;
-                this.current_right_pupil_y = gaze.RightEyePos.y;
-        #endif
+        if (use_left_eye)
+        {
+            this.current_left_pupil_x = gaze.LeftEyePos.x;
+            this.current_left_pupil_y = gaze.LeftEyePos.y;
+        }
+        if (use_right_eye)
+        {
+            this.current_right_pupil_x = gaze.RightEyePos.x;
+            this.current_right_pupil_y = gaze.RightEyePos.y;
+        }
     }
 
     public void populate_data(int index)
 	{
 		CalibRound calib = this.participant.layers[this.current_layer].markers[this.current_marker].calib_rounds[this.current_calib_round];
 
-		// load data from sensor here
-		#if USE_LEFT_EYE
-		calib.left_x[index] = this.current_left_pupil_x;
-		calib.left_y[index] = this.current_left_pupil_y;
-		#endif
-		#if USE_RIGHT_EYE
-		calib.right_x[index] = this.current_right_pupil_x;
-		calib.right_y[index] = this.current_right_pupil_y;
-		#endif
+        // load data from sensor here
+        if (use_left_eye)
+        {
+            calib.left_x[index] = this.current_left_pupil_x;
+            calib.left_y[index] = this.current_left_pupil_y;
+        }
+        if (use_right_eye)
+        {
+            calib.right_x[index] = this.current_right_pupil_x;
+            calib.right_y[index] = this.current_right_pupil_y;
+        }
 	}
 
 
@@ -448,21 +453,18 @@ public class Calib3D : MonoBehaviour {
 
 		[XmlAttribute("screen_y")]
 		public float screen_y;
-
-		#if USE_LEFT_EYE
+        
 		[XmlAttribute("calib_mean_left_x")]
 		public float calib_mean_left_x;
 
 		[XmlAttribute("calib_mean_left_y")]
 		public float calib_mean_left_y;
-		#endif
-		#if USE_RIGHT_EYE
+
 		[XmlAttribute("calib_mean_right_x")]
 		public float calib_mean_right_x;
 
 		[XmlAttribute("calib_mean_right_y")]
 		public float calib_mean_right_y;
-		#endif
 
 		[XmlArrayItem("calib_round")]
 		public CalibRound[] calib_rounds = new CalibRound[Calib3D.CALIBRATION_ROUNDS];
@@ -475,24 +477,17 @@ public class Calib3D : MonoBehaviour {
 		[XmlAttribute("calib_round")]
 		public int calib_round;
 
-		#if USE_LEFT_EYE
-
 		[XmlArrayItem("left_x")]
 		public float[] left_x = new float[Calib3D.READINGS_PER_CALIBRATION];
 
 		[XmlArrayItem("left_y")]
 		public float[] left_y = new float[Calib3D.READINGS_PER_CALIBRATION];
 
-		#endif
-		#if USE_RIGHT_EYE
-
 		[XmlArrayItem("right_x")]
 		public float[] right_x = new float[Calib3D.READINGS_PER_CALIBRATION];
 
 		[XmlArrayItem("right_y")]
 		public float[] right_y = new float[Calib3D.READINGS_PER_CALIBRATION];
-
-		#endif
 
 	}
 
