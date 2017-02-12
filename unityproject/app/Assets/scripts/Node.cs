@@ -81,14 +81,18 @@ public class Node : MonoBehaviour
 
     public static Node GetNodeWithId(int id)
     {
+        Debug.Log("trying to get node with id: " + id);
         GameObject[] nodes = GameObject.FindGameObjectsWithTag("Node");
         foreach(GameObject node in nodes)
         {
             if(node.GetComponent<Node>().id == id)
             {
+                Debug.Log("got node with id: " + id);
                 return node.GetComponent<Node>();
             }
         }
+
+        Debug.Log("Node not found. Fallback select node: " + id);
         return nodes[0].GetComponent<Node>();
     }
      

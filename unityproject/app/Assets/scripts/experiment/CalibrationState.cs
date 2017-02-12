@@ -18,7 +18,9 @@ public class CalibrationState : ExperimentState
 	GameObject c;
 	[SerializeField]
     GameObject panel;
-	public bool Next
+    [SerializeField]
+    KeyCode skip = KeyCode.End;
+    public bool Next
 	{
 		get
 		{
@@ -33,7 +35,7 @@ public class CalibrationState : ExperimentState
 
 	public override ExperimentState HandleInput(ExperimentController ec)
 	{
-		if(Next)
+		if(Next || Input.GetKeyDown(skip))
 		{
 			panel.gameObject.SetActive(false);
 			c.gameObject.SetActive(false);

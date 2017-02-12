@@ -18,12 +18,13 @@ public class Bubble : MonoBehaviour
 	private bool start = false;
 	public float jitterMax = 10.0f;
 	public float jitterMin = -10.0f;
-	public float dwellTime = 0.1f;
+	public float dwellTime = 0.2f;
 	public float interval = 0.1f;
-	public GameObject eyepointer;
+    public GameObject currentBubbleCenter;
+    public GameObject eyepointer;
 	private Vector3 lastHit;
 	private int dwellCount;
-
+    public bool rayCastAllowed = false;
 	void Start ()
 	{
 	
@@ -32,34 +33,44 @@ public class Bubble : MonoBehaviour
 		InvokeRepeating ("doRayCast", 0.0f, interval);
 	}
 
-   
+
     void doRayCast()
     {
+        if (rayCastAllowed)
+        {
+            Vector2 neu = camParent.GetComponent<udpsocket>().LastEyeCoordinate;
+            neu.x = neu.x + (Screen.width / 2);
+            neu.y = neu.y + (Screen.height / 2);
+            GameObject go = bestBubble(neu);
+            Vector3 newPos = getPosition(go);
 
-        /*
-		Vector2 neu = camParent.GetComponent<udpsocket> ().LastEyeCoordinate;
-		neu.x = neu.x + (Screen.width / 2);
-		neu.y = neu.y + (Screen.height / 2);
-		Vector3 newPos = bestBubble (neu);
-		if (newPos != Vector3.zero) {
 
-			if (newPos == lastHit) {
-				dwellCount++;
-				lastHit = newPos;
-				//Debug.Log("increasing dwell counter to " + dwellCount);
-			} else {
-				dwellCount = 0;
-				lastHit = newPos;
-				Debug.Log ("resetting dwell counter");
-			}
-			if (dwellCount >= (dwellTime / interval) && newPos != Vector3.zero && bubble != null) {
-				Debug.Log ("drawing bubble to" + newPos);
-				start = true;
-				bubble.transform.position = newPos;
-				dwellCount = 0;
-			}
-		}
-	*/
+            if (go != null)
+            {
+                
+                if (newPos == lastHit)
+                {
+                    dwellCount++;
+                    lastHit = newPos;
+                    //Debug.Log("increasing dwell counter to " + dwellCount);
+                }
+                else
+                {
+                    dwellCount = 0;
+                    lastHit = newPos;
+                    Debug.Log("resetting dwell counter");
+                }
+                if (dwellCount >= (dwellTime / interval) && bubble != null)
+                {
+                    Debug.Log("drawing bubble to" + newPos);
+                    currentBubbleCenter = go;
+                    start = true;
+                    bubble.transform.position = newPos;
+                    dwellCount = 0;
+
+                }
+            }
+        }
     }
 
 	// Update is called once per frame
@@ -69,11 +80,13 @@ public class Bubble : MonoBehaviour
 			ZoomToBubble ();
 		}
 		if (Input.GetMouseButtonDown (0)) {
-			
-			Vector3 newPos = bestBubble (Input.mousePosition);
-			if (newPos != Vector3.zero && bubble != null) {
+            
+            GameObject go = bestBubble(Input.mousePosition);
+            Vector3 newPos = getPosition(go);
+            if (go != null && bubble != null) {
 				start = true;
-				bubble.transform.position = newPos;
+                currentBubbleCenter = go;
+                bubble.transform.position = newPos;
 			}
 		} else if (Input.anyKeyDown) {
 			start = false;
@@ -110,10 +123,11 @@ public class Bubble : MonoBehaviour
 
 	public void calcBubble (Vector2 pos)
 	{
-
-		Vector3 newPos = bestBubble (pos);
-		if (newPos != Vector3.zero) {
-			bubble.transform.position = newPos;
+        GameObject go = bestBubble(pos);
+		Vector3 newPos = getPosition(go);
+        if (go != null) { 
+            currentBubbleCenter = go;
+            bubble.transform.position = newPos;
 		}
 	}
 
@@ -141,8 +155,11 @@ public class Bubble : MonoBehaviour
 		}
 		return (positionSum / Mathf.Max (1, hits.Length));
 	}
-
-	Vector3 bestBubble (Vector2 pos)
+    Vector3 getPosition(GameObject go)
+    {
+        return go != null ? go.transform.position : Vector3.zero;
+    }
+	GameObject bestBubble (Vector2 pos)
 	{
 		RaycastHit[] hits;
 		Ray ray = Camera.main.ScreenPointToRay (pos);
@@ -163,7 +180,8 @@ public class Bubble : MonoBehaviour
 				}
 			}
 		}
-		return bestShotNode == null ? Vector3.zero : bestShotNode.transform.position;
+        
+		return bestShotNode;
 	}
 
 	public static void moveTo (Vector3 pos)

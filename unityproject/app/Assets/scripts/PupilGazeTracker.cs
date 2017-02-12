@@ -12,6 +12,7 @@ using NetMQ.Sockets;
 using System;
 using System.IO;
 using MsgPack.Serialization;
+using UnityEditor;
 
 namespace Pupil
 {
@@ -62,12 +63,79 @@ namespace Pupil
 		public double model_birth_timestamp;
 		public Circle3d circle_3d = new Circle3d();
 		public Ellipse ellipese = new Ellipse();
-	}
+    }
+    [Serializable]
+    public class GazeNormals3d
+    {
+        public double[] __invalid_name__0;
+        public double[] __invalid_name__1;
+    }
+    [Serializable]
+    public class EyeCenters3d
+    {
+        public double[] __invalid_name__0;
+        public double[] __invalid_name__1;
+    }
+    [Serializable]
+    public class BaseData2
+    {
+        public int model_id;
+        public Circle3d circle_3d = new Circle3d();
+        public string method;
+        public double timestamp;
+        public double[] norm_pos = new double[] { 0, 0, 0 };
+        public double diameter_3d;
+        public double confidence;
+        public Sphere sphere = new Sphere();
+        public double phi;
+        public double model_birth_timestamp;
+        public string topic;
+        public double diameter;
+        public double model_confidence;
+        public double theta;
+        public ProjectedSphere projected_sphere = new ProjectedSphere();
+        public int id;
+        public Ellipse ellipse = new Ellipse();
+    }
+    [Serializable]
+    public class BaseData
+    {
+        public GazeNormals3d gaze_normals_3d = new GazeNormals3d();
+        public string topic;
+        public EyeCenters3d eye_centers_3d = new EyeCenters3d();
+        public double timestamp;
+        public double[] norm_pos = new double[] { 0, 0, 0 };
+        public double confidence;
+        public double[] gaze_point_3d = new double[] { 0, 0, 0 };
+        public BaseData2[] base_data;
+    }
+    [Serializable]
+    public class GazeOnSrf
+    {
+        public float[] norm_pos = new float[] { 0, 0, 0 };
+        public string topic;
+        public BaseData base_data = new BaseData();
+        public bool on_srf;
+        public double confidence;
+    }
+    [Serializable]
+    public class PupilGazeOnSurface
+    {
+        public double[][] m_from_screen;
+        public string name;
+        public string uid;
+        public double timestamp;
+        public double[][] m_to_screen;
+        public double[][] camera_pose_3d;
+        public GazeOnSrf[] gaze_on_srf;
+    }
 }
 
 public class PupilGazeTracker:MonoBehaviour
 {
 	static PupilGazeTracker _Instance;
+    public GameObject camera;
+    private udpsocket udpsocketScript;
 	public static PupilGazeTracker Instance
 	{
 		get{
@@ -128,6 +196,7 @@ public class PupilGazeTracker:MonoBehaviour
 	Thread _serviceThread;
 	bool _isDone=false;
 	Pupil.PupilData3D _pupilData;
+    Pupil.PupilGazeOnSurface _pupilGazeOnSurface;
 
 	public delegate void OnCalibrationStartedDeleg(PupilGazeTracker manager);
 	public delegate void OnCalibrationDoneDeleg(PupilGazeTracker manager);
@@ -164,6 +233,7 @@ public class PupilGazeTracker:MonoBehaviour
 	public float CanvasWidth = 640;
 	public float CanvasHeight=480;
 
+	private Boolean isVRmode;
 
 	int _gazeFPS = 0;
 	int _currentFps = 0;
@@ -203,11 +273,11 @@ public class PupilGazeTracker:MonoBehaviour
 	}
 	public Vector2 LeftEyePos
 	{
-		get{ return leftEye.gaze; }
+		get{ return leftEye.gaze == null ? Vector2.zero : leftEye.gaze; }
 	}
 	public Vector2 RightEyePos
 	{
-		get{ return rightEye.gaze; }
+		get{ return rightEye.gaze == null ? Vector2.zero : rightEye.gaze; }
 	}
 
 	public Vector2 GetEyeGaze(GazeSource s)
@@ -230,9 +300,11 @@ public class PupilGazeTracker:MonoBehaviour
 		leftEye = new EyeData (SamplesCount);
 		rightEye= new EyeData (SamplesCount);
 
-		_dataLock = new object ();
+		isVRmode = PlayerSettings.virtualRealitySupported;
 
-		_serviceThread = new Thread(NetMQClient);
+		_dataLock = new object ();
+        udpsocketScript = camera.GetComponent<udpsocket>();
+        _serviceThread = new Thread(NetMQClient);
 		_serviceThread.Start();
 
 	}
@@ -246,23 +318,33 @@ public class PupilGazeTracker:MonoBehaviour
 
 	NetMQMessage _sendRequestMessage(Dictionary<string,object> data)
 	{
-		NetMQMessage m = new NetMQMessage ();
-		m.Append ("notify."+data["subject"]);
+        try
+        {
+            NetMQMessage m = new NetMQMessage();
+            m.Append("notify." + data["subject"]);
 
-		using (var byteStream = new MemoryStream ()) {
-			var ctx=new SerializationContext();
-			ctx.CompatibilityOptions.PackerCompatibilityOptions = MsgPack.PackerCompatibilityOptions.None;
-			var ser= MessagePackSerializer.Get<object>(ctx);
-			ser.Pack (byteStream, data);
-			m.Append (byteStream.ToArray ());
-		}
+            using (var byteStream = new MemoryStream())
+            {
+                var ctx = new SerializationContext();
+                ctx.CompatibilityOptions.PackerCompatibilityOptions = MsgPack.PackerCompatibilityOptions.None;
+                var ser = MessagePackSerializer.Get<object>(ctx);
+                ser.Pack(byteStream, data);
+                m.Append(byteStream.ToArray());
+            }
 
-		_requestSocket.SendMultipartMessage (m);
+            _requestSocket.SendMultipartMessage(m);
 
-		NetMQMessage recievedMsg;
-		recievedMsg=_requestSocket.ReceiveMultipartMessage ();
+            NetMQMessage recievedMsg;
+            recievedMsg = _requestSocket.ReceiveMultipartMessage();
 
-		return recievedMsg;
+            return recievedMsg;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning("NO MQ CONNECTION " + e.Message);
+            
+            return null;
+        }
 	}
 
 	float GetPupilTimestamp()
@@ -274,6 +356,7 @@ public class PupilGazeTracker:MonoBehaviour
 
 	void NetMQClient()
 	{
+        Debug.Log("Inside NetMQClient");
 		//thanks for Yuta Itoh sample code to connect via NetMQ with Pupil Service
 		string IPHeader = ">tcp://" + ServerIP + ":";
 		var timeout = new System.TimeSpan(0, 0, 1); //1sec
@@ -299,9 +382,11 @@ public class PupilGazeTracker:MonoBehaviour
 			var subscriberSocket = new SubscriberSocket( IPHeader + subport);
 			subscriberSocket.Subscribe("gaze"); //subscribe for gaze data
 			subscriberSocket.Subscribe("notify."); //subscribe for all notifications
-			_setStatus(EStatus.ProcessingGaze);
+            subscriberSocket.Subscribe("surface"); //subscribe to gaze on surface
+            _setStatus(EStatus.ProcessingGaze);
 			var msg = new NetMQMessage();
-			while ( _isDone == false)
+
+            while ( _isDone == false)
 			{
 				_isconnected = subscriberSocket.TryReceiveMultipartMessage(timeout,ref(msg));
 				if (_isconnected)
@@ -309,13 +394,35 @@ public class PupilGazeTracker:MonoBehaviour
 					try
 					{
 						string msgType=msg[0].ConvertToString();
-						Debug.Log(msgType);
-						if(msgType=="gaze")
+
+                        if(msgType=="surface" && !isVRmode)
+                        {
+                            var message = MsgPack.Unpacking.UnpackObject(msg[1].ToByteArray());
+                            MsgPack.MessagePackObject mmap = message.Value;
+                            lock (_dataLock)
+                            {
+                                _pupilGazeOnSurface = JsonUtility.FromJson<Pupil.PupilGazeOnSurface>(mmap.ToString());
+
+                                //Debug.Log(mmap.ToString());
+                                foreach (Pupil.GazeOnSrf gazeData in _pupilGazeOnSurface.gaze_on_srf)
+                                {
+                                    //Debug.Log("confidence: " + gazeData.confidence);
+                                    if (gazeData.confidence > 0.5f && gazeData.on_srf)
+                                    {
+                                        Vector2 norm= new Vector2((float)gazeData.norm_pos[0], (float)gazeData.norm_pos[1]);
+                                        //Debug.Log("norm pos: " + norm);
+                                        udpsocketScript.processingList.Add(norm);
+                                    }
+                                }
+                            }
+                        }
+						if(msgType=="gaze" && isVRmode)
 						{
 							var message = MsgPack.Unpacking.UnpackObject(msg[1].ToByteArray());
 							MsgPack.MessagePackObject mmap = message.Value;
 							lock (_dataLock)
 							{
+
 								_pupilData = JsonUtility.FromJson<Pupil.PupilData3D>(mmap.ToString());
 								Debug.Log(_pupilData);
 								if(_pupilData.confidence>0.5f)
