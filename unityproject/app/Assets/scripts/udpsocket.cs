@@ -37,7 +37,7 @@ public class udpsocket : MonoBehaviour
 		if (processingList.Count >= 30) {
             List<Vector2> processingList_snapshot = processingList;
             processingList = new List<Vector2>();
-            LastEyeCoordinate = FilterGazeCoordinates (processingList_snapshot, true);
+            LastEyeCoordinate = FilterGazeCoordinates (processingList_snapshot, false);
 		}
 
         rect.anchoredPosition = LastEyeCoordinate;
