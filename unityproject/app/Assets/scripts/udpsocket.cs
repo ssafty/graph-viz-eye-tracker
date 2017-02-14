@@ -18,6 +18,8 @@ public class udpsocket : MonoBehaviour
     Bubble bubbleScript;
     RectTransform rect;
 
+	float screenDiagonal;
+
 	public List<Vector2> processingList; 
     
 	void Start()
@@ -26,7 +28,8 @@ public class udpsocket : MonoBehaviour
         markerScript = camera.GetComponent<createMarker>();
         bubbleScript = camera.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
-      
+
+		screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
     }
 
     void Update()
@@ -34,10 +37,14 @@ public class udpsocket : MonoBehaviour
         //bubbleScript.calcBubble(LastEyeCoordinate);
 
 		//filter out when list gets 30 points
-		if (processingList.Count >= 30) {
+		if (processingList.Count >= 20) {
             List<Vector2> processingList_snapshot = processingList;
             processingList = new List<Vector2>();
-            LastEyeCoordinate = FilterGazeCoordinates (processingList_snapshot, false);
+			Vector2 currentGaze = FilterGazeCoordinates (processingList_snapshot, false);
+
+			if (NotNoise (currentGaze)) {
+				LastEyeCoordinate = currentGaze;
+			}
 		}
 
         rect.anchoredPosition = LastEyeCoordinate;
@@ -55,6 +62,17 @@ public class udpsocket : MonoBehaviour
 		}
     }
     */
+
+	Boolean NotNoise(Vector2 currentGaze){
+		if (LastEyeCoordinate == null)
+			return true;
+		
+		// distance of the currentGaze from previous reading
+		float distance = Vector2.Distance(currentGaze, LastEyeCoordinate);
+
+		return (distance / screenDiagonal) > 0.1;
+	}
+
 	Vector2 FilterGazeCoordinates(List<Vector2> processingList, Boolean flip_y){
 
         List<Vector2> ModifiedCoordinates = new List<Vector2>();
