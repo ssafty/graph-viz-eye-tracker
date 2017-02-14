@@ -597,8 +597,8 @@ public class PupilGazeTracker:MonoBehaviour
 	void OnGUI()
 	{
 		string str="Capture Rate="+FPS;
-		str += "\nLeft Eye:" + LeftEyePos.ToString ();
-		str += "\nRight Eye:" + RightEyePos.ToString ();
-		GUI.TextArea (new Rect (0, 0, 200, 50), str);
+		str += "\tLeft Eye:" + LeftEyePos.ToString ();
+		str += "\tRight Eye:" + RightEyePos.ToString ();
+		GUI.TextArea (new Rect (0, 0, 50, 50), str);
 	}
 }
