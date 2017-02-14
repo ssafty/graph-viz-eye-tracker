@@ -13,6 +13,9 @@ public class createMarker : MonoBehaviour
 	Vector2 SurfaceTopRight = Vector2.zero;
 	public Vector2 newScreen;
 
+	// used for debugging in the UnityEditor
+	public KeyCode reduceMarkerSize = KeyCode.F7;
+
 
 	// Use this for initialization
 	void Start ()
@@ -108,5 +111,10 @@ public class createMarker : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (Input.GetKeyDown (reduceMarkerSize)) {
+			foreach (GameObject m in GameObject.FindGameObjectsWithTag ("marker")){
+				m.transform.localScale -= new Vector3(0.05f,0.05f,0f);
+			}
+		}
 	}
 }
