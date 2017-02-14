@@ -235,6 +235,7 @@ public class PupilGazeTracker:MonoBehaviour
 	public int SamplesCount=4;
 	public float CanvasWidth = 640;
 	public float CanvasHeight=480;
+	public Double GazeConfidence=0.7;
 
 	private Boolean isVRmode = false;
 
@@ -412,7 +413,7 @@ public class PupilGazeTracker:MonoBehaviour
                                 foreach (Pupil.GazeOnSrf gazeData in _pupilGazeOnSurface.gaze_on_srf)
                                 {
                                     //Debug.Log("confidence: " + gazeData.confidence);
-                                    if (gazeData.confidence > 0.5f && gazeData.on_srf)
+									if (gazeData.confidence > GazeConfidence && gazeData.on_srf)
                                     {
                                         Vector2 norm= new Vector2((float)gazeData.norm_pos[0], (float)gazeData.norm_pos[1]);
                                         //Debug.Log("norm pos: " + norm);
@@ -430,7 +431,7 @@ public class PupilGazeTracker:MonoBehaviour
 
 								_pupilData = JsonUtility.FromJson<Pupil.PupilData3D>(mmap.ToString());
 								Debug.Log(_pupilData);
-								if(_pupilData.confidence>0.5f)
+								if(_pupilData.confidence > GazeConfidence)
 								{
 									OnPacket(_pupilData);
 								}
