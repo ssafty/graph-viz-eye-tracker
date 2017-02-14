@@ -37,7 +37,7 @@ public class udpsocket : MonoBehaviour
         //bubbleScript.calcBubble(LastEyeCoordinate);
 
 		//filter out when list gets 30 points
-		if (processingList.Count >= 20) {
+		if (processingList.Count >= 10) {
             List<Vector2> processingList_snapshot = processingList;
             processingList = new List<Vector2>();
 			Vector2 currentGaze = FilterGazeCoordinates (processingList_snapshot, false);
@@ -70,7 +70,11 @@ public class udpsocket : MonoBehaviour
 		// distance of the currentGaze from previous reading
 		float distance = Vector2.Distance(currentGaze, LastEyeCoordinate);
 
-		return (distance / screenDiagonal) > 0.1;
+		if (screenDiagonal == 0) {
+			screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
+		}
+
+		return (distance / screenDiagonal) > 0.05f;
 	}
 
 	Vector2 FilterGazeCoordinates(List<Vector2> processingList, Boolean flip_y){
