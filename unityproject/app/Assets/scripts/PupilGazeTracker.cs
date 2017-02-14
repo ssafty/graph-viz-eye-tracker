@@ -12,7 +12,10 @@ using NetMQ.Sockets;
 using System;
 using System.IO;
 using MsgPack.Serialization;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Pupil
 {
@@ -233,7 +236,7 @@ public class PupilGazeTracker:MonoBehaviour
 	public float CanvasWidth = 640;
 	public float CanvasHeight=480;
 
-	private Boolean isVRmode;
+	private Boolean isVRmode = false;
 
 	int _gazeFPS = 0;
 	int _currentFps = 0;
@@ -300,7 +303,9 @@ public class PupilGazeTracker:MonoBehaviour
 		leftEye = new EyeData (SamplesCount);
 		rightEye= new EyeData (SamplesCount);
 
+		#if UNITY_EDITOR
 		isVRmode = PlayerSettings.virtualRealitySupported;
+		#endif
 
 		_dataLock = new object ();
         udpsocketScript = camera.GetComponent<udpsocket>();
