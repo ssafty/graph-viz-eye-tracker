@@ -19,22 +19,22 @@ public class Calib3D : MonoBehaviour
     public PupilGazeTracker gaze;
 
     // config for full calib setup
-    public const int NUM_LAYERS = 1;
+    public const int NUM_LAYERS = 3;
     //public const int NUM_LAYERS = 3;
     public const int MARKERS_PER_LAYER = 9;
     public const int CALIBRATION_ROUNDS = 5;
 
     //config for data storage per calib round
-    public const int READINGS_PER_CALIBRATION = 10;
-    public const int FRAMES_TO_WAIT_AT_START = 1;
+    public const int READINGS_PER_CALIBRATION = 100;
+    public const int FRAMES_TO_WAIT_AT_START = 30;
     public const int FRAMES_TO_CAPTURE = Calib3D.READINGS_PER_CALIBRATION;
-    public const int FRAMES_TO_WAIT_AT_END = 1;
+    public const int FRAMES_TO_WAIT_AT_END = 30;
 
     // marker layout arrangement
     private float marker_layout_scale = 4.0f;
     private float marker_layout_aspect = 2f;
-    //private float[] marker_layout_depth = { 30.0f, 20.0f, 10.0f };
-    private float[] marker_layout_depth = { 30.0f };
+    private float[] marker_layout_depth = { 30.0f, 20.0f, 10.0f };
+   // private float[] marker_layout_depth = { 30.0f };
 
     // participant details
     public string participant_name;
