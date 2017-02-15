@@ -13,8 +13,13 @@ public class HighlightNode : MonoBehaviour
 
 	void OnTriggerEnter (Collider other)
 	{
+        if(gameObject.GetComponent<Renderer>().material.color != Color.magenta) { 
 		ChangeColorTo (other, highlightColor);
-	}
+        } else
+        {
+            highlighted = true;
+        }
+    }
 
 
 

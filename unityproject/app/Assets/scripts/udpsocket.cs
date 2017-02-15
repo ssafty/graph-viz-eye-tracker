@@ -18,7 +18,9 @@ public class udpsocket : MonoBehaviour
     Bubble bubbleScript;
     RectTransform rect;
 
-	private List<Vector2> processingList; 
+	float screenDiagonal;
+
+	public List<Vector2> processingList; 
     
 	void Start()
     {
@@ -26,15 +28,8 @@ public class udpsocket : MonoBehaviour
         markerScript = camera.GetComponent<createMarker>();
         bubbleScript = camera.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
-        Client = new UdpClient(Port);
-        try
-        {
-            Client.BeginReceive(new AsyncCallback(recv), null);
-        }
-        catch (Exception e)
-        {
-            Debug.Log(e.ToString());
-        }
+
+		screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
     }
 
     void Update()
@@ -42,21 +37,22 @@ public class udpsocket : MonoBehaviour
         //bubbleScript.calcBubble(LastEyeCoordinate);
 
 		//filter out when list gets 30 points
-		if (processingList.Count >= 30) { 
-			LastEyeCoordinate = FilterGazeCoordinates (processingList);
-			processingList = new List<Vector2> ();
+		if (processingList.Count >= 10) {
+            List<Vector2> processingList_snapshot = processingList;
+            processingList = new List<Vector2>();
+			Vector2 currentGaze = FilterGazeCoordinates (processingList_snapshot, false);
+
+			if (NotNoise (currentGaze)) {
+				LastEyeCoordinate = currentGaze;
+			}
 		}
 
         rect.anchoredPosition = LastEyeCoordinate;
     }
-
-    private void recv(IAsyncResult res)
+    /*
+     private void recv(IAsyncResult res)
     {
-		IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, Port);
-        byte[] received = Client.EndReceive(res, ref RemoteIpEndPoint);
-
-        Client.BeginReceive(new AsyncCallback(recv), null);
-
+	
 		if (Encoding.UTF8.GetString (received).Length > 0) {
 			//parse coordinates
 			processingList.AddRange(ExtractGazeCoordinates (false, Encoding.UTF8.GetString (received)));
@@ -65,53 +61,55 @@ public class udpsocket : MonoBehaviour
 			processingList = new List<Vector2> (); 
 		}
     }
+    */
 
-	List<Vector2> ExtractGazeCoordinates(Boolean flip_y, String response)
-	{
-        string[] responseArray 	= response.Split(')');
-		List<Vector2> outputVec = new List<Vector2> ();
+	Boolean NotNoise(Vector2 currentGaze){
+		if (LastEyeCoordinate == null)
+			return true;
+		
+		// distance of the currentGaze from previous reading
+		float distance = Vector2.Distance(currentGaze, LastEyeCoordinate);
 
-        foreach (string tuple in responseArray)
+		if (screenDiagonal == 0) {
+			screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
+		}
+
+		return (distance / screenDiagonal) > 0.05f;
+	}
+
+	Vector2 FilterGazeCoordinates(List<Vector2> processingList, Boolean flip_y){
+
+        List<Vector2> ModifiedCoordinates = new List<Vector2>();
+        foreach (Vector2 point in processingList)
         {
-            string[] tempCoordinates = tuple.Split(',');
-            if (tempCoordinates.Length == 2)
-            {
-                double x, y;
+            float x = point.x;
+            float y = point.y;
+            Debug.Log(markerScript.newScreen);
+            x *= markerScript.newScreen.x;
+            if (flip_y) { y = 1 - y; }
+            y *= markerScript.newScreen.y;
 
-                double.TryParse(tempCoordinates[0].Substring(1), out x);
-                double.TryParse(tempCoordinates[1].Substring(1), out y);
-                
-				x *= markerScript.newScreen.x ;
-                if (flip_y) { y = 1 - y; }
-				y *= markerScript.newScreen.y;
-
-				//Debug.Log("x" + x + " ;y" + y);
-				Debug.Log("GETTING INPUT FROM UDP SERVER");
-				outputVec.Add(new Vector2(((float)x - (markerScript.newScreen.x / 2)), (float)y - (markerScript.newScreen.y / 2)));
-            }
+            ModifiedCoordinates.Add(new Vector2(((float)x - (markerScript.newScreen.x / 2)), (float)y - (markerScript.newScreen.y / 2)));
         }
-		return outputVec;
-    }
 
-	Vector2 FilterGazeCoordinates(List<Vector2> processingList){
 		Double x_sum = 0;
 		Double y_sum = 0;
 
-		foreach (Vector2 point in processingList) {
-			x_sum += point.x;
+		foreach (Vector2 point in ModifiedCoordinates) {
+            x_sum += point.x;
 			y_sum += point.y;
 		}
 
-		Vector2 centeroid = new Vector2((float) x_sum / processingList.Count, (float) y_sum / processingList.Count);
+		Vector2 centeroid = new Vector2((float) x_sum / ModifiedCoordinates.Count, (float) y_sum / ModifiedCoordinates.Count);
 
 		List<Vector3> DistanceFromCenteroid = new List<Vector3> ();
 
-		foreach (Vector2 point in processingList) {
+		foreach (Vector2 point in ModifiedCoordinates) {
 			DistanceFromCenteroid.Add (new Vector3 (point.x, point.y, Vector2.Distance(point, centeroid)));
 		}
 
 		DistanceFromCenteroid.Sort((a, b) => a.z.CompareTo(b.z));
-		List<Vector3> trimmedList = DistanceFromCenteroid.GetRange (0, (int)(processingList.Count * 0.75));
+		List<Vector3> trimmedList = DistanceFromCenteroid.GetRange (0, (int)(ModifiedCoordinates.Count * 0.75));
 
 		x_sum = 0;
 		y_sum = 0;

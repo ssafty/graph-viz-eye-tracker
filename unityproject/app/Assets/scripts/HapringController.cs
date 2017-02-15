@@ -3,16 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class HapringController : MonoBehaviour {
-    public Color highlightColor = Color.red;
+    private Color highlightColor = Color.magenta;
     private List<GameObject> nodes;
     private GameObject currentSelectNode;
-    private int currentIndex = -1;
+    public int currentIndex = -1;
     void Start () {
 	
 	}
-
+    bool isInBubble(int index)
+    {
+        List<GameObject> hightlightedNodes;
+        hightlightedNodes = HighlightNode.GetAllHighlighted();
+        foreach(GameObject g in hightlightedNodes)
+        {
+            if (g.GetComponent<Node>().id == index) { return true; }
+        }
+        return false;
+    }
     void Update()
     {
+        
+
+        if (!isInBubble(currentIndex))
+        {
+            //Debug.Log(GetComponent<Bubble>().currentBubbleCenter);
+            
+            if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
+            {
+                Debug.Log("first assigned");
+                currentIndex = GetComponent<Bubble>().currentBubbleCenter.GetComponent<Node>().id;
+                currentSelectNode = GetComponent<Bubble>().currentBubbleCenter;
+                GetComponent<Bubble>().currentBubbleCenter.GetComponent<Renderer>().material.color = highlightColor;
+            }
+        }
         if (Input.GetKeyDown(KeyCode.Return))
         {
             chooseSelectedNode();
@@ -43,11 +66,6 @@ public class HapringController : MonoBehaviour {
         if (direction == Direction.right)
         {
             nodes = HighlightNode.GetAllHighlighted();
-            if (currentIndex == -1 && nodes.Count > 0)
-            {
-                Debug.Log("first assigned");
-                currentIndex = nodes[0].GetComponent<Node>().id;
-            }
             int index = nodes.FindIndex(c => c.GetComponent<Node>().id == currentIndex);
             Debug.Log("lastIndex =" + index);
             if (nodes.Count > 0 && index + 2 > nodes.Count)
@@ -83,12 +101,8 @@ public class HapringController : MonoBehaviour {
         }
         else if(direction == Direction.left)
         {
+
             nodes = HighlightNode.GetAllHighlighted();
-            if (currentIndex == -1 && nodes.Count > 0)
-            {
-                Debug.Log("first assigned");
-                currentIndex = nodes[0].GetComponent<Node>().id;
-            }
             int index = nodes.FindIndex(c => c.GetComponent<Node>().id == currentIndex);
             Debug.Log("lastIndex =" + index);
             if (nodes.Count > 0 && (index - 1) >= 0)
@@ -123,16 +137,19 @@ public class HapringController : MonoBehaviour {
     }
     public void chooseSelectedNode()
     {
-        if(currentSelectNode.GetComponent<Node>().derAuserwaehlte)
+        if (currentSelectNode != null)
         {
-            experimentLogger.getLogger().correctNodehit = "t";
-        }
-        else
-        {
-            experimentLogger.getLogger().correctNodehit = "f";
-        }
-        currentSelectNode.GetComponent<Node>().gotHit = true;
-        
+            if (currentSelectNode.GetComponent<Node>().derAuserwaehlte)
+            {
+                experimentLogger.getLogger().correctNodehit = "t";
+            }
+            else
+            {
+                experimentLogger.getLogger().correctNodehit = "f";
+            }
+            currentIndex = -1;
+            currentSelectNode.GetComponent<Node>().gotHit = true;
+        } 
     }
     
     enum Direction { up, down, left, right};
