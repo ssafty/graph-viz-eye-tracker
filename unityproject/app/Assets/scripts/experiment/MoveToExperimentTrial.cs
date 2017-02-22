@@ -28,7 +28,7 @@ public class MoveToExperimentTrial : ExperimentTrial
 				gameController.GetComponent<Bubble> ().rayCastAllowed = false;
 			}
 			Bubble.changeBubbleSize (_graph.BubbleSize);
-			first = false;
+
 			createGraph ();
 			highlight ();
 			graphCreated = true;
@@ -39,26 +39,29 @@ public class MoveToExperimentTrial : ExperimentTrial
 
 			experimentLogger.getLogger ().currentGraph = _graph.Name;
 			experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
-
+			first = false;
 		}
        
 	}
 
 	private void resetColor ()
 	{
-		if (nodeToFind.GetComponent<Node> ().id != GameObject.FindGameObjectWithTag ("GameController").GetComponent<HapringController> ().currentIndex) {
-			nodeToFind.Highlight (colorDesAuserwaehlten);
-		} else {
-			nodeToFind.Highlight (colorDesGefundenenAuserwaehlten);
+
+		try {
+			if (nodeToFind.GetComponent<Node> ().id != GameObject.FindGameObjectWithTag ("GameController").GetComponent<HapringController> ().currentIndex) {
+				nodeToFind.Highlight (colorDesAuserwaehlten);
+			} else {
+				nodeToFind.Highlight (colorDesGefundenenAuserwaehlten);
+			}
+		} catch (System.Exception ex) {
+			
 		}
 	}
 
 	public void update ()
 	{
-		if (!done) {
-			if (hightlightCounter >= _graph.NumberHighlightedNodes) {
-				done = true;
-			} else {
+		if (!first) {
+			if (hightlightCounter < _graph.NumberHighlightedNodes) {
 				if (nodeToFind.gotHit) {
 					Bubble.moveTo (Bubble.REST_POS);
 					Debug.LogWarning ("got hit");
@@ -67,11 +70,16 @@ public class MoveToExperimentTrial : ExperimentTrial
 					nodeToFind.gotHit = false;
 					nodeToFind.HighlightDefault ();
 					highlight ();
-
+			
 				}
 				resetColor ();
+			} else {
+				done = true;
 			}
-		}      
+		}
+
+			
+		      
 	}
 
 	private void highlight ()
