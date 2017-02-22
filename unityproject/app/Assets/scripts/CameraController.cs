@@ -14,8 +14,7 @@ public class CameraController : MonoBehaviour
 
 	private bool mouseActive = false;
 
-	bool isCameraTransitionRunning = false;
-	float CameraTransitionsmoothing = 5f;
+
 	Vector3 targetPos;
 	Vector3 targetForward = new Vector3 (0, 0, 1);
 	private Camera camLeft, camRight;

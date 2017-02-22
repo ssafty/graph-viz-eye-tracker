@@ -44,12 +44,11 @@ public class Bubble : MonoBehaviour
 
             if (go != null)
             {
-                
+                Debug.Log("newPos "+newPos);
                 if (newPos == lastHit)
                 {
                     dwellCount++;
-                    lastHit = newPos;
-                    //Debug.Log("increasing dwell counter to " + dwellCount);
+                    Debug.Log("increasing dwell counter to " + dwellCount);
                 }
                 else
                 {
@@ -150,31 +149,38 @@ public class Bubble : MonoBehaviour
 	}
     Vector3 getPosition(GameObject go)
     {
-        return go != null ? go.transform.position : Vector3.zero;
+        return go != null ? go.transform.position : REST_POS;
     }
 	GameObject bestBubble (Vector2 pos)
 	{
-		RaycastHit[] hits;
-		Ray ray = Camera.main.ScreenPointToRay (pos);
+        if (pos != Vector2.zero)
+        {
+            RaycastHit[] hits;
+            Ray ray = Camera.main.ScreenPointToRay(pos);
 
-		hits = Physics.RaycastAll (ray);
-		Vector3 positionSum = Vector3.zero;
-		float bestShotDistance = float.MaxValue;
-		GameObject bestShotNode = null;
-		for (int i = 0; i < hits.Length; i++) {
-			RaycastHit hit = hits [i];
-			if (hit.collider.gameObject.tag == "Node") {
+            hits = Physics.RaycastAll(ray);
+            Vector3 positionSum = Vector3.zero;
+            float bestShotDistance = float.MaxValue;
+            GameObject bestShotNode = null;
+            for (int i = 0; i < hits.Length; i++)
+            {
+                RaycastHit hit = hits[i];
+                if (hit.collider.gameObject.tag == "Node")
+                {
 
-				float distance = Vector2.Distance (new Vector2 (hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y), new Vector2 (hit.point.x, hit.point.y));
+                    float distance = Vector2.Distance(new Vector2(hit.collider.gameObject.transform.position.x, hit.collider.gameObject.transform.position.y), new Vector2(hit.point.x, hit.point.y));
 
-				if (distance < bestShotDistance) {
-					bestShotDistance = distance;
-					bestShotNode = hit.collider.gameObject;
-				}
-			}
-		}
-        
-		return bestShotNode;
+                    if (distance < bestShotDistance)
+                    {
+                        bestShotDistance = distance;
+                        bestShotNode = hit.collider.gameObject;
+                    }
+                }
+            }
+
+            return bestShotNode;
+        }
+        return null;
 	}
 
 	public static void moveTo (Vector3 pos)

@@ -43,15 +43,19 @@ public class StereoScript : MonoBehaviour
 		if (stereo) {
 			camRight.gameObject.SetActive (true);
 			camLeft.rect = new Rect (0, 0, 0.5f, 1);
-			camLeft.transform.Translate (new Vector3 (-(0.5f * stereoDist), 0, 0));
+			camLeft.transform.Translate (new Vector3 (-0.5f * stereoDist, 0, 0));
 			camRight.transform.Translate (new Vector3 (0.5f * stereoDist, 0, 0));
 	
 			camLeft.transform.Rotate (new Vector3 (0, stereoConv, 0));
-			camRight.transform.Rotate (new Vector3 (0, stereoConv, 0));
+			camRight.transform.Rotate (new Vector3 (0, -stereoConv, 0));
 			X_DISTORTION = 0.45f;
 		} else {
 			camLeft.rect = new Rect (0, 0, 1, 1);
 			camRight.gameObject.SetActive (false);
+			camLeft.transform.position = camLeft.transform.parent.transform.position;
+			camRight.transform.position = camLeft.transform.parent.transform.position;
+			camLeft.transform.rotation = Quaternion.identity;
+			camRight.transform.rotation = Quaternion.identity;
 			X_DISTORTION = 1;
 		}
 	}

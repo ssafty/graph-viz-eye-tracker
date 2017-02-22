@@ -13,6 +13,7 @@ public class udpsocket : MonoBehaviour
     public GameObject eyepointer;
     public Vector2 LastEyeCoordinate;
     public GameObject camera;
+    public GameObject mainGameObject;
 
     createMarker markerScript;
     Bubble bubbleScript;
@@ -21,20 +22,25 @@ public class udpsocket : MonoBehaviour
 	float screenDiagonal;
 
 	public List<Vector2> processingList; 
+
+	private GameObject eyepointer_copy;
     
 	void Start()
     {
 		processingList = new List<Vector2> ();
         markerScript = camera.GetComponent<createMarker>();
-        bubbleScript = camera.GetComponent<Bubble>();
+        bubbleScript = mainGameObject.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
+		eyepointer_copy = GameObject.Instantiate (eyepointer);
+		eyepointer_copy.transform.parent = eyepointer.transform.parent;
+		eyepointer_copy.SetActive (false);
 
 		screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
     }
 
     void Update()
     {
-        //bubbleScript.calcBubble(LastEyeCoordinate);
+        bubbleScript.calcBubble(LastEyeCoordinate);
 
 		//filter out when list gets 30 points
 		if (processingList.Count >= 10) {
@@ -47,7 +53,15 @@ public class udpsocket : MonoBehaviour
 			}
 		}
 
-        rect.anchoredPosition = LastEyeCoordinate;
+		eyepointer_copy.SetActive (StereoScript.X_DISTORTION != 1.0f);
+		if (StereoScript.X_DISTORTION == 1.0f) {
+			eyepointer.GetComponent<RectTransform> ().anchoredPosition = LastEyeCoordinate;
+		} else {
+			Vector2 new_pos = LastEyeCoordinate - new Vector2 (Screen.width * 0.25f, 0f);
+			Vector2 pos_copy = new_pos + new Vector2 (Screen.width * 0.5f, 0f);
+			eyepointer.GetComponent<RectTransform> ().anchoredPosition = new_pos;
+			eyepointer_copy.GetComponent<RectTransform> ().anchoredPosition = pos_copy;
+		}
     }
     /*
      private void recv(IAsyncResult res)
