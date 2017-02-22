@@ -21,6 +21,8 @@ public class udpsocket : MonoBehaviour
 	float screenDiagonal;
 
 	public List<Vector2> processingList; 
+
+	private GameObject eyepointer_copy;
     
 	void Start()
     {
@@ -28,6 +30,9 @@ public class udpsocket : MonoBehaviour
         markerScript = camera.GetComponent<createMarker>();
         bubbleScript = camera.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
+		eyepointer_copy = GameObject.Instantiate (eyepointer);
+		eyepointer_copy.transform.parent = eyepointer.transform.parent;
+		eyepointer_copy.SetActive (false);
 
 		screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
     }
@@ -47,7 +52,15 @@ public class udpsocket : MonoBehaviour
 			}
 		}
 
-        rect.anchoredPosition = LastEyeCoordinate;
+		eyepointer_copy.SetActive (StereoScript.X_DISTORTION != 1.0f);
+		if (StereoScript.X_DISTORTION == 1.0f) {
+			eyepointer.GetComponent<RectTransform> ().anchoredPosition = LastEyeCoordinate;
+		} else {
+			Vector2 new_pos = LastEyeCoordinate - new Vector2 (Screen.width * 0.25f, 0f);
+			Vector2 pos_copy = new_pos + new Vector2 (Screen.width * 0.5f, 0f);
+			eyepointer.GetComponent<RectTransform> ().anchoredPosition = new_pos;
+			eyepointer_copy.GetComponent<RectTransform> ().anchoredPosition = pos_copy;
+		}
     }
     /*
      private void recv(IAsyncResult res)
