@@ -9,7 +9,7 @@ public class MoveToExperimentController : ExperimentController
 	[SerializeField]
 	Vector3 targetPosition;
 	[SerializeField]
-	int numberOfTrialsForEveryGraph = 2;
+	int numberOfTrialsForEveryGraph = 5;
 	List<Graph> graphList;
 
 	// Use this for initialization
@@ -30,14 +30,10 @@ public class MoveToExperimentController : ExperimentController
 		Debug.LogWarning ("FillTrials()");
 		currentTrials = new List<ExperimentTrial> ();
 		graphList = new List<Graph> ();
-		graphList.Add (new Graph ("Tree_50", 50, numberOfTrialsForEveryGraph, 5.0f, experimentType.EYE));
-		graphList.Add (new Graph ("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
-		graphList.Add (new Graph ("Tree_150_1", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
-		graphList.Add (new Graph ("Tree_50_1", 50, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
+		graphList.Add (new Graph ("Tree_50", 50, numberOfTrialsForEveryGraph, 5.0f, experimentType.MOUSE));
+		graphList.Add (new Graph ("Tree_50", 50, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
+		graphList.Add (new Graph ("Tree_150", 50, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
 
-		//graphList.Add(new Graph("Tree_450",450,5));
-	
-		//graphList.Add(new Graph("500_nodes",500,5));
 		graphList = ShuffleList<Graph> (graphList);
 
 		int k = 0;

@@ -61,11 +61,11 @@ public class MoveToExperimentTrial : ExperimentTrial
 	public void update ()
 	{
 		if (!first) {
-			if (hightlightCounter < _graph.NumberHighlightedNodes) {
+			if (hightlightCounter < _graph.NumberHighlightedNodes && !done) {
 				if (nodeToFind.gotHit) {
 					Bubble.moveTo (Bubble.REST_POS);
-					Debug.LogWarning ("got hit");
 					hightlightCounter++;
+					Debug.LogWarning ("Got Hit. Current hits: " + hightlightCounter + " Needed: " + _graph.NumberHighlightedNodes);
 					nodeToFind.derAuserwaehlte = false;
 					nodeToFind.gotHit = false;
 					nodeToFind.HighlightDefault ();

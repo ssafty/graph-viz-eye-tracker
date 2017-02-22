@@ -37,7 +37,10 @@ public class TrialState : ExperimentState
 
 			mttrial.update ();
 			if (mttrial.done) {
-
+				GameObject[] nodes = GameObject.FindGameObjectsWithTag ("Node");
+				foreach (GameObject node in nodes) {
+					GameObject.Destroy (node);
+				}
 				ec.CurrentTrialIndex++;
 			}
 		} else {
