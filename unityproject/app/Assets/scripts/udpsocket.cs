@@ -13,6 +13,7 @@ public class udpsocket : MonoBehaviour
     public GameObject eyepointer;
     public Vector2 LastEyeCoordinate;
     public GameObject camera;
+    public GameObject mainGameObject;
 
     createMarker markerScript;
     Bubble bubbleScript;
@@ -28,7 +29,7 @@ public class udpsocket : MonoBehaviour
     {
 		processingList = new List<Vector2> ();
         markerScript = camera.GetComponent<createMarker>();
-        bubbleScript = camera.GetComponent<Bubble>();
+        bubbleScript = mainGameObject.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
 		eyepointer_copy = GameObject.Instantiate (eyepointer);
 		eyepointer_copy.transform.parent = eyepointer.transform.parent;
@@ -39,7 +40,7 @@ public class udpsocket : MonoBehaviour
 
     void Update()
     {
-        //bubbleScript.calcBubble(LastEyeCoordinate);
+        bubbleScript.calcBubble(LastEyeCoordinate);
 
 		//filter out when list gets 30 points
 		if (processingList.Count >= 10) {
