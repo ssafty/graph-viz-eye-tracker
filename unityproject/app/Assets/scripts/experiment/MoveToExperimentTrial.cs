@@ -39,8 +39,8 @@ public class MoveToExperimentTrial : ExperimentTrial
             experimentLogger.getLogger().bubbleSize = _graph.BubbleSize.ToString();
             graphCreated = true;
             Vector3 pos = Node.GetNodeWithId(0).transform.position;
-            Camera.main.transform.position = new Vector3(pos.x, pos.y, pos.z -20);
-            Camera.main.transform.LookAt(pos);
+            GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(pos.x, pos.y, pos.z -20);
+            GameObject.FindGameObjectWithTag("metaCamera").transform.LookAt(pos);
 
         }
        
