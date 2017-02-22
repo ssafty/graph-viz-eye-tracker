@@ -22,7 +22,7 @@ public class Calib3D : MonoBehaviour
     public const int NUM_LAYERS = 3;
     //public const int NUM_LAYERS = 3;
     public const int MARKERS_PER_LAYER = 9;
-    public const int CALIBRATION_ROUNDS = 5;
+    public const int CALIBRATION_ROUNDS = 1;
 
     //config for data storage per calib round
     public const int READINGS_PER_CALIBRATION = 100;
@@ -376,10 +376,10 @@ public class Calib3D : MonoBehaviour
         // fake pupil eye with mouse
 
 #if USE_LEFT_EYE
-        //this.current_left_pupil_x = Input.mousePosition.x;
-        //this.current_left_pupil_y = Input.mousePosition.y;
-        this.current_left_pupil_x = gaze.LeftEyePos.x;
-        this.current_left_pupil_y = gaze.LeftEyePos.y;
+        this.current_left_pupil_x = Input.mousePosition.x;
+        this.current_left_pupil_y = Input.mousePosition.y;
+        //this.current_left_pupil_x = gaze.LeftEyePos.x;
+        //this.current_left_pupil_y = gaze.LeftEyePos.y;
 #endif
 #if USE_RIGHT_EYE
         //this.current_right_pupil_x = Input.mousePosition.x;

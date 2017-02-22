@@ -111,10 +111,10 @@ public class TestAfterCalib3D : MonoBehaviour
         // fake pupil eye with mouse
 
 #if USE_LEFT_EYE
-        //this.current_left_pupil_x = Input.mousePosition.x;
-        //this.current_left_pupil_y = Input.mousePosition.y;
-        this.current_left_pupil_x = gaze.LeftEyePos.x;
-        this.current_left_pupil_y = gaze.LeftEyePos.y;
+        this.current_left_pupil_x = Input.mousePosition.x;
+        this.current_left_pupil_y = Input.mousePosition.y;
+       // this.current_left_pupil_x = gaze.LeftEyePos.x;
+        //this.current_left_pupil_y = gaze.LeftEyePos.y;
 #endif
 #if USE_RIGHT_EYE
         //this.current_right_pupil_x = Input.mousePosition.x;
