@@ -46,8 +46,6 @@ public class createMarker : MonoBehaviour
 
 		offset = offset * ((0.5f + scale) / (scale * 0.85f) - 0.8f);
 
-		print ("HALLO 1: " + markers[0].name);
-
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < columns; j++) {
 				float x = 0.0f;
@@ -85,10 +83,6 @@ public class createMarker : MonoBehaviour
 					if (newPos.x >= SurfaceTopRight.x && newPos.y >= SurfaceTopRight.y) {
 						SurfaceTopRight = newPos; //+ new Vector2 (rect.width, rect.height);
 					}
-						
-					if (lastMarker == 0) {
-						markers [lastMarker].GetComponentInChildren<Image>().color = Color.red;
-					}
 
 					lastMarker++;
 				}
@@ -113,10 +107,6 @@ public class createMarker : MonoBehaviour
 				current_marker.GetComponent<RectTransform> ().anchoredPosition = new_pos;
 				duplicate.GetComponent<RectTransform> ().anchoredPosition = pos_dup;
 				created.Add (duplicate);
-
-				if (i == 0) {
-					current_marker.GetComponentInChildren<Image> ().color = Color.red;
-				}
 			}
 
 			Rect inner_marker = GameObject.Find ("marker_2").GetComponent<RectTransform> ().rect;
@@ -127,12 +117,8 @@ public class createMarker : MonoBehaviour
 			Debug.Log (newScreen);
 		}
 
-		print ("HALLO 2: " + markers[0].name);
-
 		created.AddRange (markers);
 		return created.ToArray ();
-
-		print ("HALLO 3: " + markers[0].name);
 	}
 
 	
