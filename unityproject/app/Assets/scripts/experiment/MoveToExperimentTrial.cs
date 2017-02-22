@@ -3,6 +3,7 @@ using System.Collections;
 
 public class MoveToExperimentTrial : ExperimentTrial
 {
+
 	private Graph _graph;
 	bool first = true;
 	int hightlightCounter = 0;
@@ -11,6 +12,7 @@ public class MoveToExperimentTrial : ExperimentTrial
 	public static Color colorDesGefundenenAuserwaehlten = new Color (1.0f, 1.0f, 0.0f);
 	Node nodeToFind;
 	public bool done = false;
+
 
 	public Graph Graph {
 		get {
@@ -33,10 +35,10 @@ public class MoveToExperimentTrial : ExperimentTrial
 			highlight ();
 			graphCreated = true;
 
-			Vector3 pos = Node.GetNodeWithId (0).transform.position;
-			Camera.main.transform.position = new Vector3 (pos.x, pos.y, pos.z - 20);
-			Camera.main.transform.LookAt (pos);
-
+			Vector3 pos = Node.GetNodeWithId(0).transform.position;
+      GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(pos.x, pos.y, pos.z -20);
+      GameObject.FindGameObjectWithTag("metaCamera").transform.LookAt(pos);
+      
 			experimentLogger.getLogger ().currentGraph = _graph.Name;
 			experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
 			first = false;
