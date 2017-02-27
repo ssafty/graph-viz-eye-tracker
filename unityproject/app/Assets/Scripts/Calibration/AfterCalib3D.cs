@@ -32,12 +32,12 @@ public class AfterCalib3D : MonoBehaviour {
     private float current_right_pupil_y;
 #endif
 #if USE_LEFT_EYE
-    private float calibrated_left_pupil_x;
-    private float calibrated_left_pupil_y;
+    public float left_pupil_x;
+    public float left_pupil_y;
 #endif
 #if USE_RIGHT_EYE
-    private float calibrated_right_pupil_x;
-    private float calibrated_right_pupil_y;
+    public float right_pupil_x;
+    public float right_pupil_y;
 #endif
 
     public void use_calibration(bool use)
@@ -72,13 +72,13 @@ public class AfterCalib3D : MonoBehaviour {
     {
         if (useCalibration)
         {
-            this.calibrated_left_pupil_x =
+            this.left_pupil_x =
                 all_layers_coeff_A[this.selectLayer, 0] +
                 all_layers_coeff_A[this.selectLayer, 1] * this.current_left_pupil_x +
                 all_layers_coeff_A[this.selectLayer, 2] * this.current_left_pupil_y +
                 all_layers_coeff_A[this.selectLayer, 3] * this.current_left_pupil_x * this.current_left_pupil_x +
                 all_layers_coeff_A[this.selectLayer, 4] * this.current_left_pupil_y * this.current_left_pupil_y;
-            this.calibrated_left_pupil_y =
+            this.left_pupil_y =
                 all_layers_coeff_B[this.selectLayer, 0] +
                 all_layers_coeff_B[this.selectLayer, 1] * this.current_left_pupil_x +
                 all_layers_coeff_B[this.selectLayer, 2] * this.current_left_pupil_y +
@@ -87,8 +87,8 @@ public class AfterCalib3D : MonoBehaviour {
         }
         else
         {
-            this.calibrated_left_pupil_x = this.current_left_pupil_x;
-            this.calibrated_left_pupil_y = this.current_left_pupil_y;
+            this.left_pupil_x = this.current_left_pupil_x;
+            this.left_pupil_y = this.current_left_pupil_y;
         }
 
     }
@@ -96,11 +96,11 @@ public class AfterCalib3D : MonoBehaviour {
     public void OnGUI()
     {
 #if USE_LEFT_EYE
-        GUI.Box(new Rect(this.calibrated_left_pupil_x - 15, Screen.height - this.calibrated_left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
+        GUI.Box(new Rect(this.left_pupil_x - 15, Screen.height - this.left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
         GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[O]"));
 #endif
 #if USE_RIGHT_EYE
-        GUI.Box(new Rect(this.calibrated_right_pupil_x - 15, Screen.height - this.calibrated_right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
+        GUI.Box(new Rect(this.right_pupil_x - 15, Screen.height - this.right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
         GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[O]"));
 #endif
     }
