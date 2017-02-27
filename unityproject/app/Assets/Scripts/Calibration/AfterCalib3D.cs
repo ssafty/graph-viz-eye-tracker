@@ -32,18 +32,28 @@ public class AfterCalib3D : MonoBehaviour {
     private float current_right_pupil_y;
 #endif
 #if USE_LEFT_EYE
-    public float left_pupil_x;
-    public float left_pupil_y;
+    private float left_pupil_x;
+    private float left_pupil_y;
 #endif
 #if USE_RIGHT_EYE
-    public float right_pupil_x;
-    public float right_pupil_y;
+    private float right_pupil_x;
+    private float right_pupil_y;
 #endif
 
     public void use_calibration(bool use)
     {
         this.useCalibration = use;
     }
+
+	public Vector2 get_cursor_vec()
+	{
+		if (this.enabled) {
+			return new Vector2 (this.left_pupil_x, this.left_pupil_y);
+		} else {
+			Debug.LogError ("You cannot use the coordinates as calibration is not done ..");
+			return Vector2.zero;
+		}
+	}
 
     // Use this for initialization
     public void load_calib_file_and_initialize (string participant_name, string working_dir)
