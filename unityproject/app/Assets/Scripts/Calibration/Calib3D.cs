@@ -19,10 +19,10 @@ public class Calib3D : MonoBehaviour
     public PupilGazeTracker gaze;
 
     // config for full calib setup
-    public const int NUM_LAYERS = 3;
+    public const int NUM_LAYERS = 1;
     //public const int NUM_LAYERS = 3;
     public const int MARKERS_PER_LAYER = 9;
-    public const int CALIBRATION_ROUNDS = 1;
+    public const int CALIBRATION_ROUNDS = 2;
 
     //config for data storage per calib round
     public const int READINGS_PER_CALIBRATION = 100;
@@ -38,7 +38,7 @@ public class Calib3D : MonoBehaviour
 
     // participant details
     public string participant_name;
-    private string calib_file_path;
+	private string working_dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\EyeTracker\\" ;
 
     // object to store all participant data
     private Participant participant;
@@ -77,10 +77,13 @@ public class Calib3D : MonoBehaviour
         if (this.participant_name == null || this.participant_name == "")
         {
             Debug.LogWarning("You did not provide participant name using default name!!!");
-            this.participant_name = "Default Name";
-        }
-        participant.name = this.participant_name;
-        this.calib_file_path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "//" + participant.name + ".xml";
+            this.participant_name = "Unknown_Name";
+		}
+		this.participant_name += "__" + DateTime.Now;
+		this.participant_name = this.participant_name.Replace("/", "_");
+		this.participant_name = this.participant_name.Replace(":", "_");
+		this.participant_name = this.participant_name.Replace(" ", "_");
+		participant.name = this.participant_name;
 
         // initialize all the required layers and calib points to store the recorded data
         for (int i = 0; i < Calib3D.NUM_LAYERS; i++)
@@ -185,7 +188,7 @@ public class Calib3D : MonoBehaviour
         // if calib done nothing to do
         if (this.calib_done)
         {
-            Debug.Log("Calibration is completed. Check file " + this.calib_file_path);
+			Debug.Log("Calibration is completed. Check file " + this.participant_name + ".xml");
             return;
         }
 
@@ -286,14 +289,43 @@ public class Calib3D : MonoBehaviour
                         Debug.Log("Calculating calibration statistics ...");
                         this.calculate_calibration_statistics_mean();
                         Debug.Log("Saving file ...");
-                        this.WriteXML();
+						this.WriteXML();
+						Debug.Log("Calculating coefficents and any other things with python externally ...");
+						//this.calculate_calibration_statistics_mean();
+						this.give_python_a_job();
+						Debug.Log("Enabeling the TestCalibration script");
+						this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
+						Debug.Log("Load XML file that is calibrated by python script ...");
+						this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir);
+						Debug.Log("Destroy ..... the calib script");
+						Destroy(this);
                     }
                 }
             }
 
             return;
         }
-    }
+	}
+
+	public void give_python_a_job()
+	{
+		string calibjob_file_path = this.working_dir + this.participant_name + ".calibjob";
+		if (!File.Exists(calibjob_file_path))
+		{
+			// create job file
+			File.Create(calibjob_file_path);
+
+			// check if python has finished with calibration job
+			while(!File.Exists(calibjob_file_path + "done"))
+			{
+				new WaitForSeconds(1);
+			}
+		}
+		else
+		{
+			Debug.LogError("This should not happen");
+		}
+	}
 
     public void calculate_calibration_statistics_mean()
     {
@@ -518,7 +550,7 @@ public class Calib3D : MonoBehaviour
         System.Xml.Serialization.XmlSerializer writer =
             new System.Xml.Serialization.XmlSerializer(typeof(Participant));
 
-        var path = this.calib_file_path;
+		var path = this.working_dir + this.participant_name + ".xml";
         System.IO.FileStream file = System.IO.File.Create(path);
 
         writer.Serialize(file, this.participant);

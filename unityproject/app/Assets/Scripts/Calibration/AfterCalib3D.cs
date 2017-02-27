@@ -11,7 +11,7 @@ public class AfterCalib3D : MonoBehaviour {
 
     // participant details
     private string participant_name;
-    private string calib_file_path;
+	private string working_dir;
 
     // select layer
     private int selectLayer = 0;
@@ -46,14 +46,14 @@ public class AfterCalib3D : MonoBehaviour {
     }
 
     // Use this for initialization
-    public void load_calib_file_and_initialize (string participant_name, string calib_file_path)
+    public void load_calib_file_and_initialize (string participant_name, string working_dir)
     {
         // disable cursor
         Cursor.visible = false;
 
         this.participant_name = participant_name;
+		this.working_dir = working_dir;
 
-        this.calib_file_path = calib_file_path;
         this.ReadXML();
     }
 	
@@ -129,7 +129,7 @@ public class AfterCalib3D : MonoBehaviour {
         System.Xml.Serialization.XmlSerializer serializer =
             new System.Xml.Serialization.XmlSerializer(typeof(Calib3D.Participant));
 
-        System.IO.FileStream file = System.IO.File.OpenRead(this.calib_file_path);
+		System.IO.FileStream file = System.IO.File.OpenRead(this.working_dir + this.participant_name + ".xml");
 
         this.participant = (Calib3D.Participant)serializer.Deserialize(file);
 
