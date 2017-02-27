@@ -12,7 +12,10 @@ using NetMQ.Sockets;
 using System;
 using System.IO;
 using MsgPack.Serialization;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Pupil
 {
@@ -232,8 +235,9 @@ public class PupilGazeTracker:MonoBehaviour
 	public int SamplesCount=4;
 	public float CanvasWidth = 640;
 	public float CanvasHeight=480;
+	public Double GazeConfidence=0.7;
 
-	private Boolean isVRmode;
+	private Boolean isVRmode = false;
 
 	int _gazeFPS = 0;
 	int _currentFps = 0;
@@ -300,7 +304,9 @@ public class PupilGazeTracker:MonoBehaviour
 		leftEye = new EyeData (SamplesCount);
 		rightEye= new EyeData (SamplesCount);
 
+		#if UNITY_EDITOR
 		isVRmode = PlayerSettings.virtualRealitySupported;
+		#endif
 
 		_dataLock = new object ();
         udpsocketScript = camera.GetComponent<udpsocket>();
@@ -407,7 +413,7 @@ public class PupilGazeTracker:MonoBehaviour
                                 foreach (Pupil.GazeOnSrf gazeData in _pupilGazeOnSurface.gaze_on_srf)
                                 {
                                     //Debug.Log("confidence: " + gazeData.confidence);
-                                    if (gazeData.confidence > 0.5f && gazeData.on_srf)
+									if (gazeData.confidence > GazeConfidence && gazeData.on_srf)
                                     {
                                         Vector2 norm= new Vector2((float)gazeData.norm_pos[0], (float)gazeData.norm_pos[1]);
                                         //Debug.Log("norm pos: " + norm);
@@ -425,7 +431,7 @@ public class PupilGazeTracker:MonoBehaviour
 
 								_pupilData = JsonUtility.FromJson<Pupil.PupilData3D>(mmap.ToString());
 								Debug.Log(_pupilData);
-								if(_pupilData.confidence>0.5f)
+								if(_pupilData.confidence > GazeConfidence)
 								{
 									OnPacket(_pupilData);
 								}
@@ -592,8 +598,8 @@ public class PupilGazeTracker:MonoBehaviour
 	void OnGUI()
 	{
 		string str="Capture Rate="+FPS;
-		str += "\nLeft Eye:" + LeftEyePos.ToString ();
-		str += "\nRight Eye:" + RightEyePos.ToString ();
-		GUI.TextArea (new Rect (0, 0, 200, 50), str);
+		str += "\tLeft Eye:" + LeftEyePos.ToString ();
+		str += "\tRight Eye:" + RightEyePos.ToString ();
+		GUI.TextArea (new Rect (0, 0, 500, 20), str);
 	}
 }

@@ -1,6 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
+
+using System.Linq;
+
 
 public class createMarker : MonoBehaviour
 {
@@ -12,6 +16,9 @@ public class createMarker : MonoBehaviour
 	Vector2 SurfaceBottomLeft = Vector2.zero;
 	Vector2 SurfaceTopRight = Vector2.zero;
 	public Vector2 newScreen;
+
+	// used for debugging in the UnityEditor
+	public KeyCode reduceMarkerSize = KeyCode.F7;
 
 
 	// Use this for initialization
@@ -33,6 +40,7 @@ public class createMarker : MonoBehaviour
 		float hStepsize = screenWidth / (columns - 1);
 		int lastMarker = 0;
 		GameObject[] markers = GameObject.FindGameObjectsWithTag (markerTag);
+		markers = markers.OrderBy(go=>go.name.GetHashCode()).ToList().ToArray();
 
 		GameObject marker_object = GameObject.Find (canvasTag);
 
@@ -75,31 +83,40 @@ public class createMarker : MonoBehaviour
 					if (newPos.x >= SurfaceTopRight.x && newPos.y >= SurfaceTopRight.y) {
 						SurfaceTopRight = newPos; //+ new Vector2 (rect.width, rect.height);
 					}
-						
+
 					lastMarker++;
 				}
 			}
 		}
 
+
 		if (wDist != 1) {
+			GameObject[] stereo_markers = GameObject.FindGameObjectsWithTag ("marker_stereo");
+
+			markers = markers.OrderBy(go=>go.name.GetHashCode()).ToList().ToArray();
+			stereo_markers = markers.OrderBy(go=>go.name.GetHashCode()).ToList().ToArray();
+
 			for (int i = 0; i < markers.Length; i++) {
-				Vector2 new_pos = markers [i].GetComponent<RectTransform> ().anchoredPosition;
-				GameObject duplicate = GameObject.Instantiate (markers [i]);
+				GameObject current_marker = stereo_markers [i];
+				current_marker.GetComponent<RectTransform> ().anchoredPosition = markers [i].GetComponent<RectTransform> ().anchoredPosition;
+				Vector2 new_pos = current_marker.GetComponent<RectTransform> ().anchoredPosition;
+				GameObject duplicate = GameObject.Instantiate (current_marker);
 				duplicate.transform.parent = marker_object.transform;
 				Vector2 pos_dup = new_pos + new Vector2 (Screen.width * 0.25f, 0f);
 				new_pos -= new Vector2 (Screen.width * 0.25f, 0f);
-				markers [i].GetComponent<RectTransform> ().anchoredPosition = new_pos;
+				current_marker.GetComponent<RectTransform> ().anchoredPosition = new_pos;
 				duplicate.GetComponent<RectTransform> ().anchoredPosition = pos_dup;
 				created.Add (duplicate);
 			}
 
-			Rect inner_marker = GameObject.Find ("marker_1").GetComponent<RectTransform> ().rect;
+			Rect inner_marker = GameObject.Find ("marker_2").GetComponent<RectTransform> ().rect;
 			SurfaceBottomLeft -= new Vector2 (inner_marker.width / 2, inner_marker.height / 2);
 			SurfaceTopRight += new Vector2 (inner_marker.width / 2, inner_marker.height / 2);
 
 			newScreen = new Vector2 (SurfaceTopRight.x - SurfaceBottomLeft.x, SurfaceTopRight.y - SurfaceBottomLeft.y);
 			Debug.Log (newScreen);
 		}
+
 		created.AddRange (markers);
 		return created.ToArray ();
 	}
@@ -108,5 +125,10 @@ public class createMarker : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (Input.GetKeyDown (reduceMarkerSize)) {
+			foreach (GameObject m in GameObject.FindGameObjectsWithTag ("marker")){
+				m.transform.localScale -= new Vector3(0.05f,0.05f,0f);
+			}
+		}
 	}
 }

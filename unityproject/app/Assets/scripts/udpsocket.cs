@@ -12,29 +12,56 @@ public class udpsocket : MonoBehaviour
     UdpClient Client;
     public GameObject eyepointer;
     public Vector2 LastEyeCoordinate;
+    public GameObject camera;
+    public GameObject mainGameObject;
 
     createMarker markerScript;
+    Bubble bubbleScript;
     RectTransform rect;
 
+	float screenDiagonal;
+
 	public List<Vector2> processingList; 
+
+	private GameObject eyepointer_copy;
     
 	void Start()
     {
 		processingList = new List<Vector2> ();
-        markerScript = this.GetComponent<createMarker>();
+        markerScript = camera.GetComponent<createMarker>();
+        bubbleScript = mainGameObject.GetComponent<Bubble>();
         rect = eyepointer.GetComponent<RectTransform>();
-      
+		eyepointer_copy = GameObject.Instantiate (eyepointer);
+		eyepointer_copy.transform.parent = eyepointer.transform.parent;
+		eyepointer_copy.SetActive (false);
+
+		screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
     }
 
     void Update()
     {
+        bubbleScript.calcBubble(LastEyeCoordinate);
+
 		//filter out when list gets 30 points
-		if (processingList.Count >= 30) {
+		if (processingList.Count >= 10) {
             List<Vector2> processingList_snapshot = processingList;
             processingList = new List<Vector2>();
-            LastEyeCoordinate = FilterGazeCoordinates (processingList_snapshot, true);
+			Vector2 currentGaze = FilterGazeCoordinates (processingList_snapshot, false);
+
+			if (NotNoise (currentGaze)) {
+				LastEyeCoordinate = currentGaze;
+			}
 		}
-        rect.anchoredPosition = LastEyeCoordinate;
+
+		eyepointer_copy.SetActive (StereoScript.X_DISTORTION != 1.0f);
+		if (StereoScript.X_DISTORTION == 1.0f) {
+			eyepointer.GetComponent<RectTransform> ().anchoredPosition = LastEyeCoordinate;
+		} else {
+			Vector2 new_pos = LastEyeCoordinate - new Vector2 (Screen.width * 0.25f, 0f);
+			Vector2 pos_copy = new_pos + new Vector2 (Screen.width * 0.5f, 0f);
+			eyepointer.GetComponent<RectTransform> ().anchoredPosition = new_pos;
+			eyepointer_copy.GetComponent<RectTransform> ().anchoredPosition = pos_copy;
+		}
     }
     /*
      private void recv(IAsyncResult res)
@@ -49,6 +76,21 @@ public class udpsocket : MonoBehaviour
 		}
     }
     */
+
+	Boolean NotNoise(Vector2 currentGaze){
+		if (LastEyeCoordinate == null)
+			return true;
+		
+		// distance of the currentGaze from previous reading
+		float distance = Vector2.Distance(currentGaze, LastEyeCoordinate);
+
+		if (screenDiagonal == 0) {
+			screenDiagonal = Vector2.Distance (Vector2.zero, markerScript.newScreen);
+		}
+
+		return (distance / screenDiagonal) > 0.05f;
+	}
+
 	Vector2 FilterGazeCoordinates(List<Vector2> processingList, Boolean flip_y){
 
         List<Vector2> ModifiedCoordinates = new List<Vector2>();
