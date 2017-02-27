@@ -25,10 +25,10 @@ public class Calib3D : MonoBehaviour
     public const int CALIBRATION_ROUNDS = 2;
 
     //config for data storage per calib round
-    public const int READINGS_PER_CALIBRATION = 100;
-    public const int FRAMES_TO_WAIT_AT_START = 30;
+    public const int READINGS_PER_CALIBRATION = 10;
+    public const int FRAMES_TO_WAIT_AT_START = 1;
     public const int FRAMES_TO_CAPTURE = Calib3D.READINGS_PER_CALIBRATION;
-    public const int FRAMES_TO_WAIT_AT_END = 30;
+    public const int FRAMES_TO_WAIT_AT_END = 1;
 
     // marker layout arrangement
     private float marker_layout_scale = 4.0f;
@@ -54,7 +54,8 @@ public class Calib3D : MonoBehaviour
     private int current_frame_counter = -1;
     private bool wait_for_user_to_switch_calib_round = true;
     private bool wait_for_user_to_switch_layer = true;
-    private bool calib_done = false;
+    private bool calib_done_with_data_acquisation = false;
+	private bool wait_for_python_to_get_job_done = true;
 #if USE_LEFT_EYE
 
     private float current_left_pupil_x;
@@ -185,10 +186,25 @@ public class Calib3D : MonoBehaviour
         // acquire data from pupil wyw
         this.acquire_data();
 
-        // if calib done nothing to do
-        if (this.calib_done)
+        // if calib data is acquired completely ... wait for python to calculte coeffiecients and exit gracefully
+        if (this.calib_done_with_data_acquisation)
         {
-			Debug.Log("Calibration is completed. Check file " + this.participant_name + ".xml");
+			if (this.wait_for_python_to_get_job_done) {
+				// check if python has finished with calibration job
+				if (File.Exists (this.working_dir + this.participant_name + ".calibjobdone")) {
+					this.wait_for_python_to_get_job_done = false;
+				} else {
+					Debug.Log("Calibration data is acquired. Waiting for python to get the job done ...");
+				}
+			} else {
+				Debug.Log("Great ... Python has done the job :) ... Check file " + this.participant_name + ".xml");
+				Debug.Log("Enabeling the AfterCalib3D script");
+				this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
+				Debug.Log("Load XML file that is calibrated by python script ...");
+				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir);
+				Debug.Log("Destroy ..... the calib script");
+				Destroy(this);
+			}
             return;
         }
 
@@ -284,21 +300,14 @@ public class Calib3D : MonoBehaviour
                     // calib done and save file
                     if (this.current_layer == Calib3D.NUM_LAYERS - 1)
                     {
-                        Debug.Log("Changing status to end calib and saving file ...");
-                        this.calib_done = true;
-                        Debug.Log("Calculating calibration statistics ...");
-                        this.calculate_calibration_statistics_mean();
-                        Debug.Log("Saving file ...");
+                        Debug.Log("Changing status to end calib data acquization ...");
+                        this.calib_done_with_data_acquisation = true;
+                        //Debug.Log("Calculating calibration statistics ..."); // this things can anyways be done in python now
+                        //this.calculate_calibration_statistics_mean();
+                        Debug.Log("Saving XML file that can be used by python ...");
 						this.WriteXML();
 						Debug.Log("Calculating coefficents and any other things with python externally ...");
-						//this.calculate_calibration_statistics_mean();
 						this.give_python_a_job();
-						Debug.Log("Enabeling the TestCalibration script");
-						this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
-						Debug.Log("Load XML file that is calibrated by python script ...");
-						this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir);
-						Debug.Log("Destroy ..... the calib script");
-						Destroy(this);
                     }
                 }
             }
@@ -314,12 +323,6 @@ public class Calib3D : MonoBehaviour
 		{
 			// create job file
 			File.Create(calibjob_file_path);
-
-			// check if python has finished with calibration job
-			while(!File.Exists(calibjob_file_path + "done"))
-			{
-				new WaitForSeconds(1);
-			}
 		}
 		else
 		{
