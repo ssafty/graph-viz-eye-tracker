@@ -202,6 +202,9 @@ public class Calib3D : MonoBehaviour
 				this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
 				Debug.Log("Load XML file that is calibrated by python script ...");
 				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir);
+				Debug.Log ("Destroy ..... the calib markers and participant XML object");
+				Destroy (this.marker_parent_go);
+				this.participant = null;
 				Debug.Log("Destroy ..... the calib script");
 				Destroy(this);
 			}
