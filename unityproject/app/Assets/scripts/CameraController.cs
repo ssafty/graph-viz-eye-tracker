@@ -41,8 +41,8 @@ public class CameraController : MonoBehaviour
 			transform.Rotate (new Vector3 (-sensitivity * Convert.ToInt32 (mouseActive) * Input.GetAxis ("Mouse Y"), 0.0f, 0.0f));
 		}
         // Strafing and Zooming
-        transform.Translate(new Vector3(strafeSpeed * Input.GetAxis("Horizontal2"), strafeSpeed * Input.GetAxis("Vertical2"), zoomSpeed * Input.GetAxis("Zoom") + scrollSpeed * Convert.ToInt32(mouseActive) * Input.GetAxis("Scroll")));
-
+        transform.Translate(new Vector3(strafeSpeed * Input.GetAxis("Horizontal2"), strafeSpeed * Input.GetAxis("Vertical2"), zoomSpeed * Input.GetAxis("Zoom") + scrollSpeed * Convert.ToInt32(mouseActive) * Input.GetAxis("Scroll")), Camera.main.transform);
+      
 
 		//Toggle Mouse
 		if (Input.GetKeyUp (KeyCode.M)) {
