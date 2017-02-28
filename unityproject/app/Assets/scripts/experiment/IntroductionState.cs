@@ -46,7 +46,6 @@ public class IntroductionState : ExperimentState
 	public override void UpdateState (ExperimentController ec)
 	{
 		c.gameObject.SetActive (true);
-		marker.gameObject.SetActive (false);
 		graph.gameObject.SetActive (false);
 		eyepointer.gameObject.SetActive (false);
 		panel.gameObject.SetActive (true);

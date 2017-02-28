@@ -50,7 +50,6 @@ public class CalibrationState : ExperimentState
     public override void UpdateState(ExperimentController ec)
     {
     	panel.gameObject.SetActive(false);
-    	marker.gameObject.SetActive(false);
 		eyepointer.gameObject.SetActive(false);
 		c.gameObject.SetActive(true);
 		
