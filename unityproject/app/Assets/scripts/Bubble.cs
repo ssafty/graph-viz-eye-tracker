@@ -27,7 +27,6 @@ public class Bubble : MonoBehaviour
     public bool rayCastAllowed = false;
 	void Start ()
 	{
-	
 		lastHit = Vector3.zero;
 		dwellCount = 0;
 		InvokeRepeating ("doRayCast", 0.0f, interval);
@@ -71,6 +70,46 @@ public class Bubble : MonoBehaviour
             }
         }
     }
+
+	void doRayCast_correctedGaze()
+	{
+		if (rayCastAllowed)
+		{
+			GameObject eyepointer_corrected = GameObject.FindGameObjectWithTag("eyepointer_corrected");
+
+			Vector2 neu = eyepointer.GetComponent<RectTransform>().anchoredPosition;
+			neu.x = neu.x + (Screen.width / 2);
+			neu.y = neu.y + (Screen.height / 2);
+			GameObject go = bestBubble(neu);
+			Vector3 newPos = getPosition(go);
+
+
+			if (go != null)
+			{
+				Debug.Log("newPos "+newPos);
+				if (newPos == lastHit)
+				{
+					dwellCount++;
+					Debug.Log("increasing dwell counter to " + dwellCount);
+				}
+				else
+				{
+					dwellCount = 0;
+					lastHit = newPos;
+					Debug.Log("resetting dwell counter");
+				}
+				if (dwellCount >= (dwellTime / interval) && bubble != null)
+				{
+					Debug.Log("drawing bubble to" + newPos);
+					currentBubbleCenter = go;
+					start = true;
+					bubble.transform.position = newPos;
+					dwellCount = 0;
+
+				}
+			}
+		}
+	}
 
 	// Update is called once per frame
 	void Update ()

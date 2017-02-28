@@ -70,14 +70,8 @@ public class AfterCalib3D : MonoBehaviour {
         // calibrate
         this.calibrate_based_on_selected_latyer();
 
+		eyepointer_corrected.GetComponent<RectTransform> ().anchoredPosition = new Vector2(this.pupil_x_calibrated, Screen.height - this.pupil_y_calibrated);;
 
-		if (this.pupil_x_calibrated == -1 || this.pupil_y_calibrated == -1) {
-			eyepointer_corrected.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (Screen.height / 2.0f, Screen.width / 2.0f); 
-			
-		} else {
-			Vector2 LastEyeCoordinate = new Vector2(this.pupil_x_calibrated, Screen.height - this.pupil_y_calibrated);
-			eyepointer_corrected.GetComponent<RectTransform> ().anchoredPosition = LastEyeCoordinate;
-		}
 		//GUI.Box(new Rect(this.pupil_x - 15, Screen.height - this.pupil_y - 15, 30, 30), new GUIContent("[O]"));
 
     }
