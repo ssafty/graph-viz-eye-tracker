@@ -1,6 +1,6 @@
 ﻿
-#define USE_MOUSE
-//#define USE_PUPIL_EYE
+//#define USE_MOUSE
+#define USE_PUPIL_EYE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System;
 public class AfterCalib3D : MonoBehaviour {
 
 
-	private PupilGazeTracker gaze;
+	private Vector2 gaze;
 
     // participant details
     private string participant_name;
@@ -51,21 +51,14 @@ public class AfterCalib3D : MonoBehaviour {
 	}
 
     // Use this for initialization
-	public void load_calib_file_and_initialize (string participant_name, string working_dir, PupilGazeTracker gaze)
+	public void load_calib_file_and_initialize (string participant_name, string working_dir)
     {
         // disable cursor
         // Cursor.visible = false;
 
         this.participant_name = participant_name;
 		this.working_dir = working_dir;
-		this.gaze = gaze;
 		this.enabled = true;
-
-		#if USE_PUPIL_EYE
-		if (this.gaze == null) {
-			Debug.LogError ("Sadly PupilGazeTracker is not available !!!");
-		}
-		#endif
 
         this.ReadXML();
 		this.is_available = true;
@@ -101,21 +94,25 @@ public class AfterCalib3D : MonoBehaviour {
         this.pupil_y = this.current_pupil_y;
     }
 
-	public void acquire_data()
+    private Vector2 getGazePosition()
+    {
+        GameObject eyepointer = GameObject.FindGameObjectWithTag("eyepointer");
+        return eyepointer.GetComponent<RectTransform>().anchoredPosition;
+    }
+
+    public void acquire_data()
 	{
 		// fake pupil eye with mouse
 
 		#if USE_MOUSE
 		this.current_pupil_x = Input.mousePosition.x;
 		this.current_pupil_y = Input.mousePosition.y;
-		#endif
-		#if USE_PUPIL_EYE
-		this.current_pupil_x = this.gaze.LeftEyePos.x;
-		this.current_pupil_y = this.gaze.LeftEyePos.y;
-		#endif
-
-
-	}
+        #endif
+        #if USE_PUPIL_EYE
+		this.current_pupil_x = getGazePosition().x;
+		this.current_pupil_y = getGazePosition().y;
+        #endif
+    }
 
     public void ReadXML()
     {

@@ -47,7 +47,7 @@ public class IntroductionState : ExperimentState
 	{
 		c.gameObject.SetActive (true);
 		graph.gameObject.SetActive (false);
-		eyepointer.gameObject.SetActive (false);
+		
 		panel.gameObject.SetActive (true);
 		text.text = "Hi and welcome to this experiment!";
 		//Debug.Log ("Hi im now in the Introductionstate");

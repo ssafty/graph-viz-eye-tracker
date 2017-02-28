@@ -1,6 +1,6 @@
 ﻿
-#define USE_MOUSE
-//#define USE_PUPIL_EYE
+//#define USE_MOUSE
+#define USE_PUPIL_EYE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -14,20 +14,16 @@ using System.Collections;
 
 public class Calib3D : MonoBehaviour
 {
-
-    
-    private PupilGazeTracker gaze;
-
     // config for full calib setup
     public const int NUM_LAYERS = 3;
     public const int MARKERS_PER_LAYER = 9;
     public const int CALIBRATION_ROUNDS = 2;
 
     //config for data storage per calib round
-    public const int READINGS_PER_CALIBRATION = 10;
-    public const int FRAMES_TO_WAIT_AT_START = 1;
+    public const int READINGS_PER_CALIBRATION = 160;
+    public const int FRAMES_TO_WAIT_AT_START = 40;
     public const int FRAMES_TO_CAPTURE = Calib3D.READINGS_PER_CALIBRATION;
-    public const int FRAMES_TO_WAIT_AT_END = 1;
+    public const int FRAMES_TO_WAIT_AT_END = 40;
 
     // marker layout arrangement
     private float marker_layout_scale = 4.0f;
@@ -68,15 +64,6 @@ public class Calib3D : MonoBehaviour
 		if (!this.enable_calib_3D) {
 			if (GUI.Button (new Rect (30, 30, 100, 50), "Calibrate 3D")) {
 
-				// check if PupilGazeTracker is available. It is very important to have it working before Calib3D starts
-				GameObject go = GameObject.Find ("PupilGazeTracker");
-				if(go != null) this.gaze = go.GetComponent<PupilGazeTracker> ();
-				#if USE_PUPIL_EYE
-				if (go == null || this.gaze == null) {
-					Debug.LogError ("Sadly PupilGazeTracker is not available. It is very important to have it working before Calib3D starts!!!");
-					return;
-				}
-				#endif
 				this.StartCalib3DScene ();
 				this.enable_calib_3D = true;
 			}
@@ -86,6 +73,12 @@ public class Calib3D : MonoBehaviour
 		GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[X]"));
 	}
 
+
+    private Vector2 getGazePosition()
+    {
+        GameObject eyepointer = GameObject.FindGameObjectWithTag("eyepointer");
+        return eyepointer.GetComponent<RectTransform>().anchoredPosition;
+    }
 
     // Use this for initialization
     void StartCalib3DScene()
@@ -223,7 +216,7 @@ public class Calib3D : MonoBehaviour
 				Debug.Log("Enabeling the AfterCalib3D script");
 				this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
 				Debug.Log("Load XML file that is calibrated by python script ...");
-				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir, this.gaze);
+				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir);
 				Debug.Log("Enabeling the AfterCalib3D script");
 				// add if you forgot to attach :)
 				//if (this.gameObject.GetComponent<CollectCalibStats> () == null) {
@@ -244,8 +237,8 @@ public class Calib3D : MonoBehaviour
         // wait for next layer to be selected 
         if (this.wait_for_user_to_switch_layer)
         {
-            Debug.Log("Start the layer " + (this.current_layer + 1) + " by pressing `L`!!!");
-            if (Input.GetKeyDown(KeyCode.L))
+            Debug.Log("Start the layer " + (this.current_layer + 1) + " by pressing `Keypad 8`!!!");
+            if (Input.GetKeyDown(KeyCode.Keypad8))
             {
                 this.wait_for_user_to_switch_layer = false;
                 this.current_layer++;
@@ -260,8 +253,8 @@ public class Calib3D : MonoBehaviour
         // wait for next calib round to be selected
         if (this.wait_for_user_to_switch_calib_round)
         {
-            Debug.Log("Press `R` to start with calibration round " + (this.current_calib_round + 1) + " for current layer " + this.current_layer + " !!!");
-            if (Input.GetKeyDown(KeyCode.R))
+            Debug.Log("Press `Keypad5` to start with calibration round " + (this.current_calib_round + 1) + " for current layer " + this.current_layer + " !!!");
+            if (Input.GetKeyDown(KeyCode.Keypad5))
             {
                 this.wait_for_user_to_switch_calib_round = false;
                 this.current_calib_round++;
@@ -408,18 +401,18 @@ public class Calib3D : MonoBehaviour
 
 	public void acquire_data()
 	{
-		// fake pupil eye with mouse
+        // fake pupil eye with mouse
 
-		#if USE_MOUSE
+        #if USE_MOUSE
 		this.current_left_pupil_x = Input.mousePosition.x;
 		this.current_left_pupil_y = Input.mousePosition.y;
-		#endif
-		#if USE_PUPIL_EYE
-		this.current_left_pupil_x = gaze.LeftEyePos.x;
-		this.current_left_pupil_y = gaze.LeftEyePos.y;
-		#endif
+        #endif
+        #if USE_PUPIL_EYE
+        this.current_left_pupil_x = getGazePosition().x;
+		this.current_left_pupil_y = getGazePosition().y;
+        #endif
 
-	}
+    }
 
     public void populate_data(int index)
     {
