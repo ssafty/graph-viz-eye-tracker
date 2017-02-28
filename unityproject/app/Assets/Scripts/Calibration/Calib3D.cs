@@ -216,14 +216,19 @@ public class Calib3D : MonoBehaviour
 				}
 			} else {
 				Debug.Log("Great ... Python has done the job :) ... Check file " + this.participant_name + ".xml");
+				// add if you forgot to attach :)
 				if (this.gameObject.GetComponent<AfterCalib3D> () == null) {
-					this.gameObject.AddComponent<AfterCalib3D> ();
+					Debug.LogError ("Looks like you forgot to attach AfterCalib3D script :(");
 				}
 				Debug.Log("Enabeling the AfterCalib3D script");
 				this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
 				Debug.Log("Load XML file that is calibrated by python script ...");
 				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir, this.gaze);
 				Debug.Log("Enabeling the AfterCalib3D script");
+				// add if you forgot to attach :)
+				//if (this.gameObject.GetComponent<CollectCalibStats> () == null) {
+				//	this.gameObject.AddComponent<CollectCalibStats> ();
+				//}
 				//this.gameObject.GetComponent<CollectCalibStats>().enabled = true;
 				//Debug.Log("Load XML file that is calibrated by python script ...");
 				//this.gameObject.GetComponent<CollectCalibStats>().init_game_for_collecting_statistics(this.participant_name, this.working_dir);

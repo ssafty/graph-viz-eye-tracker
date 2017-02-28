@@ -31,6 +31,7 @@ public class AfterCalib3D : MonoBehaviour {
 	public float pupil_y;
 	public float pupil_x_calibrated;
 	public float pupil_y_calibrated;
+	public bool is_available = false;
 
 	public void OnGUI()
 	{
@@ -47,6 +48,7 @@ public class AfterCalib3D : MonoBehaviour {
         this.participant_name = participant_name;
 		this.working_dir = working_dir;
 		this.gaze = gaze;
+		this.enabled = true;
 
 		#if USE_PUPIL_EYE
 		if (this.gaze == null) {
@@ -55,13 +57,8 @@ public class AfterCalib3D : MonoBehaviour {
 		#endif
 
         this.ReadXML();
+		this.is_available = true;
     }
-
-	void Start()
-	{
-		// set this to false if accidentally enabled. This script can be only enabled by Calib3D script
-		this.enabled = false;
-	}
 	
 	// Update is called once per frame
 	void Update ()
