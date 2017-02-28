@@ -38,9 +38,10 @@ public class MoveToExperimentTrial : ExperimentTrial
 			Vector3 pos = Node.GetNodeWithId(0).transform.position;
             GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(0, 0, -40);
             Camera.main.transform.localEulerAngles = Vector3.zero;
-
+            Camera.main.transform.position = new Vector3(0, 0, -40);
             GameObject cr = GameObject.FindGameObjectWithTag("RightCam");
-            if(cr) { 
+            if(cr) {
+                cr.transform.position = new Vector3(0, 0, -40);
                 cr.transform.localEulerAngles = Vector3.zero;
             }
 
