@@ -39,8 +39,9 @@ public class MoveToExperimentTrial : ExperimentTrial
       GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(pos.x, pos.y, pos.z -20);
       GameObject.FindGameObjectWithTag("metaCamera").transform.LookAt(pos);
       
-			experimentLogger.getLogger ().currentGraph = _graph.Name;
-			experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
+			experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
+            experimentLogger.getLogger().condition = _graph.ExperimentType.ToString();
+            experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
 			first = false;
 		}
        
@@ -90,7 +91,7 @@ public class MoveToExperimentTrial : ExperimentTrial
 		node.Highlight (colorDesAuserwaehlten);
 		node.derAuserwaehlte = true;
 		nodeToFind = node;
-		experimentLogger.getLogger ().currentHighlightedNode = node.id_string;
+		experimentLogger.getLogger ().targetNode = node.id_string;
 	}
 
 	private void createGraph ()
