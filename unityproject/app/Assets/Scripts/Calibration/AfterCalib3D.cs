@@ -1,5 +1,7 @@
-﻿#define USE_LEFT_EYE
-//#define USE_RIGHT_EYE
+﻿
+#define USE_MOUSE
+//#define USE_PUPIL_EYE
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +9,8 @@ using System;
 
 public class AfterCalib3D : MonoBehaviour {
 
-	public PupilGazeTracker gaze;
+
+	private PupilGazeTracker gaze;
 
     // participant details
     private string participant_name;
@@ -23,22 +26,10 @@ public class AfterCalib3D : MonoBehaviour {
     // object that holds all participant data
     private Calib3D.Participant participant;
 
-#if USE_LEFT_EYE
     private float current_left_pupil_x;
     private float current_left_pupil_y;
-#endif
-#if USE_RIGHT_EYE
-    private float current_right_pupil_x;
-    private float current_right_pupil_y;
-#endif
-#if USE_LEFT_EYE
     private float left_pupil_x;
     private float left_pupil_y;
-#endif
-#if USE_RIGHT_EYE
-    private float right_pupil_x;
-    private float right_pupil_y;
-#endif
 
     public void use_calibration(bool use)
     {
@@ -55,14 +46,27 @@ public class AfterCalib3D : MonoBehaviour {
 		}
 	}
 
+	public void OnGUI()
+	{
+		GUI.Box(new Rect(this.left_pupil_x - 15, Screen.height - this.left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
+		GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[O]"));
+	}
+
     // Use this for initialization
-    public void load_calib_file_and_initialize (string participant_name, string working_dir)
+	public void load_calib_file_and_initialize (string participant_name, string working_dir, PupilGazeTracker gaze)
     {
         // disable cursor
-        Cursor.visible = false;
+        // Cursor.visible = false;
 
         this.participant_name = participant_name;
 		this.working_dir = working_dir;
+		this.gaze = gaze;
+
+		#if USE_PUPIL_EYE
+		if (this.gaze == null) {
+			Debug.LogError ("Sadly PupilGazeTracker is not available !!!");
+		}
+		#endif
 
         this.ReadXML();
     }
@@ -103,34 +107,19 @@ public class AfterCalib3D : MonoBehaviour {
 
     }
 
-    public void OnGUI()
-    {
-#if USE_LEFT_EYE
-        GUI.Box(new Rect(this.left_pupil_x - 15, Screen.height - this.left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
-        GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[O]"));
-#endif
-#if USE_RIGHT_EYE
-        GUI.Box(new Rect(this.right_pupil_x - 15, Screen.height - this.right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
-        GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[O]"));
-#endif
-    }
-
 	public void acquire_data()
 	{
 		// fake pupil eye with mouse
 
-		#if USE_LEFT_EYE
+		#if USE_MOUSE
 		this.current_left_pupil_x = Input.mousePosition.x;
 		this.current_left_pupil_y = Input.mousePosition.y;
-		//this.current_left_pupil_x = gaze.LeftEyePos.x;
-		//this.current_left_pupil_y = gaze.LeftEyePos.y;
 		#endif
-		#if USE_RIGHT_EYE
-		//this.current_right_pupil_x = Input.mousePosition.x;
-		//this.current_right_pupil_y = Input.mousePosition.y;
-		this.current_right_pupil_x = gaze.RightEyePos.x;
-		this.current_right_pupil_y = gaze.RightEyePos.y;
+		#if USE_PUPIL_EYE
+		this.current_left_pupil_x = gaze.LeftEyePos.x;
+		this.current_left_pupil_y = gaze.LeftEyePos.y;
 		#endif
+
 
 	}
 

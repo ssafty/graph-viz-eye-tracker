@@ -1,6 +1,6 @@
 ﻿
-#define USE_LEFT_EYE
-//#define USE_RIGHT_EYE
+#define USE_MOUSE
+//#define USE_PUPIL_EYE
 
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ public class Calib3D : MonoBehaviour
 {
 
     
-    public PupilGazeTracker gaze;
+    private PupilGazeTracker gaze;
 
     // config for full calib setup
     public const int NUM_LAYERS = 1;
@@ -52,26 +52,47 @@ public class Calib3D : MonoBehaviour
     private int current_calib_round = -1;
     private int current_marker = 0;
     private int current_frame_counter = -1;
+	private bool enable_calib_3D = false;
     private bool wait_for_user_to_switch_calib_round = true;
     private bool wait_for_user_to_switch_layer = true;
     private bool calib_done_with_data_acquisation = false;
 	private bool wait_for_python_to_get_job_done = true;
-#if USE_LEFT_EYE
 
     private float current_left_pupil_x;
     private float current_left_pupil_y;
-#endif
-#if USE_RIGHT_EYE
-    private float current_right_pupil_x;
-    private float current_right_pupil_y;
-#endif
+
+
+	public void OnGUI()
+	{
+
+		// enable the calibration
+		if (!this.enable_calib_3D) {
+			if (GUI.Button (new Rect (30, 30, 100, 50), "Calibrate 3D")) {
+
+				// check if PupilGazeTracker is available. It is very important to have it working before Calib3D starts
+				GameObject go = GameObject.Find ("PupilGazeTracker");
+				if(go != null) this.gaze = go.GetComponent<PupilGazeTracker> ();
+				#if USE_PUPIL_EYE
+				if (go == null || this.gaze == null) {
+					Debug.LogError ("Sadly PupilGazeTracker is not available. It is very important to have it working before Calib3D starts!!!");
+					return;
+				}
+				#endif
+				this.StartCalib3DScene ();
+				this.enable_calib_3D = true;
+			}
+			return;
+		}
+
+		GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[X]"));
+	}
+
 
     // Use this for initialization
-    void Start()
+    void StartCalib3DScene()
     {
-
         // disable cursor
-        Cursor.visible = false;
+        //Cursor.visible = false;
 
         // get the participant name
         this.participant = new Participant();
@@ -114,16 +135,8 @@ public class Calib3D : MonoBehaviour
 
                     for (int l = 0; l < Calib3D.READINGS_PER_CALIBRATION; l++)
                     {
-#if USE_LEFT_EYE
-
                         this.participant.layers[i].markers[j].calib_rounds[k].left_x[l] = -9999.0f;
                         this.participant.layers[i].markers[j].calib_rounds[k].left_y[l] = -9999.0f;
-#endif
-#if USE_RIGHT_EYE
- 
-                        this.participant.layers[i].markers[j].calib_rounds[k].right_x[l] = -9999.0f;
-                        this.participant.layers[i].markers[j].calib_rounds[k].right_y[l] = -9999.0f;
-#endif
                     }
                 }
             }
@@ -183,6 +196,11 @@ public class Calib3D : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		// check if calib 3D is to be performed
+		if (!this.enable_calib_3D) {
+			return;
+		}
+
         // acquire data from pupil wyw
         this.acquire_data();
 
@@ -199,10 +217,16 @@ public class Calib3D : MonoBehaviour
 			} else {
 				Debug.Log("Great ... Python has done the job :) ... Check file " + this.participant_name + ".xml");
 				Debug.Log("Enabeling the AfterCalib3D script");
+				this.gameObject.AddComponent<AfterCalib3D> ();
 				this.gameObject.GetComponent<AfterCalib3D>().enabled = true;
 				Debug.Log("Load XML file that is calibrated by python script ...");
-				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir);
-				Debug.Log ("Destroy ..... the calib markers and participant XML object");
+				this.gameObject.GetComponent<AfterCalib3D>().load_calib_file_and_initialize(this.participant_name, this.working_dir, this.gaze);
+				Debug.Log("Enabeling the AfterCalib3D script");
+				//this.gameObject.AddComponent<CollectCalibStats> ();
+				//this.gameObject.GetComponent<CollectCalibStats>().enabled = true;
+				//Debug.Log("Load XML file that is calibrated by python script ...");
+				//this.gameObject.GetComponent<CollectCalibStats>().init_game_for_collecting_statistics(this.participant_name, this.working_dir);
+				//Debug.Log ("Destroy ..... the calib markers and participant XML object");
 				Destroy (this.marker_parent_go);
 				this.participant = null;
 				Debug.Log("Destroy ..... the calib script");
@@ -343,15 +367,9 @@ public class Calib3D : MonoBehaviour
             for (int j = 0; j < Calib3D.MARKERS_PER_LAYER; j++)
             {
                 Calib3D.Marker marker = layer.markers[j];
-#if USE_LEFT_EYE
+
                 float calib_left_x = 0.0f;
                 float calib_left_y = 0.0f;
-#endif
-#if USE_RIGHT_EYE
- 
-                float calib_right_x = 0.0f;
-                float calib_right_y = 0.0f;
-#endif
 
                 for (int k = 0; k < Calib3D.CALIBRATION_ROUNDS; k++)
                 {
@@ -359,29 +377,13 @@ public class Calib3D : MonoBehaviour
 
                     for (int l = 0; l < Calib3D.READINGS_PER_CALIBRATION; l++)
                     {
-#if USE_LEFT_EYE
-
                         calib_left_x += calib_rnd.left_x[l];
                         calib_left_y += calib_rnd.left_y[l];
-#endif
-#if USE_RIGHT_EYE
- 
-                        calib_right_x += calib_rnd.right_x[l];
-                        calib_right_y += calib_rnd.right_y[l];
-#endif
                     }
                 }
 
-#if USE_LEFT_EYE
-
                 marker.calib_mean_left_x = calib_left_x / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
                 marker.calib_mean_left_y = calib_left_y / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-#endif
-#if USE_RIGHT_EYE
- 
-                marker.calib_mean_right_x = calib_right_x / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-                marker.calib_mean_right_y = calib_right_y / (float)(Calib3D.CALIBRATION_ROUNDS * Calib3D.READINGS_PER_CALIBRATION);
-#endif
             }
         }
     }
@@ -397,52 +399,30 @@ public class Calib3D : MonoBehaviour
         }
     }
 
-    public void OnGUI()
-    {
-#if USE_LEFT_EYE
 
-        GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[X]"));
-#endif
-#if USE_RIGHT_EYE
- 
-        GUI.Box(new Rect(this.current_right_pupil_x - 15, Screen.height - this.current_right_pupil_y - 15, 30, 30), new GUIContent("[X]"));
-#endif
-    }
+	public void acquire_data()
+	{
+		// fake pupil eye with mouse
 
-    public void acquire_data()
-    {
-        // fake pupil eye with mouse
+		#if USE_MOUSE
+		this.current_left_pupil_x = Input.mousePosition.x;
+		this.current_left_pupil_y = Input.mousePosition.y;
+		#endif
+		#if USE_PUPIL_EYE
+		this.current_left_pupil_x = gaze.LeftEyePos.x;
+		this.current_left_pupil_y = gaze.LeftEyePos.y;
+		#endif
 
-#if USE_LEFT_EYE
-        this.current_left_pupil_x = Input.mousePosition.x;
-        this.current_left_pupil_y = Input.mousePosition.y;
-        //this.current_left_pupil_x = gaze.LeftEyePos.x;
-        //this.current_left_pupil_y = gaze.LeftEyePos.y;
-#endif
-#if USE_RIGHT_EYE
-        //this.current_right_pupil_x = Input.mousePosition.x;
-        //this.current_right_pupil_y = Input.mousePosition.y;
-        this.current_right_pupil_x = gaze.RightEyePos.x;
-        this.current_right_pupil_y = gaze.RightEyePos.y;
-#endif
-    
-    }
+	}
 
     public void populate_data(int index)
     {
         CalibRound calib = this.participant.layers[this.current_layer].markers[this.current_marker].calib_rounds[this.current_calib_round];
 
         // load data from sensor here
-#if USE_LEFT_EYE
 
         calib.left_x[index] = this.current_left_pupil_x;
         calib.left_y[index] = this.current_left_pupil_y;
-#endif
-#if USE_RIGHT_EYE
- 
-        calib.right_x[index] = this.current_right_pupil_x;
-        calib.right_y[index] = this.current_right_pupil_y;
-#endif
     }
 
 
@@ -502,22 +482,11 @@ public class Calib3D : MonoBehaviour
         [XmlAttribute("screen_y")]
         public float screen_y;
 
-#if USE_LEFT_EYE
-
         [XmlAttribute("calib_mean_left_x")]
         public float calib_mean_left_x;
 
         [XmlAttribute("calib_mean_left_y")]
         public float calib_mean_left_y;
-#endif
-#if USE_RIGHT_EYE
- 
-        [XmlAttribute("calib_mean_right_x")]
-        public float calib_mean_right_x;
- 
-        [XmlAttribute("calib_mean_right_y")]
-        public float calib_mean_right_y;
-#endif
 
         [XmlArrayItem("calib_round")]
         public CalibRound[] calib_rounds = new CalibRound[Calib3D.CALIBRATION_ROUNDS];
@@ -530,24 +499,11 @@ public class Calib3D : MonoBehaviour
         [XmlAttribute("calib_round")]
         public int calib_round;
 
-#if USE_LEFT_EYE
-
         [XmlArrayItem("left_x")]
         public float[] left_x = new float[Calib3D.READINGS_PER_CALIBRATION];
 
         [XmlArrayItem("left_y")]
         public float[] left_y = new float[Calib3D.READINGS_PER_CALIBRATION];
-
-#endif
-#if USE_RIGHT_EYE
- 
-        [XmlArrayItem("right_x")]
-        public float[] right_x = new float[Calib3D.READINGS_PER_CALIBRATION];
- 
-        [XmlArrayItem("right_y")]
-        public float[] right_y = new float[Calib3D.READINGS_PER_CALIBRATION];
- 
-#endif
 
     }
 
