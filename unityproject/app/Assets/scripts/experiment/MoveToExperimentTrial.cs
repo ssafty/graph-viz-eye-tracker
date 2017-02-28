@@ -36,10 +36,16 @@ public class MoveToExperimentTrial : ExperimentTrial
 			graphCreated = true;
 
 			Vector3 pos = Node.GetNodeWithId(0).transform.position;
-      GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(pos.x, pos.y, pos.z -20);
-      GameObject.FindGameObjectWithTag("metaCamera").transform.LookAt(pos);
-      
-			experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
+            GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(0, 0, -40);
+            Camera.main.transform.localEulerAngles = Vector3.zero;
+
+            GameObject cr = GameObject.FindGameObjectWithTag("RightCam");
+            if(cr) { 
+                cr.transform.localEulerAngles = Vector3.zero;
+            }
+
+
+            experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
             experimentLogger.getLogger().condition = _graph.ExperimentType.ToString();
             experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
 			first = false;
