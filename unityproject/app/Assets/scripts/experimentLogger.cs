@@ -23,7 +23,7 @@ public class experimentLogger : MonoBehaviour
         
 		participantId = "1";
 		file = new System.IO.StreamWriter(@"ExperimentLog\"+participantId+".csv");
-		file.WriteLine ("timestamp,currentGraph,bubbleSize,participantId,keypressed,currentHighlightedNode,correctNodehit");
+		file.WriteLine ("participantId,condition,timeSinceStartup,correctNodeHit,keypressed,calibrationData,bubbleSize,numberNodes,targetNode,currentSelectedNode");
 		file.Flush ();
 	}
 
