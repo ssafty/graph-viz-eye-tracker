@@ -19,8 +19,7 @@ public class Calib3D : MonoBehaviour
     private PupilGazeTracker gaze;
 
     // config for full calib setup
-    public const int NUM_LAYERS = 1;
-    //public const int NUM_LAYERS = 3;
+    public const int NUM_LAYERS = 3;
     public const int MARKERS_PER_LAYER = 9;
     public const int CALIBRATION_ROUNDS = 2;
 
@@ -33,7 +32,7 @@ public class Calib3D : MonoBehaviour
     // marker layout arrangement
     private float marker_layout_scale = 4.0f;
     private float marker_layout_aspect = 2f;
-    private float[] marker_layout_depth = { 30.0f, 20.0f, 10.0f };
+    private float[] marker_layout_depth = { -15.0f, -25.0f, -30.0f };
    // private float[] marker_layout_depth = { 30.0f };
 
     // participant details
@@ -148,6 +147,7 @@ public class Calib3D : MonoBehaviour
         {
             this.markers_go[i] = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             this.markers_go[i].name = "Marker " + i;
+            this.markers_go[i].tag = "CalibMarker";
             this.markers_go[i].transform.SetParent(this.marker_parent_go.transform);
             this.markers_go[i].gameObject.GetComponent<Renderer>().material.color = Color.green;
 

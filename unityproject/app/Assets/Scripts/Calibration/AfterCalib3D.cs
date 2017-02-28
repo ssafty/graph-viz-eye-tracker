@@ -33,6 +33,17 @@ public class AfterCalib3D : MonoBehaviour {
 	public float pupil_y_calibrated;
 	public bool is_available = false;
 
+     void Start()
+    {
+        GameObject[] calibMarker = GameObject.FindGameObjectsWithTag("CalibMarker");
+        foreach(GameObject marker in calibMarker)
+        {
+            Destroy(marker);
+        }
+    }
+
+    
+
 	public void OnGUI()
 	{
 		GUI.Box(new Rect(this.pupil_x_calibrated - 15, Screen.height - this.pupil_y_calibrated - 15, 30, 30), new GUIContent("[C]"));

@@ -49,10 +49,10 @@ public class CalibrationState : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {
-    	panel.gameObject.SetActive(true);
-    	marker.gameObject.SetActive(true);
+    	panel.gameObject.SetActive(false);
+    	marker.gameObject.SetActive(false);
 		eyepointer.gameObject.SetActive(false);
 		c.gameObject.SetActive(true);
-		text.text = "Please look in the middle of the screen.";
+		
     }
 }
