@@ -70,6 +70,12 @@ public class AfterCalib3D : MonoBehaviour {
 
         this.ReadXML();
     }
+
+	void Start()
+	{
+		// set this to false if accedentally enabled. This script can be only enabled by Calib3D script
+		this.enabled = false;
+	}
 	
 	// Update is called once per frame
 	void Update ()
