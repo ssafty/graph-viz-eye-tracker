@@ -22,8 +22,14 @@ public class HapringController : MonoBehaviour {
     }
     void Update()
     {
-        
 
+        if (currentSelectNode) {
+            experimentLogger.getLogger().currentNode = currentSelectNode.GetComponent<Node>().id.ToString();
+        }
+        else
+        {
+            experimentLogger.getLogger().currentNode = "-1";
+        }
         if (!isInBubble(currentIndex))
         {
             //Debug.Log(GetComponent<Bubble>().currentBubbleCenter);
@@ -141,11 +147,11 @@ public class HapringController : MonoBehaviour {
         {
             if (currentSelectNode.GetComponent<Node>().derAuserwaehlte)
             {
-                experimentLogger.getLogger().correctNodehit = "t";
+                experimentLogger.getLogger().correctNodehit = "TRUE";
             }
             else
             {
-                experimentLogger.getLogger().correctNodehit = "f";
+                experimentLogger.getLogger().correctNodehit = "FALSE";
             }
             currentIndex = -1;
             currentSelectNode.GetComponent<Node>().gotHit = true;
