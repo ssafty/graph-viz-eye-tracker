@@ -31,8 +31,8 @@ public class experimentLogger : MonoBehaviour
 	// lateUpdate is called once per frame after all other Updates
 	void LateUpdate ()
 	{
-		file.WriteLine (Time.realtimeSinceStartup + "," + currentGraph + "," + bubbleSize + "," + participantId + "," + keypressed, "," + currentHighlightedNode + "," + correctNodehit);
-		file.Flush ();
+	//	file.WriteLine (Time.realtimeSinceStartup + "," + currentGraph + "," + bubbleSize + "," + participantId + "," + keypressed, "," + currentHighlightedNode + "," + correctNodehit);
+		//file.Flush ();
 		correctNodehit = "";
 	}
 

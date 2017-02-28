@@ -4,6 +4,9 @@ using System;
 
 public class Bubble : MonoBehaviour
 {
+    public udpsocket socket;
+    public bool useGaze;    //Use Gaze info from the socket to calc the bubble?
+
 	public static Vector3 REST_POS = new Vector3 (9999, 9999, 9999);
     public GameObject camParent;
 	public GameObject camLeft;
@@ -88,7 +91,11 @@ public class Bubble : MonoBehaviour
 			start = false;
 		}
 
-	}
+        if (useGaze)
+        {
+            calcBubble(socket.GetComponent<udpsocket>().LastEyeCoordinate);
+        }
+    }
 
 	void RotateToBubble ()
 	{
