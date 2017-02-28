@@ -18,7 +18,6 @@ public class AfterCalib3D : MonoBehaviour {
 
     // select layer
     private int selectLayer = 0;
-    private bool useCalibration = true;
 
     private float[,] all_layers_coeff_A = new float[Calib3D.NUM_LAYERS, 5];
     private float[,] all_layers_coeff_B = new float[Calib3D.NUM_LAYERS, 5];
@@ -26,30 +25,17 @@ public class AfterCalib3D : MonoBehaviour {
     // object that holds all participant data
     private Calib3D.Participant participant;
 
-    private float current_left_pupil_x;
-    private float current_left_pupil_y;
-    private float left_pupil_x;
-    private float left_pupil_y;
-
-    public void use_calibration(bool use)
-    {
-        this.useCalibration = use;
-    }
-
-	public Vector2 get_cursor_vec()
-	{
-		if (this.enabled) {
-			return new Vector2 (this.left_pupil_x, this.left_pupil_y);
-		} else {
-			Debug.LogError ("You cannot use the coordinates as calibration is not done ..");
-			return Vector2.zero;
-		}
-	}
+    private float current_pupil_x;
+	private float current_pupil_y;
+	public float pupil_x;
+	public float pupil_y;
+	public float pupil_x_calibrated;
+	public float pupil_y_calibrated;
 
 	public void OnGUI()
 	{
-		GUI.Box(new Rect(this.left_pupil_x - 15, Screen.height - this.left_pupil_y - 15, 30, 30), new GUIContent("[C]"));
-		GUI.Box(new Rect(this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent("[O]"));
+		GUI.Box(new Rect(this.pupil_x_calibrated - 15, Screen.height - this.pupil_y_calibrated - 15, 30, 30), new GUIContent("[C]"));
+		GUI.Box(new Rect(this.pupil_x - 15, Screen.height - this.pupil_y - 15, 30, 30), new GUIContent("[O]"));
 	}
 
     // Use this for initialization
@@ -73,7 +59,7 @@ public class AfterCalib3D : MonoBehaviour {
 
 	void Start()
 	{
-		// set this to false if accedentally enabled. This script can be only enabled by Calib3D script
+		// set this to false if accidentally enabled. This script can be only enabled by Calib3D script
 		this.enabled = false;
 	}
 	
@@ -90,27 +76,21 @@ public class AfterCalib3D : MonoBehaviour {
 
     public void calibrate_based_on_selected_latyer()
     {
-        if (useCalibration)
-        {
-            this.left_pupil_x =
-                all_layers_coeff_A[this.selectLayer, 0] +
-                all_layers_coeff_A[this.selectLayer, 1] * this.current_left_pupil_x +
-                all_layers_coeff_A[this.selectLayer, 2] * this.current_left_pupil_y +
-                all_layers_coeff_A[this.selectLayer, 3] * this.current_left_pupil_x * this.current_left_pupil_x +
-                all_layers_coeff_A[this.selectLayer, 4] * this.current_left_pupil_y * this.current_left_pupil_y;
-            this.left_pupil_y =
-                all_layers_coeff_B[this.selectLayer, 0] +
-                all_layers_coeff_B[this.selectLayer, 1] * this.current_left_pupil_x +
-                all_layers_coeff_B[this.selectLayer, 2] * this.current_left_pupil_y +
-                all_layers_coeff_B[this.selectLayer, 3] * this.current_left_pupil_x * this.current_left_pupil_x +
-                all_layers_coeff_B[this.selectLayer, 4] * this.current_left_pupil_y * this.current_left_pupil_y;
-        }
-        else
-        {
-            this.left_pupil_x = this.current_left_pupil_x;
-            this.left_pupil_y = this.current_left_pupil_y;
-        }
-
+        this.pupil_x_calibrated =
+            all_layers_coeff_A[this.selectLayer, 0] +
+            all_layers_coeff_A[this.selectLayer, 1] * this.current_pupil_x +
+            all_layers_coeff_A[this.selectLayer, 2] * this.current_pupil_y +
+            all_layers_coeff_A[this.selectLayer, 3] * this.current_pupil_x * this.current_pupil_x +
+            all_layers_coeff_A[this.selectLayer, 4] * this.current_pupil_y * this.current_pupil_y;
+        this.pupil_y_calibrated =
+            all_layers_coeff_B[this.selectLayer, 0] +
+            all_layers_coeff_B[this.selectLayer, 1] * this.current_pupil_x +
+            all_layers_coeff_B[this.selectLayer, 2] * this.current_pupil_y +
+            all_layers_coeff_B[this.selectLayer, 3] * this.current_pupil_x * this.current_pupil_x +
+            all_layers_coeff_B[this.selectLayer, 4] * this.current_pupil_y * this.current_pupil_y;
+	
+        this.pupil_x = this.current_pupil_x;
+        this.pupil_y = this.current_pupil_y;
     }
 
 	public void acquire_data()
@@ -118,12 +98,12 @@ public class AfterCalib3D : MonoBehaviour {
 		// fake pupil eye with mouse
 
 		#if USE_MOUSE
-		this.current_left_pupil_x = Input.mousePosition.x;
-		this.current_left_pupil_y = Input.mousePosition.y;
+		this.current_pupil_x = Input.mousePosition.x;
+		this.current_pupil_y = Input.mousePosition.y;
 		#endif
 		#if USE_PUPIL_EYE
-		this.current_left_pupil_x = gaze.LeftEyePos.x;
-		this.current_left_pupil_y = gaze.LeftEyePos.y;
+		this.current_pupil_x = this.gaze.LeftEyePos.x;
+		this.current_pupil_y = this.gaze.LeftEyePos.y;
 		#endif
 
 
