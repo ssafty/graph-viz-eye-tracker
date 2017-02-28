@@ -90,11 +90,6 @@ public class Bubble : MonoBehaviour
 		} else if (Input.anyKeyDown) {
 			start = false;
 		}
-
-        if (useGaze)
-        {
-            calcBubble(socket.GetComponent<udpsocket>().LastEyeCoordinate);
-        }
     }
 
 	void RotateToBubble ()
