@@ -40,8 +40,6 @@ public class udpsocket : MonoBehaviour
 
     void Update()
     {
-        bubbleScript.calcBubble(LastEyeCoordinate);
-
 		//filter out when list gets 30 points
 		if (processingList.Count >= 1) {
             List<Vector2> processingList_snapshot = processingList;
@@ -63,19 +61,6 @@ public class udpsocket : MonoBehaviour
 			eyepointer_copy.GetComponent<RectTransform> ().anchoredPosition = pos_copy;
 		}
     }
-    /*
-     private void recv(IAsyncResult res)
-    {
-	
-		if (Encoding.UTF8.GetString (received).Length > 0) {
-			//parse coordinates
-			processingList.AddRange(ExtractGazeCoordinates (false, Encoding.UTF8.GetString (received)));
-		} else {
-			eyepointer.GetComponent<RectTransform>().anchoredPosition = new Vector2(((float)Input.mousePosition.x - (Screen.width / 2)), (float)Input.mousePosition.y - (Screen.height / 2));
-			processingList = new List<Vector2> (); 
-		}
-    }
-    */
 
 	Boolean NotNoise(Vector2 currentGaze){
 		if (LastEyeCoordinate == null)
