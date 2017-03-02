@@ -49,7 +49,7 @@ public class Calib3D : MonoBehaviour
 	private int current_calib_round = -1;
 	private int current_marker = 0;
 	private int current_frame_counter = -1;
-	private bool enable_calib_3D = false;
+	public bool enable_calib_3D = false;
 	private bool wait_for_user_to_switch_calib_round = true;
 	private bool wait_for_user_to_switch_layer = true;
 	private bool calib_done_with_data_acquisation = false;
@@ -75,7 +75,7 @@ public class Calib3D : MonoBehaviour
 	}
 
 	// Use this for initialization
-	void StartCalib3DScene ()
+	public void StartCalib3DScene ()
 	{
 		// disable cursor
 		//Cursor.visible = false;
@@ -218,27 +218,22 @@ public class Calib3D : MonoBehaviour
 		// wait for next layer to be selected 
 		if (this.wait_for_user_to_switch_layer) {
 			Debug.Log ("Start the layer " + (this.current_layer + 1) + " by pressing `Keypad 8`!!!");
-			if (Input.GetKeyDown (KeyCode.Keypad8)) {
-				this.wait_for_user_to_switch_layer = false;
-				this.current_layer++;
-				this.marker_parent_go.transform.position = this.transform.position + this.transform.forward * this.marker_layout_depth [this.current_layer];
-				this.estimate_and_store_screen_pos_for_all_markers ();
-				this.current_calib_round = -1;
-				Debug.Log ("Layer " + this.current_layer + " is selected successfully!!!");
-			}
-			return;
+			if (Input.GetKeyDown (KeyCode.Keypad8))
+            {
+                invokeCalib();
+            }
+            return;
 		}
 
 		// wait for next calib round to be selected
 		if (this.wait_for_user_to_switch_calib_round) {
 			Debug.Log ("Press `Keypad5` to start with calibration round " + (this.current_calib_round + 1) + " for current layer " + this.current_layer + " !!!");
-			if (Input.GetKeyDown (KeyCode.Keypad5)) {
-				this.wait_for_user_to_switch_calib_round = false;
-				this.current_calib_round++;
-				this.current_marker = 0;
-				Debug.Log ("Calibration round " + this.current_calib_round + " is selected!!!");
-			}
-			return;
+			if (Input.GetKeyDown (KeyCode.Keypad5))
+            {
+                startCalibForReal();
+                Debug.Log("Calibration round " + this.current_calib_round + " is selected!!!");
+            }
+            return;
 		}
 
 		// monitor frames
@@ -312,7 +307,24 @@ public class Calib3D : MonoBehaviour
 		}
 	}
 
-	public void give_python_a_job ()
+    public void startCalibForReal()
+    {
+        this.wait_for_user_to_switch_calib_round = false;
+        this.current_calib_round++;
+        this.current_marker = 0;
+    }
+
+    public void invokeCalib()
+    {
+        this.wait_for_user_to_switch_layer = false;
+        this.current_layer++;
+        this.marker_parent_go.transform.position = this.transform.position + this.transform.forward * this.marker_layout_depth[this.current_layer];
+        this.estimate_and_store_screen_pos_for_all_markers();
+        this.current_calib_round = -1;
+        Debug.Log("Layer " + this.current_layer + " is selected successfully!!!");
+    }
+
+    public void give_python_a_job ()
 	{
 		string calibjob_file_path = this.working_dir + this.participant_name + ".calibjob";
 		if (!File.Exists (calibjob_file_path)) {

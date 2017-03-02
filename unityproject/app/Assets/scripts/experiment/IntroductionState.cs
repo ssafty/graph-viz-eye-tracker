@@ -45,10 +45,11 @@ public class IntroductionState : ExperimentState
 
 	public override void UpdateState (ExperimentController ec)
 	{
-		c.gameObject.SetActive (true);
+        experimentLogger.getLogger().currentState = "Introduction";
+        c.gameObject.SetActive (true);
 		graph.gameObject.SetActive (false);
-		
-		panel.gameObject.SetActive (true);
+        //eyepointer.gameObject.SetActive(false);
+        panel.gameObject.SetActive (true);
 		text.text = "Hi and welcome to this experiment!";
 		//Debug.Log ("Hi im now in the Introductionstate");
 
