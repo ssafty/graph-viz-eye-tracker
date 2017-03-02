@@ -12,6 +12,7 @@ public abstract class ExperimentController
     protected ExperimentState currentState;
 
     private int currentTrialIndex;
+    private int numberOfTrainings;
     protected StreamWriter outputStream;
 
     protected List<ExperimentTrial> currentTrials;
@@ -34,6 +35,13 @@ public abstract class ExperimentController
         set
         {
             currentTrialIndex = value;
+        }
+    }
+    public int NumberOfTrainings
+    {
+        get
+        {
+            return numberOfTrainings;
         }
     }
 

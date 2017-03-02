@@ -25,7 +25,8 @@ public class TrialState : ExperimentState
 
 	public override void UpdateState (ExperimentController ec)
 	{
-		marker.gameObject.SetActive (true);
+        experimentLogger.getLogger().currentState = "Trial";
+        marker.gameObject.SetActive (true);
 		eyepointer.gameObject.SetActive (true);
 		graph.gameObject.SetActive (true);
 		MoveToExperimentTrial mttrial = ec.CurrentTrials [ec.CurrentTrialIndex] as MoveToExperimentTrial;

@@ -22,8 +22,8 @@ public class MoveToExperimentTrial : ExperimentTrial
 
 	public void initialze (GameObject gameController)
 	{
-		
-		if (first) {
+        
+        if (first) {
 			if (Graph.ExperimentType == experimentType.EYE) {
 				gameController.GetComponent<Bubble> ().rayCastAllowed = true;
 			} else if (Graph.ExperimentType == experimentType.MOUSE) {

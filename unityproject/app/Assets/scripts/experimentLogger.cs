@@ -17,16 +17,17 @@ public class experimentLogger : MonoBehaviour
     public string targetNode;
     public string correctNodehit;
     public string condition;
+    public string currentState;
     private string calibrationData = "noCalibrationDataSet";
     void Start ()
 	{
-        
-		participantId = "1";
-		file = new System.IO.StreamWriter(@"ExperimentLog\"+participantId+".csv");
-		file.WriteLine ("participantId,condition,timeSinceStartup,correctNodeHit,keypressed,calibrationData,bubbleSize,numberNodes,targetNode,currentSelectedNode");
-		file.Flush ();
-	}
 
+        int fileCount = Directory.GetFiles(@"ExperimentLog\", "*.csv*").Length;
+        participantId = (fileCount+1).ToString();
+		file = new System.IO.StreamWriter(@"ExperimentLog\"+participantId+".csv");
+		file.WriteLine ("participantId,condition,timeSinceStartup,correctNodeHit,keypressed,calibrationData,bubbleSize,numberNodes,targetNode,currentSelectedNode,currentState");
+		file.Flush ();
+	} 
 	void Update ()
 	{
         if(Input.anyKey)
@@ -46,7 +47,7 @@ public class experimentLogger : MonoBehaviour
 	// lateUpdate is called once per frame after all other Updates
 	void LateUpdate ()
 	{
-		file.WriteLine (participantId + "," + condition  + "," + Time.realtimeSinceStartup + "," + correctNodehit + "," + keypressed + "," +calibrationData+ "," + bubbleSize + "," + currentGraphSize.ToString() + "," + targetNode + "," + currentNode);
+		file.WriteLine (participantId + "," + condition  + "," + Time.realtimeSinceStartup + "," + correctNodehit + "," + keypressed + "," +calibrationData+ "," + bubbleSize + "," + currentGraphSize.ToString() + "," + targetNode + "," + currentNode + "," + currentState);
 		file.Flush ();
 		correctNodehit = "";
 	}

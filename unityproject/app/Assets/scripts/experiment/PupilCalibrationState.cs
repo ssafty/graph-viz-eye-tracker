@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System;
 
-public class CalibrationState : ExperimentState
+public class PupilCalibrationState : ExperimentState
 {
 
     
@@ -49,9 +49,11 @@ public class CalibrationState : ExperimentState
 
     public override void UpdateState(ExperimentController ec)
     {
-    	panel.gameObject.SetActive(false);
-		//eyepointer.gameObject.SetActive(false);
-		c.gameObject.SetActive(true);
+        experimentLogger.getLogger().currentState = "PupilCalibration";
+        panel.gameObject.SetActive(true);
+        //eyepointer.gameObject.SetActive(false);
+        text.text = "The first phase of the calibration will start in the next seconds";
+        c.gameObject.SetActive(true);
 		
     }
 }
