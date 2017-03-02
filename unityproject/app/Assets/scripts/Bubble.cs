@@ -33,7 +33,7 @@ public class Bubble : MonoBehaviour
 	{
 		lastHit = Vector3.zero;
 		dwellCount = 0;
-		InvokeRepeating ("doRayCast", 0.0f, interval);
+		InvokeRepeating ("doRayCast_correctedGaze", 0.0f, interval);
 	}
 
 
@@ -41,7 +41,7 @@ public class Bubble : MonoBehaviour
 	{
 		bool doIt = rayCastAllowed;
 		if (pressKeyToTrack) {
-			doIt &= Input.GetKey (pushToTrack);
+			doIt |= Input.GetKey (pushToTrack);
 		}
 
 		if (doIt) {
@@ -77,10 +77,15 @@ public class Bubble : MonoBehaviour
 
 	void doRayCast_correctedGaze ()
 	{
-		if (rayCastAllowed) {
+		bool doIt = rayCastAllowed;
+		if (pressKeyToTrack) {
+			doIt |= Input.GetKey (pushToTrack);
+		}
+
+		if (doIt) {
 			GameObject eyepointer_corrected = GameObject.FindGameObjectWithTag ("eyepointer_corrected");
 
-			Vector2 neu = eyepointer.GetComponent<RectTransform> ().anchoredPosition;
+			Vector2 neu = eyepointer_corrected.GetComponent<RectTransform> ().anchoredPosition;
 			neu.x = neu.x + (Screen.width / 2);
 			neu.y = neu.y + (Screen.height / 2);
 			GameObject go = bestBubble (neu);
