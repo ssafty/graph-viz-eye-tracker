@@ -41,7 +41,7 @@ public class Bubble : MonoBehaviour
 	{
 		bool doIt = rayCastAllowed;
 		if (pressKeyToTrack) {
-			doIt |= Input.GetKey (pushToTrack);
+			doIt &= Input.GetKey (pushToTrack);
 		}
 
 		if (doIt) {
@@ -79,7 +79,7 @@ public class Bubble : MonoBehaviour
 	{
 		bool doIt = rayCastAllowed;
 		if (pressKeyToTrack) {
-			doIt |= Input.GetKey (pushToTrack);
+			doIt &= Input.GetKey (pushToTrack);
 		}
 
 		if (doIt) {
