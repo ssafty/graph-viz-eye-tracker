@@ -67,6 +67,10 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	public static Quaternion rot;
 	public static float xDeg = 0;
 	public static float yDeg = 0;
+
+	public static byte pressureThreshold = 127;
+	public static bool isTipPressed = false;
+
 	public static float zDeg = 0;
 
 	Coroutine c;
@@ -75,6 +79,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	public GameObject graph;
 	public GameObject bubble;
 	public Camera mainCamera;
+	public GameObject gameController;
+	private HapringController hapringController;
 	private Transform mainCameraParentTransform;
 
 	void Awake ()
@@ -139,6 +145,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		} else {
 			mainCameraParentTransform = mainCamera.transform.parent;
 		}
+		hapringController = gameController.GetComponent<HapringController> ();
 	}
 
 	private float lastBClick = 0f;
@@ -160,7 +167,24 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	}
 	// code for selecting the nodes
 	void nodeSelection ()
+
+
 	{
+		if (checkNoJoystickEvent ()) {	
+					joyNeutral = true;
+					}
+
+		if (checkIncreaseJoystickEvent () && joyNeutral) {
+			Debug.Log ("NODE BROWSING UP");
+			hapringController.switchNode (HapringController.Direction.left);
+			joyNeutral = false;
+		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
+			Debug.Log ("NODE BROWSING DOWN");
+			hapringController.switchNode (HapringController.Direction.right);
+			joyNeutral = false;
+		}
+
+
 //		// get the highlighted nodes
 //		List<GameObject> nodes = HighlightNode.GetAllHighlighted ();
 //		if (!checkButtonBStatus ()) {
@@ -231,16 +255,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	{
 
 		if (checkButtonAStatus()) {
-
-			/*
-			// This has intuitive axes but a gimbal lock problem
-			mainCamera.transform.SetParent (pivot.transform);
-			Vector3 deltaRing = lastRotRing - rot.eulerAngles;
-			Quaternion newRot = Quaternion.Euler(lastRotGraph.x + deltaRing.x, lastRotGraph.y + deltaRing.z, lastRotGraph.z);
-			pivot.transform.localRotation = newRot;
-			*/
-
-			// This does not have gimbal lock, but the axes are less intuitive
 			mainCamera.transform.SetParent (pivot.transform);
 			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
 			pivot.transform.rotation = lastGraphQuad * diff;
@@ -319,6 +333,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		}
 	}
 
+
 	public class UDPReceiver
 	{
 		UdpClient client;
@@ -332,7 +347,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 				try {
 					if (client.Available >= 1) {
 						byte[] data = client.Receive (ref source);
-						Debug.Log(data.Length);
 
 						if (data.Length == 16) {
 							qw = (double)((((int)data [0] << 24) + ((int)data [1] << 16) + ((int)data [2] << 8) + data [3])) * (1.0 / (1 << 30));
@@ -343,29 +357,9 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 							//Debug.Log("IMU >>>>>> " + qx + " : "+ qy + " : "+ qz + " : " + qw);
 						} else if (data.Length == 1) {
 							result = Byte.TryParse (Encoding.UTF8.GetString (data), out lastCommandValue);
-							/*
-                            if (result)
-                            {
-                                switch (lastCommandValue)
-                                {
-                                    case 0: // BUTTON_DATA.BUTTONA_PRESSED:
-                                        {
-                                            break;
-                                        }
-                                    default:
-                                        break;
-                                }
-                            }
-                            */
+
 						} else if (data.Length == 2) {
-	
 
-							// simple code to skip fast events
-							if (data [0] < 80 || data [0] > 240) {
-
-							}
-
-						
 							// code to set events
 							if (data [0] < 80) {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.INCREASE;
@@ -374,7 +368,11 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 							} else {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 							}
-						}
+						} else if (data.Length == 3) {
+							isTipPressed = (data[2] > pressureThreshold);
+							if(isTipPressed){
+							Debug.Log("Tip Press Event");
+							}}
 					}
 				} catch (Exception e) {
 					Debug.Log ("EXCEPTION ******************************* " + e.Message);

@@ -32,7 +32,6 @@ public class HapringController : MonoBehaviour {
         }
         if (!isInBubble(currentIndex))
         {
-			Debug.Log(GameObject.FindGameObjectWithTag("Bubble"));
             
             if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
             {
@@ -64,7 +63,7 @@ public class HapringController : MonoBehaviour {
         }
     }
         
-    void switchNode(Direction direction)
+    public void switchNode(Direction direction)
     {
 		if (direction == Direction.up) {
 			chooseSelectedNode();
@@ -158,6 +157,6 @@ public class HapringController : MonoBehaviour {
         } 
     }
     
-    enum Direction { up, down, left, right};
+    public enum Direction { up, down, left, right};
 
 }
