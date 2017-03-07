@@ -332,6 +332,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 				try {
 					if (client.Available >= 1) {
 						byte[] data = client.Receive (ref source);
+						Debug.Log(data.Length);
 
 						if (data.Length == 16) {
 							qw = (double)((((int)data [0] << 24) + ((int)data [1] << 16) + ((int)data [2] << 8) + data [3])) * (1.0 / (1 << 30));
@@ -357,7 +358,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
                             }
                             */
 						} else if (data.Length == 2) {
-							///Debug.Log("J *** " + data[0] + " : " + data[1]);
+	
 
 							// simple code to skip fast events
 							if (data [0] < 80 || data [0] > 240) {
