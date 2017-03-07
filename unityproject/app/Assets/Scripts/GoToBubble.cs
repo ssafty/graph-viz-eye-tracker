@@ -16,16 +16,21 @@ public class GoToBubble : MonoBehaviour
 	{
 		
 		if (Input.GetKey(KeyCode.K)) {
-			GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
-			if (Bubble.REST_POS != bubble.transform.position) {
-				ZoomToBubble ();
-			}
+			GoToBubble.Zoom ();
 					
 
 		}  
 	}
 
-	void RotateToBubble ()
+	public static void Zoom() {
+		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
+		if (Bubble.REST_POS != bubble.transform.position) {
+			GoToBubble.ZoomToBubble ();
+		}
+	}
+		
+
+	static void RotateToBubble ()
 	{
 		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
 		Camera camLeft = Camera.main;
@@ -35,7 +40,7 @@ public class GoToBubble : MonoBehaviour
 	//	camRight.transform.localRotation = Quaternion.Lerp (camLeft.transform.rotation, toRotation, 5 * Time.deltaTime);
 	}
 
-	public bool ZoomToBubble ()
+		public static  bool ZoomToBubble ()
 	{
 		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
 		Camera camLeft = Camera.main;
