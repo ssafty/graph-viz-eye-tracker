@@ -76,8 +76,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	Coroutine c;
 	Thread workerThread;
 
-	public GameObject graph;
-	public GameObject bubble;
+
+
 	public Camera mainCamera;
 	public GameObject gameController;
 	private HapringController hapringController;
@@ -110,7 +110,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		lastRotRing = rot.eulerAngles;
 		lastRotGraph = pivot.transform.rotation.eulerAngles;
-		//startPosition = graph.transform.position;
 		lastGraphQuad = pivot.transform.rotation;
 		lastRingQuad = rot;
 
@@ -137,9 +136,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	void Start ()
 	{
-		if (bubble == null) {
-			Debug.LogError ("Please attach bubble game object to this script!!!");
-		}
+
 		if (mainCamera == null) {
 			Debug.LogError ("Please attach main camera to this script!!!");
 		} else {
@@ -149,6 +146,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	}
 
 	private float lastBClick = 0f;
+
 	void Update ()
 	{
 		// select the nodes
@@ -167,12 +165,10 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	}
 	// code for selecting the nodes
 	void nodeSelection ()
-
-
 	{
 		if (checkNoJoystickEvent ()) {	
-					joyNeutral = true;
-					}
+			joyNeutral = true;
+		}
 
 		if (checkIncreaseJoystickEvent () && joyNeutral) {
 			hapringController.switchNode (HapringController.Direction.left);
@@ -186,60 +182,20 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			Debug.Log ("TIP PRESSED");
 			startVibration ();
 			hapringController.switchNode (HapringController.Direction.select);
-		//	Invoke ("stopVibration", 1.0f);
+			//	Invoke ("stopVibration", 1.0f);
 			isTipPressed = false;
 		}
-
-
-//		// get the highlighted nodes
-//		List<GameObject> nodes = HighlightNode.GetAllHighlighted ();
-//		if (!checkButtonBStatus ()) {
-//			bNeutral = true;
-//			stopVibration ();
-//		}
-//
-//		// if no highlighted nodes exit
-//		if (nodes.Count == 0)
-//			return;
-//
-//		// check if current index in range
-//		if (currentIndex >= nodes.Count)
-//			currentIndex = 0;
-//		if (currentIndex == -1)
-//			currentIndex = nodes.Count - 1;
-//
-//		if (checkNoJoystickEvent ()) {	//unblock iteration
-//			joyNeutral = true;
-//		}
-//
-//		// check for operation next or previous
-//		if (checkIncreaseJoystickEvent () && joyNeutral) {
-//			Debug.Log ("NODE BROWSING UP");
-//			currentIndex += 1;
-//			joyNeutral = false;
-//		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
-//			Debug.Log ("NODE BROWSING DOWN");
-//			currentIndex -= 1;
-//			joyNeutral = false;
-//		} else if (checkButtonBStatus () && bNeutral) {
-//			// select the node
-//			Debug.Log ("NODE SELECTION");
-//			bNeutral = false;
-//			nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.red;
-//			//if (nodes [currentIndex] = goalNode)
-//			startVibration ();
-//			//Invoke ("stopVibration", 1.0f);
-//
-
 	}
 
-	// code for rotating object
+
+
+	// code for rot	ating object
 	public void rotateTargetObject ()
 	{
 
-		if (checkButtonAStatus()) {
+		if (checkButtonAStatus ()) {
 			mainCamera.transform.SetParent (pivot.transform);
-			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
+			Quaternion diff = Quaternion.Inverse (lastRingQuad) * rot;
 			pivot.transform.rotation = lastGraphQuad * diff;
 
 		} else {
@@ -352,8 +308,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 							}
 						} else if (data.Length == 3) {
-							isTipPressed = (data[2] > pressureThreshold);
-							}
+							isTipPressed = (data [2] > pressureThreshold);
+						}
 					}
 				} catch (Exception e) {
 					Debug.Log ("EXCEPTION ******************************* " + e.Message);
