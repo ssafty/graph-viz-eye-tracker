@@ -208,7 +208,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		// reset color of all nodes
 		foreach (GameObject n in nodes) {
-			n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
+		n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
 		}
 
 		// highlight the node
@@ -237,6 +237,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			// This does not have gimbal lock, but the axes are less intuitive
 			mainCamera.transform.SetParent (pivot.transform);
 			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
+			Quaternion q = new Quaternion (0f, 0f, 0f, 1f);
 			pivot.transform.rotation = lastGraphQuad * diff;
 
 		} else {
@@ -380,6 +381,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 							}
 
+						
 							// code to set events
 							if (data [0] < 80) {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.INCREASE;
@@ -430,7 +432,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			//lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 			return true;
 		}
-
+	
 		return false;
 	}
 
