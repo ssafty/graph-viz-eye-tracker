@@ -70,7 +70,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	public static byte pressureThreshold = 127;
 	public static bool isTipPressed = false;
-
+	public static float tipPressCounter = 0f;
 	public static float zDeg = 0;
 
 	Coroutine c;
@@ -178,12 +178,17 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			joyNeutral = false;
 		}
 
-		if (isTipPressed) {
-			Debug.Log ("TIP PRESSED");
+
+		Debug.Log("Tip Press Counter (Fire Event on 12): " + tipPressCounter);
+		if (tipPressCounter > 11) {
+			
 			startVibration ();
 			hapringController.switchNode (HapringController.Direction.select);
 			//	Invoke ("stopVibration", 1.0f);
-			isTipPressed = false;
+			tipPressCounter = 0;
+		}
+		if (tipPressCounter > 0f) {
+			tipPressCounter -= 0.025f;
 		}
 	}
 
@@ -288,6 +293,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 						byte[] data = client.Receive (ref source);
 
 						if (data.Length == 16) {
+
 							qw = (double)((((int)data [0] << 24) + ((int)data [1] << 16) + ((int)data [2] << 8) + data [3])) * (1.0 / (1 << 30));
 							qx = (double)((((int)data [4] << 24) + ((int)data [5] << 16) + ((int)data [6] << 8) + data [7])) * (1.0 / (1 << 30));
 							qy = (double)((((int)data [8] << 24) + ((int)data [9] << 16) + ((int)data [10] << 8) + data [11])) * (1.0 / (1 << 30));
@@ -295,10 +301,11 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 							rot = Quaternion.Euler (xDeg, yDeg, zDeg) * new Quaternion ((float)qx, (float)qy, (float)qz, (float)qw);
 							//Debug.Log("IMU >>>>>> " + qx + " : "+ qy + " : "+ qz + " : " + qw);
 						} else if (data.Length == 1) {
+							Debug.Log("Reset counter");
+							tipPressCounter = 0;
 							result = Byte.TryParse (Encoding.UTF8.GetString (data), out lastCommandValue);
 
 						} else if (data.Length == 2) {
-
 							// code to set events
 							if (data [0] < 80) {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.INCREASE;
@@ -308,7 +315,12 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 							}
 						} else if (data.Length == 3) {
-							isTipPressed = (data [2] > pressureThreshold);
+							if((data [2] > pressureThreshold)) {
+								tipPressCounter++;
+							} else {
+								Debug.Log("Reset counter");
+								tipPressCounter = 0;
+							}
 						}
 					}
 				} catch (Exception e) {
