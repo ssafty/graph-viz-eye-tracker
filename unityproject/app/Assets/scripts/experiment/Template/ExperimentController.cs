@@ -5,57 +5,55 @@ using System.IO;
 
 public abstract class ExperimentController
     : Singleton<ExperimentController>
-    {
+{
 
 
-    [SerializeField]
-    protected ExperimentState currentState;
+	[SerializeField]
+	protected ExperimentState currentState;
 
-    private int currentTrialIndex;
-    private int numberOfTrainings;
-    protected StreamWriter outputStream;
+	public int currentTrialIndex;
+	public bool drawGraph = false;
+	private int numberOfTrainings;
 
-    protected List<ExperimentTrial> currentTrials;
+	protected StreamWriter outputStream;
 
-    public List<ExperimentTrial> CurrentTrials
-    {
-        get
-        {
-            return currentTrials;
-        }
-    }
+	protected List<ExperimentTrial> currentTrials;
 
-    public int CurrentTrialIndex
-    {
-        get
-        {
-            return currentTrialIndex;
-        }
+	public List<ExperimentTrial> CurrentTrials {
+		get {
+			return currentTrials;
+		}
+	}
 
-        set
-        {
-            currentTrialIndex = value;
-        }
-    }
-    public int NumberOfTrainings
-    {
-        get
-        {
-            return numberOfTrainings;
-        }
-    }
+	public int CurrentTrialIndex {
+		get {
+			return currentTrialIndex;
+		}
 
-    // Use this for initialization
-    void Start () {
+		set {
+			currentTrialIndex = value;
+		}
+	}
+
+	public int NumberOfTrainings {
+		get {
+			return numberOfTrainings;
+		}
+	}
+
+	// Use this for initialization
+	void Start ()
+	{
 	
 	}
 	
 	// Update is called once per frame
-	protected virtual void Update () {
-        currentState = currentState.HandleInput(this);
-        currentState.UpdateState(this);
-    }
+	protected virtual void Update ()
+	{
+		currentState = currentState.HandleInput (this);
+		currentState.UpdateState (this);
+	}
 
-    protected abstract void FillTrials();
+	protected abstract void FillTrials ();
     
 }

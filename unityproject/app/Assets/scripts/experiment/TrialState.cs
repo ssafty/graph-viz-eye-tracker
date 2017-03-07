@@ -13,9 +13,21 @@ public class TrialState : ExperimentState
 	GameObject graph;
 	[SerializeField]
 	GameObject GameController;
+	[SerializeField]
+	ExperimentState trainingState;
+	private experimentType lastTrialType;
+	private bool first = true;
 
 	public override ExperimentState HandleInput (ExperimentController ec)
 	{
+		if (ec.CurrentTrials.Count > ec.CurrentTrialIndex) {
+			MoveToExperimentTrial mttrial = ec.CurrentTrials [ec.CurrentTrialIndex] as MoveToExperimentTrial;
+			if (mttrial.Graph.ExperimentType != lastTrialType && !first) {
+				Debug.Log ("found new TrialType. Issuing a training phase");
+				first = true;
+				return trainingState;
+			}
+		}
 		if (ec.CurrentTrialIndex >= ec.CurrentTrials.Count) {
 			return nextState;
 		} else {
@@ -25,8 +37,8 @@ public class TrialState : ExperimentState
 
 	public override void UpdateState (ExperimentController ec)
 	{
-        experimentLogger.getLogger().currentState = "Trial";
-        marker.gameObject.SetActive (true);
+		experimentLogger.getLogger ().currentState = "Trial";
+		marker.gameObject.SetActive (true);
 		eyepointer.gameObject.SetActive (true);
 		graph.gameObject.SetActive (true);
 		MoveToExperimentTrial mttrial = ec.CurrentTrials [ec.CurrentTrialIndex] as MoveToExperimentTrial;
@@ -38,6 +50,10 @@ public class TrialState : ExperimentState
 
 			mttrial.update ();
 			if (mttrial.done) {
+				if (lastTrialType != mttrial.Graph.ExperimentType) {
+					first = false;
+				}
+				lastTrialType = mttrial.Graph.ExperimentType;
 				GameObject[] nodes = GameObject.FindGameObjectsWithTag ("Node");
 				foreach (GameObject node in nodes) {
 					GameObject.Destroy (node);

@@ -23,8 +23,8 @@ public class MoveToExperimentTrial : ExperimentTrial
 	public void initialze (GameObject gameController)
 	{
         
-        if (first) {
-			if (Graph.ExperimentType == experimentType.EYE) {
+		if (first) {
+			if (Graph.ExperimentType == experimentType.EYE || Graph.ExperimentType == experimentType.WITHCUSTOMCALIB) {
 				gameController.GetComponent<Bubble> ().rayCastAllowed = true;
 			} else if (Graph.ExperimentType == experimentType.MOUSE) {
 				gameController.GetComponent<Bubble> ().rayCastAllowed = false;
@@ -35,20 +35,20 @@ public class MoveToExperimentTrial : ExperimentTrial
 			highlight ();
 			graphCreated = true;
 
-			Vector3 pos = Node.GetNodeWithId(0).transform.position;
-            GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(0, 0, -40);
-            Camera.main.transform.localEulerAngles = Vector3.zero;
-            Camera.main.transform.position = new Vector3(0, 0, -40);
-            GameObject cr = GameObject.FindGameObjectWithTag("RightCam");
-            if(cr) {
-                cr.transform.position = new Vector3(0, 0, -40);
-                cr.transform.localEulerAngles = Vector3.zero;
-            }
+			Vector3 pos = Node.GetNodeWithId (0).transform.position;
+			GameObject.FindGameObjectWithTag ("metaCamera").transform.position = new Vector3 (0, 0, -40);
+			Camera.main.transform.localEulerAngles = Vector3.zero;
+			Camera.main.transform.position = new Vector3 (0, 0, -40);
+			GameObject cr = GameObject.FindGameObjectWithTag ("RightCam");
+			if (cr) {
+				cr.transform.position = new Vector3 (0, 0, -40);
+				cr.transform.localEulerAngles = Vector3.zero;
+			}
 
 
-            experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
-            experimentLogger.getLogger().condition = _graph.ExperimentType.ToString();
-            experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
+			experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
+			experimentLogger.getLogger ().condition = _graph.ExperimentType.ToString ();
+			experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
 			first = false;
 		}
        
