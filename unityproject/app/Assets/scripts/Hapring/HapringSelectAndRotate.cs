@@ -155,9 +155,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			mainCamera.transform.rotation = camRotHistory.Pop();
 		}
 
-		Debug.Log(camPosHistory.Count);
-
-		Debug.Log(bNeutral);
 	}
 	// code for selecting the nodes
 	void nodeSelection()
@@ -220,23 +217,29 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	}
 
+	float angle1 = 0f;
+	Vector3 axis1 = Vector3.zero;
+
 	// code for rotating object
 	public void rotateTargetObject()
 	{
 		if (checkButtonAStatus()) {
-			/*
+			
 			// This has intuitive axes but a gimbal lock problem
 			mainCamera.transform.SetParent (pivot.transform);
 			Vector3 deltaRing = lastRotRing - rot.eulerAngles;
-
-			Quaternion newRot = Quaternion.Euler(lastRotGraph.x + deltaRing.x, lastRotGraph.y + deltaRing.z, lastRotGraph.z);
-			pivot.transform.localRotation = newRot;
-			*/
-
-			// This does not have gimbal lock, but the axes are less intuitive
-			mainCamera.transform.SetParent (pivot.transform);
-			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
-			pivot.transform.rotation = lastGraphQuad * diff;
+			Vector3 norm = rot.eulerAngles.normalized;
+			Quaternion.Euler (deltaRing).ToAngleAxis (out angle1, out axis1);
+			Debug.Log (angle1);
+			Debug.Log (axis1);
+	//		Camera.main.transform.RotateAround (Vector3.zero, axis1, angle1);
+			Camera.main.transform.localRotation = Quaternion.Inverse(lastRingQuad) * Quaternion.Inverse(rot);
+//			GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
+//			Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
+//			// This does not have gimbal lock, but the axes are less intuitive
+//			mainCamera.transform.SetParent (pivot.transform);
+//			Quaternion diff = Quaternion.Inverse(lastRingQuad) * Quaternion.Inverse(rot);
+//			Camera.main.transform.rotation = lastGraphQuad * diff;
 
 		} else {
 			mainCamera.transform.parent = mainCameraParentTransform;

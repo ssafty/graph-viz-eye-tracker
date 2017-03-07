@@ -32,15 +32,15 @@ public class HapringController : MonoBehaviour {
         }
         if (!isInBubble(currentIndex))
         {
-            //Debug.Log(GetComponent<Bubble>().currentBubbleCenter);
-            
-            if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
-            {
-                Debug.Log("first assigned");
-                currentIndex = GetComponent<Bubble>().currentBubbleCenter.GetComponent<Node>().id;
-                currentSelectNode = GetComponent<Bubble>().currentBubbleCenter;
-                GetComponent<Bubble>().currentBubbleCenter.GetComponent<Renderer>().material.color = highlightColor;
-            }
+//			Debug.Log(GameObject.FindGameObjectWithTag("Bubble"));
+//            
+//            if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
+//            {
+//                Debug.Log("first assigned");
+//                currentIndex = GetComponent<Bubble>().currentBubbleCenter.GetComponent<Node>().id;
+//                currentSelectNode = GetComponent<Bubble>().currentBubbleCenter;
+//                GetComponent<Bubble>().currentBubbleCenter.GetComponent<Renderer>().material.color = highlightColor;
+//            }
         }
         if (Input.GetKeyDown(KeyCode.Return))
         {

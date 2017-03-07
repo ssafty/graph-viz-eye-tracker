@@ -62,10 +62,11 @@ public class ThreeDCalibrationState : ExperimentState
         c.gameObject.SetActive(false);
         experimentLogger.getLogger().currentState = "3DCalibrationStarted";
         Calib3D calib = GameObject.FindGameObjectWithTag("Calib3D").GetComponent<Calib3D>();
-        calib.StartCalib3DScene();
+     /*   calib.StartCalib3DScene();
         calib.enable_calib_3D = true;
         calib.invokeCalib();
         Invoke("start3DCalibForReal", 1);
+        */
         
     }
     private void start3DCalibForReal()
