@@ -141,6 +141,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		}
 	}
 
+	private float lastBClick = 0f;
 	void Update ()
 	{
 		// select the nodes
@@ -149,70 +150,75 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		// rotate around bubble
 		rotateTargetObject ();
 
+		if (checkButtonBStatus ()) {
+			GoToBubble.Zoom ();
+		}
+
+
 
 
 	}
 	// code for selecting the nodes
 	void nodeSelection ()
 	{
-		// get the highlighted nodes
-		List<GameObject> nodes = HighlightNode.GetAllHighlighted ();
-		if (!checkButtonBStatus ()) {
-			bNeutral = true;
-			stopVibration ();
-		}
-
-		// if no highlighted nodes exit
-		if (nodes.Count == 0)
-			return;
-
-		// check if current index in range
-		if (currentIndex >= nodes.Count)
-			currentIndex = 0;
-		if (currentIndex == -1)
-			currentIndex = nodes.Count - 1;
-
-		if (checkNoJoystickEvent ()) {	//unblock iteration
-			joyNeutral = true;
-		}
-
-		// check for operation next or previous
-		if (checkIncreaseJoystickEvent () && joyNeutral) {
-			Debug.Log ("NODE BROWSING UP");
-			currentIndex += 1;
-			joyNeutral = false;
-		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
-			Debug.Log ("NODE BROWSING DOWN");
-			currentIndex -= 1;
-			joyNeutral = false;
-		} else if (checkButtonBStatus () && bNeutral) {
-			// select the node
-			Debug.Log ("NODE SELECTION");
-			bNeutral = false;
-			nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.red;
-			//if (nodes [currentIndex] = goalNode)
-			startVibration ();
-			//Invoke ("stopVibration", 1.0f);
-
-
-			return;
-		} else {
-			return;
-		}
-
-		// check if next index in range
-		if (currentIndex >= nodes.Count)
-			currentIndex = 0;
-		if (currentIndex == -1)
-			currentIndex = nodes.Count - 1;
-
-		// reset color of all nodes
-		foreach (GameObject n in nodes) {
-		n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
-		}
-
-		// highlight the node
-		nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.yellow;
+//		// get the highlighted nodes
+//		List<GameObject> nodes = HighlightNode.GetAllHighlighted ();
+//		if (!checkButtonBStatus ()) {
+//			bNeutral = true;
+//			stopVibration ();
+//		}
+//
+//		// if no highlighted nodes exit
+//		if (nodes.Count == 0)
+//			return;
+//
+//		// check if current index in range
+//		if (currentIndex >= nodes.Count)
+//			currentIndex = 0;
+//		if (currentIndex == -1)
+//			currentIndex = nodes.Count - 1;
+//
+//		if (checkNoJoystickEvent ()) {	//unblock iteration
+//			joyNeutral = true;
+//		}
+//
+//		// check for operation next or previous
+//		if (checkIncreaseJoystickEvent () && joyNeutral) {
+//			Debug.Log ("NODE BROWSING UP");
+//			currentIndex += 1;
+//			joyNeutral = false;
+//		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
+//			Debug.Log ("NODE BROWSING DOWN");
+//			currentIndex -= 1;
+//			joyNeutral = false;
+//		} else if (checkButtonBStatus () && bNeutral) {
+//			// select the node
+//			Debug.Log ("NODE SELECTION");
+//			bNeutral = false;
+//			nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.red;
+//			//if (nodes [currentIndex] = goalNode)
+//			startVibration ();
+//			//Invoke ("stopVibration", 1.0f);
+//
+//
+//			return;
+//		} else {
+//			return;
+//		}
+//
+//		// check if next index in range
+//		if (currentIndex >= nodes.Count)
+//			currentIndex = 0;
+//		if (currentIndex == -1)
+//			currentIndex = nodes.Count - 1;
+//
+//		// reset color of all nodes
+//		foreach (GameObject n in nodes) {
+//		n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
+//		}
+//
+//		// highlight the node
+//		nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.yellow;
 
 	}
 
@@ -237,7 +243,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			// This does not have gimbal lock, but the axes are less intuitive
 			mainCamera.transform.SetParent (pivot.transform);
 			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
-			Quaternion q = new Quaternion (0f, 0f, 0f, 1f);
 			pivot.transform.rotation = lastGraphQuad * diff;
 
 		} else {
@@ -248,28 +253,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			lastGraphQuad = pivot.transform.rotation;
 			lastRingQuad = rot;
 		}
-
-//		if (checkButtonAStatus ()) {
-//			Vector3 deltaRing = lastRotRing - rot.eulerAngles;
-//			Quaternion.Euler (deltaRing).ToAngleAxis (out angle1, out axis1);
-//			Vector3 direction = Vector3.zero;
-//			Debug.Log (deltaRing.x);
-//				if (axis1.x < -0.2) {
-//				Debug.Log ("UP");
-//					direction = Vector3.left;
-//				} else {
-//				Debug.Log ("DOWN");
-//					direction = Vector3.right;
-//				}
-//
-//				GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
-//				Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
-//				if (l != null && direction != Vector3.zero) {
-//
-//					Camera.main.transform.RotateAround (pos, direction, Mathf.Clamp (angle1, -55f, 55f) * Time.deltaTime);
-//
-//		}
-//	}
 	}
 
 	private void saveSettings ()
