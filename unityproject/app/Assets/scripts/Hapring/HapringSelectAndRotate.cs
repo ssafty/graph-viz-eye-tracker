@@ -175,13 +175,19 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 					}
 
 		if (checkIncreaseJoystickEvent () && joyNeutral) {
-			Debug.Log ("NODE BROWSING UP");
 			hapringController.switchNode (HapringController.Direction.left);
 			joyNeutral = false;
 		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
-			Debug.Log ("NODE BROWSING DOWN");
 			hapringController.switchNode (HapringController.Direction.right);
 			joyNeutral = false;
+		}
+
+		if (isTipPressed) {
+			Debug.Log ("TIP PRESSED");
+			startVibration ();
+			hapringController.switchNode (HapringController.Direction.select);
+		//	Invoke ("stopVibration", 1.0f);
+			isTipPressed = false;
 		}
 
 
@@ -224,31 +230,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 //			startVibration ();
 //			//Invoke ("stopVibration", 1.0f);
 //
-//
-//			return;
-//		} else {
-//			return;
-//		}
-//
-//		// check if next index in range
-//		if (currentIndex >= nodes.Count)
-//			currentIndex = 0;
-//		if (currentIndex == -1)
-//			currentIndex = nodes.Count - 1;
-//
-//		// reset color of all nodes
-//		foreach (GameObject n in nodes) {
-//		n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
-//		}
-//
-//		// highlight the node
-//		nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.yellow;
 
 	}
-
-	private float angle1 = 0f;
-
-	private Vector3 axis1 = Vector3.zero;
 
 	// code for rotating object
 	public void rotateTargetObject ()
@@ -370,9 +353,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 							}
 						} else if (data.Length == 3) {
 							isTipPressed = (data[2] > pressureThreshold);
-							if(isTipPressed){
-							Debug.Log("Tip Press Event");
-							}}
+							}
 					}
 				} catch (Exception e) {
 					Debug.Log ("EXCEPTION ******************************* " + e.Message);

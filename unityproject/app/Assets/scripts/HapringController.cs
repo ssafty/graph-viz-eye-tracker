@@ -65,7 +65,7 @@ public class HapringController : MonoBehaviour {
         
     public void switchNode(Direction direction)
     {
-		if (direction == Direction.up) {
+		if (direction == Direction.select) {
 			chooseSelectedNode();
 		}
         if (direction == Direction.right)
@@ -157,6 +157,6 @@ public class HapringController : MonoBehaviour {
         } 
     }
     
-    public enum Direction { up, down, left, right};
+    public enum Direction { select, up, down, left, right};
 
 }
