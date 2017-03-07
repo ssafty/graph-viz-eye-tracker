@@ -14,8 +14,10 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	public GameObject goalNode;
 	private int currentIndex = -1;
-	private bool joyNeutral = true;	//Has the joystick been neutral in the meantime
-	private bool bNeutral = true;	//Has the joystick been neutral in the meantime
+	private bool joyNeutral = true;
+	//Has the joystick been neutral in the meantime
+	private bool bNeutral = true;
+	//Has the joystick been neutral in the meantime
 	private Vector3 lastRotRing;
 	private Vector3 lastRotGraph;
 	private Quaternion lastRingQuad;
@@ -75,26 +77,27 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	public Camera mainCamera;
 	private Transform mainCameraParentTransform;
 
-	void Awake()
+	void Awake ()
 	{
-		sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-		target = new IPEndPoint(IPAddress.Parse(serverIP), dllPort);
-		Debug.Log("UDP sender ready!");
+		sender = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+		target = new IPEndPoint (IPAddress.Parse (serverIP), dllPort);
+		Debug.Log ("UDP sender ready!");
 
-		workerObject = new UDPReceiver(unityPort, dllPort);
-		workerThread = new Thread(workerObject.DoWork);
+		workerObject = new UDPReceiver (unityPort, dllPort);
+		workerThread = new Thread (workerObject.DoWork);
 
-		workerThread.Start();
-		Debug.Log("main thread: Starting worker thread...");
+		workerThread.Start ();
+		Debug.Log ("main thread: Starting worker thread...");
 
-		while (!workerThread.IsAlive) ;
+		while (!workerThread.IsAlive)
+			;
 
-		Debug.Log("UDP receiver ready!");
+		Debug.Log ("UDP receiver ready!");
 
-		doRequest(0);
-		requestChangeOnOrientationStatus(true);
+		doRequest (0);
+		requestChangeOnOrientationStatus (true);
 
-		Settings settings = SaveLoad.Load();
+		Settings settings = SaveLoad.Load ();
 		xDeg = settings.xDeg;
 		yDeg = settings.yDeg;
 		zDeg = settings.zDeg;
@@ -105,31 +108,29 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		lastGraphQuad = pivot.transform.rotation;
 		lastRingQuad = rot;
 
-		camPosHistory = new Stack<Vector3>();
-		camRotHistory = new Stack<Quaternion>();
+		camPosHistory = new Stack<Vector3> ();
+		camRotHistory = new Stack<Quaternion> ();
 	}
 
-	void OnDestroy()
+	void OnDestroy ()
 	{
-		doRequest(0);
-		Debug.Log("worker thread stopping");
+		doRequest (0);
+		Debug.Log ("worker thread stopping");
 
-		workerObject.RequestStop();
-		workerThread.Join();
-		try
-		{
-			sender.Shutdown(SocketShutdown.Both);
-			sender.Close();
-		}
-		catch (Exception e)
-		{
-			Debug.Log(e);
+		workerObject.RequestStop ();
+		workerThread.Join ();
+		try {
+			sender.Shutdown (SocketShutdown.Both);
+			sender.Close ();
+		} catch (Exception e) {
+			Debug.Log (e);
 		}
 
-		Debug.Log("sender destroyed");
+		Debug.Log ("sender destroyed");
 	}
 
-	void Start(){
+	void Start ()
+	{
 		if (bubble == null) {
 			Debug.LogError ("Please attach bubble game object to this script!!!");
 		}
@@ -140,38 +141,36 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		}
 	}
 
-	void Update()
+	void Update ()
 	{
 		// select the nodes
 		nodeSelection ();
 
 		// rotate around bubble
-		rotateTargetObject();
+		rotateTargetObject ();
 
-		//History WIP
-		if (Input.GetKeyUp (KeyCode.H) && camPosHistory.Count > 0)
-		{
-			mainCamera.transform.position = camPosHistory.Pop();
-			mainCamera.transform.rotation = camRotHistory.Pop();
-		}
+
 
 	}
 	// code for selecting the nodes
-	void nodeSelection()
+	void nodeSelection ()
 	{
 		// get the highlighted nodes
-		List<GameObject> nodes = HighlightNode.GetAllHighlighted();
+		List<GameObject> nodes = HighlightNode.GetAllHighlighted ();
 		if (!checkButtonBStatus ()) {
 			bNeutral = true;
 			stopVibration ();
 		}
 
 		// if no highlighted nodes exit
-		if (nodes.Count == 0) return;
+		if (nodes.Count == 0)
+			return;
 
 		// check if current index in range
-		if (currentIndex >= nodes.Count) currentIndex = 0;
-		if (currentIndex == -1) currentIndex = nodes.Count-1;
+		if (currentIndex >= nodes.Count)
+			currentIndex = 0;
+		if (currentIndex == -1)
+			currentIndex = nodes.Count - 1;
 
 		if (checkNoJoystickEvent ()) {	//unblock iteration
 			joyNeutral = true;
@@ -192,23 +191,23 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 			bNeutral = false;
 			nodes [currentIndex].GetComponent<Renderer> ().material.color = Color.red;
 			//if (nodes [currentIndex] = goalNode)
-			startVibration();
+			startVibration ();
 			//Invoke ("stopVibration", 1.0f);
 
-			//History stuff:
-			camPosHistory.Push(mainCamera.transform.position);
-			camRotHistory.Push(mainCamera.transform.rotation);
+
 			return;
 		} else {
 			return;
 		}
 
 		// check if next index in range
-		if (currentIndex >= nodes.Count) currentIndex = 0;
-		if (currentIndex == -1) currentIndex = nodes.Count-1;
+		if (currentIndex >= nodes.Count)
+			currentIndex = 0;
+		if (currentIndex == -1)
+			currentIndex = nodes.Count - 1;
 
 		// reset color of all nodes
-		foreach (GameObject n in nodes){
+		foreach (GameObject n in nodes) {
 			n.GetComponent<Renderer> ().material.color = HighlightNode.highlightColor;
 		}
 
@@ -217,54 +216,75 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	}
 
-	float angle1 = 0f;
-	Vector3 axis1 = Vector3.zero;
+	private float angle1 = 0f;
+
+	private Vector3 axis1 = Vector3.zero;
 
 	// code for rotating object
-	public void rotateTargetObject()
+	public void rotateTargetObject ()
 	{
+
 		if (checkButtonAStatus()) {
-			
+
+			/*
 			// This has intuitive axes but a gimbal lock problem
 			mainCamera.transform.SetParent (pivot.transform);
 			Vector3 deltaRing = lastRotRing - rot.eulerAngles;
-			Vector3 norm = rot.eulerAngles.normalized;
-			Quaternion.Euler (deltaRing).ToAngleAxis (out angle1, out axis1);
-			Debug.Log (angle1);
-			Debug.Log (axis1);
-	//		Camera.main.transform.RotateAround (Vector3.zero, axis1, angle1);
-			Camera.main.transform.localRotation = Quaternion.Inverse(lastRingQuad) * Quaternion.Inverse(rot);
-//			GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
-//			Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
-//			// This does not have gimbal lock, but the axes are less intuitive
-//			mainCamera.transform.SetParent (pivot.transform);
-//			Quaternion diff = Quaternion.Inverse(lastRingQuad) * Quaternion.Inverse(rot);
-//			Camera.main.transform.rotation = lastGraphQuad * diff;
+			Quaternion newRot = Quaternion.Euler(lastRotGraph.x + deltaRing.x, lastRotGraph.y + deltaRing.z, lastRotGraph.z);
+			pivot.transform.localRotation = newRot;
+			*/
+
+			// This does not have gimbal lock, but the axes are less intuitive
+			mainCamera.transform.SetParent (pivot.transform);
+			Quaternion diff = Quaternion.Inverse(lastRingQuad) * rot;
+			pivot.transform.rotation = lastGraphQuad * diff;
 
 		} else {
+			stopVibration ();
 			mainCamera.transform.parent = mainCameraParentTransform;
 			lastRotRing = rot.eulerAngles;
 			lastRotGraph = pivot.transform.rotation.eulerAngles;
 			lastGraphQuad = pivot.transform.rotation;
 			lastRingQuad = rot;
 		}
+
+//		if (checkButtonAStatus ()) {
+//			Vector3 deltaRing = lastRotRing - rot.eulerAngles;
+//			Quaternion.Euler (deltaRing).ToAngleAxis (out angle1, out axis1);
+//			Vector3 direction = Vector3.zero;
+//			Debug.Log (deltaRing.x);
+//				if (axis1.x < -0.2) {
+//				Debug.Log ("UP");
+//					direction = Vector3.left;
+//				} else {
+//				Debug.Log ("DOWN");
+//					direction = Vector3.right;
+//				}
+//
+//				GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
+//				Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
+//				if (l != null && direction != Vector3.zero) {
+//
+//					Camera.main.transform.RotateAround (pos, direction, Mathf.Clamp (angle1, -55f, 55f) * Time.deltaTime);
+//
+//		}
+//	}
 	}
-	private void saveSettings()
+
+	private void saveSettings ()
 	{
-		Settings settings = new Settings();
+		Settings settings = new Settings ();
 		settings.xDeg = xDeg;
 		settings.yDeg = yDeg;
 		settings.zDeg = zDeg;
-		SaveLoad.Save(settings);
+		SaveLoad.Save (settings);
 	}
 
-	void OnGUI()
+	void OnGUI ()
 	{
 		Event e = Event.current;
-		if (e.type.Equals(EventType.KeyDown))
-		{
-			switch (e.keyCode)
-			{
+		if (e.type.Equals (EventType.KeyDown)) {
+			switch (e.keyCode) {
 			case KeyCode.Q:
 				xDeg++;
 				break;
@@ -284,38 +304,34 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 				zDeg--;
 				break;
 			case KeyCode.R:
-				saveSettings();
+				saveSettings ();
 				break;
 			case KeyCode.UpArrow:
-				doRequest(127);
+				doRequest (127);
 				break;
 			case KeyCode.DownArrow:
-				doRequest(0);
+				doRequest (0);
 				break;
 			}
 		}
 	}
 
-	public void requestChangeOnOrientationStatus(bool status)
+	public void requestChangeOnOrientationStatus (bool status)
 	{
-		data = Encoding.ASCII.GetBytes((status ? -1.0f : -2.0f).ToString());
-		sender.SendTo(data, target);
+		data = Encoding.ASCII.GetBytes ((status ? -1.0f : -2.0f).ToString ());
+		sender.SendTo (data, target);
 	}
 
-	public void doRequest(float power)
+	public void doRequest (float power)
 	{
-		try
-		{
-			if (power != lastSentPower)
-			{
-				data = Encoding.ASCII.GetBytes(((byte)power).ToString());
-				sender.SendTo(data, target);
+		try {
+			if (power != lastSentPower) {
+				data = Encoding.ASCII.GetBytes (((byte)power).ToString ());
+				sender.SendTo (data, target);
 				lastSentPower = power;
 			}
-		}
-		catch (UnityException e)
-		{
-			Debug.Log("EXCEPTION ******************************* " + e.Message);
+		} catch (UnityException e) {
+			Debug.Log ("EXCEPTION ******************************* " + e.Message);
 		}
 	}
 
@@ -324,30 +340,24 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		UdpClient client;
 		IPEndPoint source;
 
-		public void DoWork()
+		public void DoWork ()
 		{
 			bool result;
 
-			while (!_shouldStop)
-			{
-				try
-				{
-					if (client.Available >= 1)
-					{
-						byte[] data = client.Receive(ref source);
+			while (!_shouldStop) {
+				try {
+					if (client.Available >= 1) {
+						byte[] data = client.Receive (ref source);
 
-						if (data.Length == 16)
-						{
-							qw = (double)((((int)data[0] << 24) + ((int)data[1] << 16) + ((int)data[2] << 8) + data[3])) * (1.0 / (1 << 30));
-							qx = (double)((((int)data[4] << 24) + ((int)data[5] << 16) + ((int)data[6] << 8) + data[7])) * (1.0 / (1 << 30));
-							qy = (double)((((int)data[8] << 24) + ((int)data[9] << 16) + ((int)data[10] << 8) + data[11])) * (1.0 / (1 << 30));
-							qz = (double)((((int)data[12] << 24) + ((int)data[13] << 16) + ((int)data[14] << 8) + data[15])) * (1.0 / (1 << 30));
-							rot = Quaternion.Euler(xDeg, yDeg, zDeg) * new Quaternion((float)qx, (float)qy, (float)qz, (float)qw);
+						if (data.Length == 16) {
+							qw = (double)((((int)data [0] << 24) + ((int)data [1] << 16) + ((int)data [2] << 8) + data [3])) * (1.0 / (1 << 30));
+							qx = (double)((((int)data [4] << 24) + ((int)data [5] << 16) + ((int)data [6] << 8) + data [7])) * (1.0 / (1 << 30));
+							qy = (double)((((int)data [8] << 24) + ((int)data [9] << 16) + ((int)data [10] << 8) + data [11])) * (1.0 / (1 << 30));
+							qz = (double)((((int)data [12] << 24) + ((int)data [13] << 16) + ((int)data [14] << 8) + data [15])) * (1.0 / (1 << 30));
+							rot = Quaternion.Euler (xDeg, yDeg, zDeg) * new Quaternion ((float)qx, (float)qy, (float)qz, (float)qw);
 							//Debug.Log("IMU >>>>>> " + qx + " : "+ qy + " : "+ qz + " : " + qw);
-						}
-						else if (data.Length == 1)
-						{
-							result = Byte.TryParse(Encoding.UTF8.GetString(data), out lastCommandValue);
+						} else if (data.Length == 1) {
+							result = Byte.TryParse (Encoding.UTF8.GetString (data), out lastCommandValue);
 							/*
                             if (result)
                             {
@@ -362,57 +372,48 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
                                 }
                             }
                             */
-						}
-						else if (data.Length == 2)
-						{
+						} else if (data.Length == 2) {
 							///Debug.Log("J *** " + data[0] + " : " + data[1]);
 
 							// simple code to skip fast events
-							if (data[0] < 80 || data[0] > 240){
+							if (data [0] < 80 || data [0] > 240) {
 
 							}
 
 							// code to set events
-							if (data[0] < 80)
-							{
+							if (data [0] < 80) {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.INCREASE;
-							}
-							else if (data[0] > 240)
-							{
+							} else if (data [0] > 240) {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.DECREASE;
-							}
-							else
-							{
+							} else {
 								lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 							}
 						}
 					}
-				}
-				catch (Exception e)
-				{
-					Debug.Log("EXCEPTION ******************************* " + e.Message);
+				} catch (Exception e) {
+					Debug.Log ("EXCEPTION ******************************* " + e.Message);
 				}
 			}
-			client.Close();
+			client.Close ();
 
-			Debug.Log("worker thread: terminating gracefully.");
+			Debug.Log ("worker thread: terminating gracefully.");
 		}
 
-		public void RequestStop()
+		public void RequestStop ()
 		{
 			_shouldStop = true;
-			Debug.Log("requesting worker thread shutdown");
+			Debug.Log ("requesting worker thread shutdown");
 		}
 		// Volatile is used as hint to the compiler that this data
 		// member will be accessed by multiple threads.
 		private volatile bool _shouldStop = false;
 
-		public UDPReceiver(int port, int dllport)
+		public UDPReceiver (int port, int dllport)
 		{
 			//this.port = port;
 			//this.dllport = dllport;
-			client = new UdpClient(port);
-			source = new IPEndPoint(IPAddress.Broadcast, dllPort);
+			client = new UdpClient (port);
+			source = new IPEndPoint (IPAddress.Broadcast, dllPort);
 			//client.Connect(source);
 		}
 
@@ -423,10 +424,9 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public bool checkIncreaseJoystickEvent()
+	public bool checkIncreaseJoystickEvent ()
 	{
-		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.INCREASE)
-		{
+		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.INCREASE) {
 			//lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 			return true;
 		}
@@ -434,10 +434,9 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		return false;
 	}
 
-	public bool checkDecreaseJoystickEvent()
+	public bool checkDecreaseJoystickEvent ()
 	{
-		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.DECREASE)
-		{
+		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.DECREASE) {
 			//lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 			return true;
 		}
@@ -445,10 +444,9 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		return false;
 	}
 
-	public bool checkNoJoystickEvent()
+	public bool checkNoJoystickEvent ()
 	{
-		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.NONE)
-		{
+		if (lastJoystickEventReceived == (byte)JOYSTICK_DATA.NONE) {
 			//lastJoystickEventReceived = (byte)JOYSTICK_DATA.NONE;
 			return true;
 		}
@@ -456,25 +454,27 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		return false;
 	}
 
-	public void startVibration()
+	public void startVibration ()
 	{
-		doRequest(90);
+		doRequest (90);
 	}
 
-	public void stopVibration()
+	public void stopVibration ()
 	{
-		doRequest(0);
+		doRequest (0);
 	}
 
-	public bool checkButtonAStatus()
+	public bool checkButtonAStatus ()
 	{
-		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONA_PRESSED) return true;
+		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONA_PRESSED)
+			return true;
 		return false;
 	}
 
-	public bool checkButtonBStatus()
+	public bool checkButtonBStatus ()
 	{
-		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONB_PRESSED) return true;
+		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONB_PRESSED)
+			return true;
 		return false;
 	}
 	/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////

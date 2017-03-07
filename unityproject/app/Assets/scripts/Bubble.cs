@@ -118,9 +118,7 @@ public class Bubble : MonoBehaviour
 	void Update ()
 	{
 
-		if (start) {
-			ZoomToBubble ();
-		}
+	
 		if (Input.GetMouseButtonDown (0)) {
             
 			GameObject go = bestBubble (Input.mousePosition);
@@ -143,20 +141,7 @@ public class Bubble : MonoBehaviour
 		camRight.transform.localRotation = Quaternion.Lerp (camLeft.transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
 	}
 
-	public bool ZoomToBubble ()
-	{
-		Vector3 pos = new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - stop);
-		if (camLeft.transform.position != pos && bubble.transform.position != REST_POS) {	
 
-
-			camLeft.transform.position = Vector3.MoveTowards (camLeft.transform.position, pos, speed * Time.deltaTime);
-			camRight.transform.position = Vector3.MoveTowards (camLeft.transform.position, pos, speed * Time.deltaTime);
-			RotateToBubble ();
-			return false;
-		} else {
-			return true;
-		}
-	}
 
 	public void calcBubble (Vector2 pos)
 	{
@@ -225,6 +210,7 @@ public class Bubble : MonoBehaviour
 		}
 		return null;
 	}
+
 
 	public static void moveTo (Vector3 pos)
 	{
