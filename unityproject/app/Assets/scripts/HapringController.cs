@@ -22,11 +22,16 @@ public class HapringController : MonoBehaviour {
     }
     void Update()
     {
-        
 
+        if (currentSelectNode) {
+            experimentLogger.getLogger().currentNode = currentSelectNode.GetComponent<Node>().id.ToString();
+        }
+        else
+        {
+            experimentLogger.getLogger().currentNode = "-1";
+        }
         if (!isInBubble(currentIndex))
         {
-            //Debug.Log(GetComponent<Bubble>().currentBubbleCenter);
             
             if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
             {
@@ -58,9 +63,9 @@ public class HapringController : MonoBehaviour {
         }
     }
         
-    void switchNode(Direction direction)
+    public void switchNode(Direction direction)
     {
-		if (direction == Direction.up) {
+		if (direction == Direction.select) {
 			chooseSelectedNode();
 		}
         if (direction == Direction.right)
@@ -141,17 +146,17 @@ public class HapringController : MonoBehaviour {
         {
             if (currentSelectNode.GetComponent<Node>().derAuserwaehlte)
             {
-                experimentLogger.getLogger().correctNodehit = "t";
+                experimentLogger.getLogger().correctNodehit = "TRUE";
             }
             else
             {
-                experimentLogger.getLogger().correctNodehit = "f";
+                experimentLogger.getLogger().correctNodehit = "FALSE";
             }
             currentIndex = -1;
             currentSelectNode.GetComponent<Node>().gotHit = true;
         } 
     }
     
-    enum Direction { up, down, left, right};
+    public enum Direction { select, up, down, left, right};
 
 }

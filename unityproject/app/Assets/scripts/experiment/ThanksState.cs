@@ -34,7 +34,8 @@ public class ThanksState : ExperimentState {
 
     public override void UpdateState(ExperimentController ec)
     {
-		marker.gameObject.SetActive(false);
+        experimentLogger.getLogger().currentState = "Thanks";
+        marker.gameObject.SetActive(false);
 		eyepointer.gameObject.SetActive(false);
         graph.gameObject.SetActive(false);
         c.gameObject.SetActive(true);
