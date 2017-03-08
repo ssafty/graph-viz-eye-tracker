@@ -6,7 +6,7 @@ Creating a gaze-aided graph navigating application using [Unity3D](https://unity
 * Supports keyboard/mouse controls.
 * Navigation/Rotation and Dramatic Camera in Node selection.
 * ~~Information panel added for each selected Node to render extra information.~~
-* Bubble technique to narrow down selection area for user.[1]
+* Bubble technique to narrow down selection area for user[1].
 
 ### Why?
 * Part of the masters project supervised by the [Human-Computer-Interaction Group, Hamburg University](https://www.inf.uni-hamburg.de/en/inst/ab/hci.html).
