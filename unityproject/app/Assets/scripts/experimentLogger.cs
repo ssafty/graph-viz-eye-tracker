@@ -30,16 +30,17 @@ public class experimentLogger : MonoBehaviour
 	} 
 	void Update ()
 	{
-        if(Input.anyKey)
-        {
-            if(Input.GetKeyDown(KeyCode.Return))
-            {
-                keypressed = "Enter";
-            } else { 
-            keypressed = Input.inputString;
-            }
-        } else
-        {
+		if (Input.anyKey) {
+			if (Input.GetKeyDown (KeyCode.Return)) {
+				keypressed = "Enter";
+			} else { 
+				keypressed = Input.inputString;
+			}
+		} else if (HapringSelectAndRotate.lastPressed != "") {
+			keypressed = HapringSelectAndRotate.lastPressed;
+			HapringSelectAndRotate.lastPressed = "";
+
+		} else {
             keypressed = "";
         }
 		

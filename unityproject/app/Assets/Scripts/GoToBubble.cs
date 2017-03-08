@@ -23,6 +23,7 @@ public class GoToBubble : MonoBehaviour
 	}
 
 	public static void Zoom() {
+		Debug.Log ("--Zoom--");
 		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
 		if (Bubble.REST_POS != bubble.transform.position) {
 			GoToBubble.ZoomToBubble ();
@@ -42,6 +43,7 @@ public class GoToBubble : MonoBehaviour
 
 		public static  bool ZoomToBubble ()
 	{
+		Debug.Log ("--ZoomToBubble--");
 		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
 		Camera camLeft = Camera.main;
 		Vector3 pos = new Vector3 (bubble.transform.position.x, bubble.transform.position.y, bubble.transform.position.z - 10);
