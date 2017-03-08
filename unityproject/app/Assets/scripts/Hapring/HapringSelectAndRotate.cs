@@ -23,6 +23,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 	private Quaternion lastRingQuad;
 	private Quaternion lastGraphQuad;
 
+	public static String lastPressed = "";
+
 	//private Vector3 startPosition;
 
 	//History stuff. Stacks would be simpler thatn lists
@@ -172,14 +174,16 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 		if (checkIncreaseJoystickEvent () && joyNeutral) {
 			hapringController.switchNode (HapringController.Direction.left);
+			lastPressed = "HAPRING_JOYSTICK_UP";
 			joyNeutral = false;
 		} else if (checkDecreaseJoystickEvent () && joyNeutral) {
 			hapringController.switchNode (HapringController.Direction.right);
+			lastPressed = "HAPRING_JOYSTICK_DOWN";
 			joyNeutral = false;
 		}
 
 
-		Debug.Log("Tip Press Counter (Fire Event on 12): " + tipPressCounter);
+
 		if (tipPressCounter > 11) {
 			
 			startVibration ();
@@ -301,7 +305,6 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 							rot = Quaternion.Euler (xDeg, yDeg, zDeg) * new Quaternion ((float)qx, (float)qy, (float)qz, (float)qw);
 							//Debug.Log("IMU >>>>>> " + qx + " : "+ qy + " : "+ qz + " : " + qw);
 						} else if (data.Length == 1) {
-							Debug.Log("Reset counter");
 							tipPressCounter = 0;
 							result = Byte.TryParse (Encoding.UTF8.GetString (data), out lastCommandValue);
 
@@ -317,8 +320,8 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 						} else if (data.Length == 3) {
 							if((data [2] > pressureThreshold)) {
 								tipPressCounter++;
+								lastPressed = "HAPRING_TIP";
 							} else {
-								Debug.Log("Reset counter");
 								tipPressCounter = 0;
 							}
 						}
@@ -399,15 +402,19 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	public bool checkButtonAStatus ()
 	{
-		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONA_PRESSED)
+		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONA_PRESSED) {
+			lastPressed = "HAPRING_A";
 			return true;
+		}
 		return false;
 	}
 
 	public bool checkButtonBStatus ()
 	{
-		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONB_PRESSED)
+		if (lastCommandValue == (byte)BUTTON_DATA.BUTTONB_PRESSED) {
+			lastPressed = "HAPRING_B";
 			return true;
+		}
 		return false;
 	}
 	/// ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
