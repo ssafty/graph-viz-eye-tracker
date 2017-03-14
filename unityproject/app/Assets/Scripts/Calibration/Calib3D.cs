@@ -22,10 +22,10 @@ public class Calib3D : MonoBehaviour
 	//2
 
 	//config for data storage per calib round
-	public const int READINGS_PER_CALIBRATION = 1;
-	public const int FRAMES_TO_WAIT_AT_START = 1;
+	public const int READINGS_PER_CALIBRATION = 100;
+	public const int FRAMES_TO_WAIT_AT_START = 30;
 	public const int FRAMES_TO_CAPTURE = Calib3D.READINGS_PER_CALIBRATION;
-	public const int FRAMES_TO_WAIT_AT_END = 1;
+	public const int FRAMES_TO_WAIT_AT_END = 30;
 
 	// marker layout arrangement
 	private float marker_layout_scale = 6.0f;
@@ -184,7 +184,12 @@ public class Calib3D : MonoBehaviour
 			if (this.wait_for_python_to_get_job_done) {
 				// check if python has finished with calibration job
 				if (File.Exists (this.working_dir + this.participant_name + ".calibjobdone")) {
-					this.wait_for_python_to_get_job_done = false;
+                    GameObject.FindGameObjectWithTag("MoveToExperimentController").GetComponent<ThreeDCalibrationState>().Next = true;
+                    foreach (GameObject marker in GameObject.FindGameObjectsWithTag("CalibMarker"))
+                    {
+                        marker.SetActive(false);
+                    }
+                    this.wait_for_python_to_get_job_done = false;
 				} else {
 					Debug.Log ("Calibration data is acquired. Waiting for python to get the job done ...");
 				}
@@ -331,10 +336,7 @@ public class Calib3D : MonoBehaviour
 
 			// create job file
 			File.Create (calibjob_file_path);
-            GameObject.FindGameObjectWithTag("MoveToExperimentController").GetComponent<ThreeDCalibrationState>().Next = true;
-            foreach (GameObject marker in GameObject.FindGameObjectsWithTag("CalibMarker")) {
-                marker.SetActive(false);
-            }
+
                 
 
         } else {
