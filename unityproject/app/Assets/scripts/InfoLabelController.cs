@@ -16,7 +16,7 @@ public class InfoLabelController : MonoBehaviour
 
 	void Start ()
 	{
-		Vector3 old = transform.position;
+	/*	Vector3 old = transform.position;
 		GameObject marker = GameObject.FindGameObjectWithTag ("marker");
 		RectTransform trans = marker.GetComponent<RectTransform> ();
 
@@ -24,7 +24,8 @@ public class InfoLabelController : MonoBehaviour
 		int offsetY = (int)(offsetX * 0.5);
 
 		transform.position = new Vector3 (old.x - offsetX, old.y - offsetY, old.z);
-	}
+    */
+    }
 
 
 	// Update is called once per frame

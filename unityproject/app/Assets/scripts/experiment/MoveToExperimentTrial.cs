@@ -29,7 +29,10 @@ public class MoveToExperimentTrial : ExperimentTrial
 			} else if (Graph.ExperimentType == experimentType.MOUSE) {
 				gameController.GetComponent<Bubble> ().rayCastAllowed = false;
 			}
-			Bubble.changeBubbleSize (_graph.BubbleSize);
+
+            gameController.GetComponent<Bubble>().useCorrectedGaze = Graph.ExperimentType == experimentType.WITHCUSTOMCALIB;
+
+            Bubble.changeBubbleSize (_graph.BubbleSize);
 
 			createGraph ();
 			highlight ();

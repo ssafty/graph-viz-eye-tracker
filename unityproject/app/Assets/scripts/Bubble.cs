@@ -26,6 +26,7 @@ public class Bubble : MonoBehaviour
 	private Vector3 lastHit;
 	private int dwellCount;
 	public bool rayCastAllowed = false;
+    public bool useCorrectedGaze = false;
 	public KeyCode pushToTrack = KeyCode.Z;
 	public bool pressKeyToTrack = true;
 
@@ -33,7 +34,8 @@ public class Bubble : MonoBehaviour
 	{
 		lastHit = Vector3.zero;
 		dwellCount = 0;
-		InvokeRepeating ("doRayCast_correctedGaze", 0.0f, interval);
+      
+		InvokeRepeating ("doRayCast", 0.0f, interval);
 	}
 
 
@@ -43,49 +45,13 @@ public class Bubble : MonoBehaviour
 		if (pressKeyToTrack) {
 			doIt &= Input.GetKey (pushToTrack);
 		}
-
 		if (doIt) {
-			Debug.Log ("do raycast");
-			Vector2 neu = camParent.GetComponent<udpsocket> ().LastEyeCoordinate;
-			neu.x = neu.x + (Screen.width / 2);
-			neu.y = neu.y + (Screen.height / 2);
-			GameObject go = bestBubble (neu);
-			Vector3 newPos = getPosition (go);
-
-
-			if (go != null) {
-				Debug.Log ("newPos " + newPos);
-				if (newPos == lastHit) {
-					dwellCount++;
-					Debug.Log ("increasing dwell counter to " + dwellCount);
-				} else {
-					dwellCount = 0;
-					lastHit = newPos;
-					Debug.Log ("resetting dwell counter");
-				}
-				if (dwellCount >= (dwellTime / interval) && bubble != null) {
-					Debug.Log ("drawing bubble to" + newPos);
-					currentBubbleCenter = go;
-					start = true;
-					bubble.transform.position = newPos;
-					dwellCount = 0;
-
-				}
-			}
-		}
-	}
-
-	void doRayCast_correctedGaze ()
-	{
-		bool doIt = rayCastAllowed;
-		if (pressKeyToTrack) {
-			doIt &= Input.GetKey (pushToTrack);
-		}
-
-		if (doIt) {
-			GameObject eyepointer_corrected = GameObject.FindGameObjectWithTag ("eyepointer_corrected");
-
-			Vector2 neu = eyepointer_corrected.GetComponent<RectTransform> ().anchoredPosition;
+            Debug.Log("do raycast");
+            Vector2 neu = camParent.GetComponent<udpsocket>().LastEyeCoordinate;
+            if (useCorrectedGaze)
+            {
+                neu = GameObject.FindGameObjectWithTag("eyepointer_corrected").GetComponent<RectTransform>().anchoredPosition;
+            }
 			neu.x = neu.x + (Screen.width / 2);
 			neu.y = neu.y + (Screen.height / 2);
 			GameObject go = bestBubble (neu);
