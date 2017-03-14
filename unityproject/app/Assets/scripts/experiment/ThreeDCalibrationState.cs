@@ -69,6 +69,7 @@ public class ThreeDCalibrationState : ExperimentState
 
 	private void start3DCalibForReal ()
 	{
+        Camera.main.transform.position = new Vector3(0, 0, -40);
 		Calib3D calib = GameObject.FindGameObjectWithTag ("Calib3D").GetComponent<Calib3D> ();
 		calib.startCalibForReal ();
 	}
