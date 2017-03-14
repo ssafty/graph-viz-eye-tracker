@@ -22,10 +22,10 @@ public class Calib3D : MonoBehaviour
 	//2
 
 	//config for data storage per calib round
-	public const int READINGS_PER_CALIBRATION = 100;
-	public const int FRAMES_TO_WAIT_AT_START = 30;
+	public const int READINGS_PER_CALIBRATION = 160;
+	public const int FRAMES_TO_WAIT_AT_START = 40;
 	public const int FRAMES_TO_CAPTURE = Calib3D.READINGS_PER_CALIBRATION;
-	public const int FRAMES_TO_WAIT_AT_END = 30;
+	public const int FRAMES_TO_WAIT_AT_END = 40;
 
 	// marker layout arrangement
 	private float marker_layout_scale = 6.0f;
@@ -58,14 +58,6 @@ public class Calib3D : MonoBehaviour
 	private float current_left_pupil_x;
 	private float current_left_pupil_y;
 
-
-	public void OnGUI ()
-	{
-
-	
-
-		GUI.Box (new Rect (this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent ("[X]"));
-	}
 
 
 	private Vector2 getGazePosition ()
