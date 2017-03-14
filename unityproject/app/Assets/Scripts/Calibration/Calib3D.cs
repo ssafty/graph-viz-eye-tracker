@@ -22,10 +22,10 @@ public class Calib3D : MonoBehaviour
 	//2
 
 	//config for data storage per calib round
-	public const int READINGS_PER_CALIBRATION = 160;
-	public const int FRAMES_TO_WAIT_AT_START = 40;
+	public const int READINGS_PER_CALIBRATION = 1;
+	public const int FRAMES_TO_WAIT_AT_START = 1;
 	public const int FRAMES_TO_CAPTURE = Calib3D.READINGS_PER_CALIBRATION;
-	public const int FRAMES_TO_WAIT_AT_END = 40;
+	public const int FRAMES_TO_WAIT_AT_END = 1;
 
 	// marker layout arrangement
 	private float marker_layout_scale = 6.0f;
@@ -328,9 +328,16 @@ public class Calib3D : MonoBehaviour
 	{
 		string calibjob_file_path = this.working_dir + this.participant_name + ".calibjob";
 		if (!File.Exists (calibjob_file_path)) {
+
 			// create job file
 			File.Create (calibjob_file_path);
-		} else {
+            GameObject.FindGameObjectWithTag("MoveToExperimentController").GetComponent<ThreeDCalibrationState>().Next = true;
+            foreach (GameObject marker in GameObject.FindGameObjectsWithTag("CalibMarker")) {
+                marker.SetActive(false);
+            }
+                
+
+        } else {
 			Debug.LogError ("This should not happen");
 		}
 	}
