@@ -22,27 +22,27 @@ public class RotateAroundBubble : MonoBehaviour
 	void Update ()
 	{
 		
-		Vector3 direction = Vector3.zero;
-		if (Input.GetKey (rotateLeftKey)) {
-			direction = Vector3.up; 
-		} else if (Input.GetKey (rotateRightKey)) {
-			direction = Vector3.down;
-		} else if (Input.GetKey (rotateUpKey)) {
-			direction = Vector3.left;
-		} else if (Input.GetKey (rotateDownKey)) {
-			direction = Vector3.right;
-		} 
+		//Vector3 direction = Vector3.zero;
+		//if (Input.GetKey (rotateLeftKey)) {
+		//	direction = Vector3.up; 
+		//} else if (Input.GetKey (rotateRightKey)) {
+		//	direction = Vector3.down;
+		//} else if (Input.GetKey (rotateUpKey)) {
+		//	direction = Vector3.left;
+		//} else if (Input.GetKey (rotateDownKey)) {
+		//	direction = Vector3.right;
+		//} 
 
-		GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
-		Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
-		if (l != null && direction != Vector3.zero) {
+		//GameObject l = GameObject.FindGameObjectWithTag ("Bubble");
+		//Vector3 pos = l.transform.position == Bubble.REST_POS ? Vector3.zero : l.transform.position;
+		//if (l != null && direction != Vector3.zero) {
 
-			left.transform.RotateAround (pos, direction, 1);
-			right.transform.RotateAround (pos, direction, 1);
+		//	left.transform.RotateAround (pos, direction, 1);
+		//	right.transform.RotateAround (pos, direction, 1);
 
 
 
-		}
+		//}
 
 
 	}
