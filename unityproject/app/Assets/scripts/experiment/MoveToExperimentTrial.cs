@@ -24,18 +24,27 @@ public class MoveToExperimentTrial : ExperimentTrial
 	{
         
 		if (first) {
+            float nodeHitxbox = 1.2f;
 			if (Graph.ExperimentType == experimentType.EYE || Graph.ExperimentType == experimentType.WITHCUSTOMCALIB) {
 				gameController.GetComponent<Bubble> ().rayCastAllowed = true;
-			} else if (Graph.ExperimentType == experimentType.MOUSE) {
+                Bubble.changeBubbleSize(_graph.BubbleSize);
+             
+
+            } else if (Graph.ExperimentType == experimentType.MOUSE) {
 				gameController.GetComponent<Bubble> ().rayCastAllowed = false;
-			}
+                Bubble.changeBubbleSize(0.0000001f);
+                nodeHitxbox = 0.6f;
+             
+            }
 
             gameController.GetComponent<Bubble>().useCorrectedGaze = Graph.ExperimentType == experimentType.WITHCUSTOMCALIB;
 
-            Bubble.changeBubbleSize (_graph.BubbleSize);
+         
 
 			createGraph ();
-			highlight ();
+
+            Node.setHitbox(nodeHitxbox);
+            highlight ();
 			graphCreated = true;
 
 			Vector3 pos = Node.GetNodeWithId (0).transform.position;

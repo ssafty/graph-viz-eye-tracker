@@ -6,9 +6,10 @@ public class Bubble : MonoBehaviour
 {
 	public udpsocket socket;
 	public bool useGaze;
-	//Use Gaze info from the socket to calc the bubble?
-
-	public static Vector3 REST_POS = new Vector3 (9999, 9999, 9999);
+    //Use Gaze info from the socket to calc the bubble?
+    private  bool bubbleActive = true;
+    public GameObject bubbleGo;
+    public static Vector3 REST_POS = new Vector3 (9999, 9999, 9999);
 	public GameObject camParent;
 	public GameObject camLeft;
 	public GameObject camRight;
@@ -17,8 +18,7 @@ public class Bubble : MonoBehaviour
 	public float rotationSpeed = 2f;
 	public float stop = 10f;
 	private bool start = false;
-	public float jitterMax = 10.0f;
-	public float jitterMin = -10.0f;
+
 	public float dwellTime = 0.2f;
 	public float interval = 0.1f;
 	public GameObject currentBubbleCenter;
@@ -34,9 +34,11 @@ public class Bubble : MonoBehaviour
 	{
 		lastHit = Vector3.zero;
 		dwellCount = 0;
-      
-		InvokeRepeating ("doRayCast", 0.0f, interval);
+        bubbleGo = GameObject.FindGameObjectWithTag("Bubble");
+
+        InvokeRepeating ("doRayCast", 0.0f, interval);
 	}
+
 
 
 	void doRayCast ()
@@ -178,16 +180,23 @@ public class Bubble : MonoBehaviour
 	}
 
 
+
 	public static void moveTo (Vector3 pos)
 	{
 		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
-		bubble.transform.position = pos;
+        if (bubble != null)
+        {
+            bubble.transform.position = pos;
+        }
 	}
 
 	public static void changeBubbleSize (Vector3 scale)
 	{
+      
 		GameObject bubble = GameObject.FindGameObjectWithTag ("Bubble");
-		bubble.transform.localScale = scale;
+        if (bubble != null) {
+            bubble.transform.localScale = scale;
+        }
 	}
 
 	public static void changeBubbleSize (float scale)
@@ -195,4 +204,20 @@ public class Bubble : MonoBehaviour
 		Vector3 vec = new Vector3 (scale * StereoScript.X_DISTORTION, scale, scale);
 		changeBubbleSize (vec);
 	}
+
+    public static bool isFarAway()
+    {
+
+        GameObject bubble = GameObject.FindGameObjectWithTag("Bubble");
+        Vector3 pos = bubble.transform.position;
+        if (Math.Abs(pos.x) >= 9999 || Math.Abs(pos.y) >= 9999 || Math.Abs(pos.z) >= 9999)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+
+        
 }

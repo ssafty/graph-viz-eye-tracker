@@ -392,7 +392,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 
 	public void startVibration ()
 	{
-		doRequest (90);
+		doRequest (110);
 	}
 
 	public void stopVibration ()

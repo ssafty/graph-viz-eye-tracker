@@ -33,7 +33,7 @@ public class HapringController : MonoBehaviour {
         if (!isInBubble(currentIndex))
         {
             
-            if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.REST_POS.Equals(GameObject.FindGameObjectWithTag("Bubble").transform.position))
+            if (GetComponent<Bubble>().currentBubbleCenter != null && !Bubble.isFarAway())
             {
                 Debug.Log("first assigned");
                 currentIndex = GetComponent<Bubble>().currentBubbleCenter.GetComponent<Node>().id;
