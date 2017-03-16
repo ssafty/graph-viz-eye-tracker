@@ -27,8 +27,8 @@ public class Bubble : MonoBehaviour
 	private int dwellCount;
 	public bool rayCastAllowed = false;
     public bool useCorrectedGaze = false;
-	public KeyCode pushToTrack = KeyCode.Z;
-	public bool pressKeyToTrack = true;
+	//public KeyCode pushToTrack = KeyCode.Z;
+	//public bool pressKeyToTrack = true;
 
 	void Start ()
 	{
@@ -44,9 +44,9 @@ public class Bubble : MonoBehaviour
 	void doRayCast ()
 	{
 		bool doIt = rayCastAllowed;
-		if (pressKeyToTrack) {
-			doIt &= Input.GetKey (pushToTrack);
-		}
+		//if (pressKeyToTrack) {
+		//	doIt &= Input.GetKey (pushToTrack);
+		//}
 		if (doIt) {
             Debug.Log("do raycast");
             Vector2 neu = camParent.GetComponent<udpsocket>().LastEyeCoordinate;
