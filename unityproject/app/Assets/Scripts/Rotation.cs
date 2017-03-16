@@ -40,12 +40,12 @@ public class Rotation : MonoBehaviour
         }
 
     
-       if(Input.GetAxis("Zoom") > 0) { 
-        transform.Translate(Vector3.forward * scrollSpeed, Camera.main.transform);
+       if(Input.GetAxis("Zoom") > 0) {
+            Camera.main.transform.Translate(Vector3.forward * scrollSpeed, Camera.main.transform);
         } else if(Input.GetAxis("Zoom") < 0)
         {
             Debug.LogWarning(Input.GetAxis("Zoom"));
-            transform.Translate(Vector3.back * scrollSpeed, Camera.main.transform);
+            Camera.main.transform.Translate(Vector3.back * scrollSpeed, Camera.main.transform);
         }
         transform.Translate(new Vector3(strafeSpeed * Input.GetAxis("Horizontal2") *-1, strafeSpeed * Input.GetAxis("Vertical2")*-1,0f), Camera.main.transform);
 
