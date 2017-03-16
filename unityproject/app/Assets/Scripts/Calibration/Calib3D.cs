@@ -59,14 +59,6 @@ public class Calib3D : MonoBehaviour
 	private float current_left_pupil_y;
 
 
-	public void OnGUI ()
-	{
-
-	
-
-		GUI.Box (new Rect (this.current_left_pupil_x - 15, Screen.height - this.current_left_pupil_y - 15, 30, 30), new GUIContent ("[X]"));
-	}
-
 
 	private Vector2 getGazePosition ()
 	{
@@ -184,7 +176,12 @@ public class Calib3D : MonoBehaviour
 			if (this.wait_for_python_to_get_job_done) {
 				// check if python has finished with calibration job
 				if (File.Exists (this.working_dir + this.participant_name + ".calibjobdone")) {
-					this.wait_for_python_to_get_job_done = false;
+                    GameObject.FindGameObjectWithTag("MoveToExperimentController").GetComponent<ThreeDCalibrationState>().Next = true;
+                    foreach (GameObject marker in GameObject.FindGameObjectsWithTag("CalibMarker"))
+                    {
+                        marker.SetActive(false);
+                    }
+                    this.wait_for_python_to_get_job_done = false;
 				} else {
 					Debug.Log ("Calibration data is acquired. Waiting for python to get the job done ...");
 				}
@@ -328,9 +325,13 @@ public class Calib3D : MonoBehaviour
 	{
 		string calibjob_file_path = this.working_dir + this.participant_name + ".calibjob";
 		if (!File.Exists (calibjob_file_path)) {
+
 			// create job file
 			File.Create (calibjob_file_path);
-		} else {
+
+                
+
+        } else {
 			Debug.LogError ("This should not happen");
 		}
 	}

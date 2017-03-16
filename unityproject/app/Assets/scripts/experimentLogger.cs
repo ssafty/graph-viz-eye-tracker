@@ -19,18 +19,29 @@ public class experimentLogger : MonoBehaviour
     public string condition;
     public string currentState;
     private string calibrationData = "noCalibrationDataSet";
+    public string currentEyePosRawX;
+    public string currentEyePosRawY;
+    public string currentEyePosAftercalibX;
+    public string currentEyePosAftercalibY;
+    private Vector2 neu;
     void Start ()
 	{
 
         int fileCount = Directory.GetFiles(@"ExperimentLog\", "*.csv*").Length;
         participantId = (fileCount+1).ToString();
 		file = new System.IO.StreamWriter(@"ExperimentLog\"+participantId+".csv");
-		file.WriteLine ("participantId,condition,timeSinceStartup,correctNodeHit,keypressed,calibrationData,bubbleSize,numberNodes,targetNode,currentSelectedNode,currentState");
+		file.WriteLine ("participantId,condition,timeSinceStartup,correctNodeHit,keypressed,calibrationData,bubbleSize,numberNodes,targetNode,currentSelectedNode,currentState,correctedEyeX,correctedEyeY,rawEyeX,rawEyeY");
 		file.Flush ();
 	} 
 	void Update ()
 	{
-		if (Input.anyKey) {
+        neu = GameObject.FindGameObjectWithTag("eyepointer_corrected").GetComponent<RectTransform>().anchoredPosition;
+        currentEyePosAftercalibX = (neu.x + (Screen.width / 2)).ToString();
+        currentEyePosAftercalibY = (neu.y + (Screen.height / 2)).ToString();
+        neu = GameObject.FindGameObjectWithTag("eyepointer").GetComponent<RectTransform>().anchoredPosition;
+        currentEyePosRawX = (neu.x + (Screen.width / 2)).ToString();
+        currentEyePosRawY = (neu.y + (Screen.height / 2)).ToString();
+        if (Input.anyKey) {
 			if (Input.GetKeyDown (KeyCode.Return)) {
 				keypressed = "Enter";
 			} else { 
@@ -48,7 +59,7 @@ public class experimentLogger : MonoBehaviour
 	// lateUpdate is called once per frame after all other Updates
 	void LateUpdate ()
 	{
-		file.WriteLine (participantId + "," + condition  + "," + Time.realtimeSinceStartup + "," + correctNodehit + "," + keypressed + "," +calibrationData+ "," + bubbleSize + "," + currentGraphSize.ToString() + "," + targetNode + "," + currentNode + "," + currentState);
+		file.WriteLine (participantId + "," + condition  + "," + Time.realtimeSinceStartup + "," + correctNodehit + "," + keypressed + "," +calibrationData+ "," + bubbleSize + "," + currentGraphSize.ToString() + "," + targetNode + "," + currentNode + "," + currentState +","+ currentEyePosAftercalibX +","+ currentEyePosAftercalibY+","+ currentEyePosRawX + ","+ currentEyePosRawY);
 		file.Flush ();
 		correctNodehit = "";
 	}

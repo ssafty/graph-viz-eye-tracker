@@ -56,7 +56,9 @@ public class ThreeDCalibrationState : ExperimentState
 
 	private void start3DCalib ()
 	{
-		panel.gameObject.SetActive (false);
+        //Camera.main.transform.position = new Vector3(0, 0, 0);
+        GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(0, 0, -40);
+        panel.gameObject.SetActive (false);
 		c.gameObject.SetActive (false);
 		experimentLogger.getLogger ().currentState = "3DCalibrationStarted";
 		Calib3D calib = GameObject.FindGameObjectWithTag ("Calib3D").GetComponent<Calib3D> ();
@@ -69,6 +71,7 @@ public class ThreeDCalibrationState : ExperimentState
 
 	private void start3DCalibForReal ()
 	{
+
 		Calib3D calib = GameObject.FindGameObjectWithTag ("Calib3D").GetComponent<Calib3D> ();
 		calib.startCalibForReal ();
 	}

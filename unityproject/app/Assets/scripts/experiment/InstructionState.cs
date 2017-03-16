@@ -54,9 +54,9 @@ public class InstructionState : ExperimentState
 		panel.gameObject.SetActive (true);
 		MoveToExperimentTrial mttrial = ec.CurrentTrials [ec.CurrentTrialIndex] as MoveToExperimentTrial;
 		if (mttrial.Graph.ExperimentType == experimentType.EYE || mttrial.Graph.ExperimentType == experimentType.WITHCUSTOMCALIB) {
-			text.text = "After pressing the button you will see a graph. \n Please try to select a cluster of nodes with your eyes \n and use the ring on your finger to switch between the nodes. \n The first one is just for testing if everything works. \n The ones after that are the ones that matters.";
+			text.text = "You will see a graph, \n please try to select a cluster of nodes with your eyes \n and use the ring on your finger to switch between the nodes. \n The first one is just for testing if everything works. \n The ones after that are the ones that matter. \n But first we need to do eyetracker calibration.";
 		} else if (mttrial.Graph.ExperimentType == experimentType.MOUSE) {
-			text.text = "After pressing the button you will see a graph. blabla";
+			text.text = "After pressing the button you will see a graph. \n Please use kouse and keyboard to navigate through the graph and select the red node. \n The first one is just for testing if everything works.  \n The ones after that are the ones that matter.";
 		}
 
 	}

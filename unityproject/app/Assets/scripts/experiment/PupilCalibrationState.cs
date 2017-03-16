@@ -49,7 +49,7 @@ public class PupilCalibrationState : ExperimentState
 		experimentLogger.getLogger ().currentState = "PupilCalibration";
 		panel.gameObject.SetActive (true);
 		//eyepointer.gameObject.SetActive(false);
-		text.text = "The first phase of the calibration will start in the next seconds";
+		text.text = "The first phase of the calibration will start whenever you are ready. \n ";
 		c.gameObject.SetActive (true);
 		
 	}
