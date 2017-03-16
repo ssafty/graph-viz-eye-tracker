@@ -33,14 +33,13 @@ public class createMarker : MonoBehaviour
 		List<GameObject> created = new List<GameObject> ();
 		float screenWidth = Screen.width * wDist;
 		float screenHeight = Screen.height * hDist;
-		Debug.Log (screenWidth + "x" + screenHeight);
-
+	
 		float aspectRatio = screenHeight / screenWidth;
 		float vStepsize = screenHeight / (rows - 1);
 		float hStepsize = screenWidth / (columns - 1);
 		int lastMarker = 0;
 		GameObject[] markers = GameObject.FindGameObjectsWithTag (markerTag);
-		markers = markers.OrderBy(go=>go.name.GetHashCode()).ToList().ToArray();
+		markers = markers.OrderBy (go => go.name.GetHashCode ()).ToList ().ToArray ();
 
 		GameObject marker_object = GameObject.Find (canvasTag);
 
@@ -93,8 +92,8 @@ public class createMarker : MonoBehaviour
 		if (wDist != 1) {
 			GameObject[] stereo_markers = GameObject.FindGameObjectsWithTag ("marker_stereo");
 
-			markers = markers.OrderBy(go=>go.name.GetHashCode()).ToList().ToArray();
-			stereo_markers = markers.OrderBy(go=>go.name.GetHashCode()).ToList().ToArray();
+			markers = markers.OrderBy (go => go.name.GetHashCode ()).ToList ().ToArray ();
+			stereo_markers = markers.OrderBy (go => go.name.GetHashCode ()).ToList ().ToArray ();
 
 			for (int i = 0; i < markers.Length; i++) {
 				GameObject current_marker = stereo_markers [i];
@@ -126,8 +125,8 @@ public class createMarker : MonoBehaviour
 	void Update ()
 	{
 		if (Input.GetKeyDown (reduceMarkerSize)) {
-			foreach (GameObject m in GameObject.FindGameObjectsWithTag ("marker")){
-				m.transform.localScale -= new Vector3(0.05f,0.05f,0f);
+			foreach (GameObject m in GameObject.FindGameObjectsWithTag ("marker")) {
+				m.transform.localScale -= new Vector3 (0.05f, 0.05f, 0f);
 			}
 		}
 	}
