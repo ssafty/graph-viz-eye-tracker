@@ -51,7 +51,7 @@ public class ThreeDCalibrationState : ExperimentState
 		//eyepointer.gameObject.SetActive(false);
 		experimentLogger.getLogger ().currentState = "WaitingFor3DCalibration";
 		text.text = "The second phase of calibration will start in 10 seconds.\n You will see many green nodes. \n Please focus the one which turns purple/red. \n Follow the colored nodes with your eyes.";
-		Invoke ("start3DCalib", 2);
+		Invoke ("start3DCalib", 10);
 	}
 
 	private void start3DCalib ()

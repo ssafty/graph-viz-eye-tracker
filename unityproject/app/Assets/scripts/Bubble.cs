@@ -89,7 +89,7 @@ public class Bubble : MonoBehaviour
 	
 		if (Input.GetMouseButtonDown (0)) {
             
-			GameObject go = bestBubble (Input.mousePosition);
+			GameObject go = simpleBubble (Input.mousePosition);
 			Vector3 newPos = getPosition (go);
 			if (go != null && bubble != null) {
 				start = true;
@@ -121,14 +121,14 @@ public class Bubble : MonoBehaviour
 		}
 	}
 
-	Vector3 simpleBubble ()
+	GameObject simpleBubble (Vector2 pos)
 	{
 		RaycastHit hit;
-		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		Ray ray = Camera.main.ScreenPointToRay (pos);
 		if (Physics.Raycast (ray, out hit)) {
-			return hit.point;
+			return hit.collider.gameObject;
 		}
-		return Vector3.zero;
+		return null;
 	}
 
 	Vector3 meanBubble ()
