@@ -38,6 +38,8 @@ public class ThreeDCalibrationState : ExperimentState
 		if (Next || Input.GetKeyDown (skip) || CalibrationSkip == true) {
 			panel.gameObject.SetActive (false);
 			c.gameObject.SetActive (false);
+			init = false;
+			CalibrationSkip = false;
 			return nextState;
 		} else {
 			return this;
@@ -82,6 +84,7 @@ public class ThreeDCalibrationState : ExperimentState
 		if (mttrial.Graph.ExperimentType == experimentType.WITHCUSTOMCALIB) {
 			if (!init) {
 				init = true;
+
 				initialize ();
             
 			}

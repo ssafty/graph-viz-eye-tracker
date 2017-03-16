@@ -22,10 +22,14 @@ public class TrialState : ExperimentState
 	{
 		if (ec.CurrentTrials.Count > ec.CurrentTrialIndex) {
 			MoveToExperimentTrial mttrial = ec.CurrentTrials [ec.CurrentTrialIndex] as MoveToExperimentTrial;
+
 			if (mttrial.Graph.ExperimentType != lastTrialType && !first) {
 				Debug.Log ("found new TrialType. Issuing a training phase");
 				first = true;
 				return trainingState;
+			} else {
+				Debug.Log(mttrial.Graph.ExperimentType +"," + lastTrialType + "," +first);
+				Debug.Log ("experiment type is still the same.");
 			}
 		}
 		if (ec.CurrentTrialIndex >= ec.CurrentTrials.Count) {
@@ -42,17 +46,15 @@ public class TrialState : ExperimentState
 		eyepointer.gameObject.SetActive (true);
 		graph.gameObject.SetActive (true);
 		MoveToExperimentTrial mttrial = ec.CurrentTrials [ec.CurrentTrialIndex] as MoveToExperimentTrial;
-        
+
 		if (mttrial != null) {
 
-			// Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
+			Debug.Log("Experiment in progess" + ec.CurrentTrialIndex);
 			mttrial.initialze (GameController);
 
 			mttrial.update ();
 			if (mttrial.done) {
-				if (lastTrialType != mttrial.Graph.ExperimentType) {
-					first = false;
-				}
+				first = false;
 				lastTrialType = mttrial.Graph.ExperimentType;
 				GameObject[] nodes = GameObject.FindGameObjectsWithTag ("Node");
 				foreach (GameObject node in nodes) {

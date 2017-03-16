@@ -183,7 +183,7 @@ public class HapringSelectAndRotate : Singleton<HapringSelectAndRotate>
 		}
 
 
-        Debug.Log("TIP PRESS COUNTER " + tipPressCounter);
+        //Debug.Log("TIP PRESS COUNTER " + tipPressCounter);
 		if (tipPressCounter > 11) {
 			
 			startVibration ();
