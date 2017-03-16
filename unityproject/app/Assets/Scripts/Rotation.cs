@@ -35,7 +35,6 @@ public class Rotation : MonoBehaviour
         cursorMode(rightClick);
 
     if(rightClick) { 
-            Debug.Log(Input.GetAxis("Mouse X") + "    " + Input.GetAxis("Mouse Y"));
             transform.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0) * Time.deltaTime * 7, Space.World);
         }
 
