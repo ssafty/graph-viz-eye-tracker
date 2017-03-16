@@ -41,8 +41,10 @@ public class GoToBubble : MonoBehaviour
 		Vector3 direction = bubble.transform.position - camLeft.transform.position;
 		Quaternion toRotation = Quaternion.FromToRotation (camLeft.transform.forward, direction);
 		camLeft.transform.localRotation = Quaternion.Lerp (camLeft.transform.rotation, toRotation, 5 * Time.deltaTime);
-	//	camRight.transform.localRotation = Quaternion.Lerp (camLeft.transform.rotation, toRotation, 5 * Time.deltaTime);
-	}
+
+
+
+    }
 
 		public static  bool ZoomToBubble (Vector3 pos)
 	{
