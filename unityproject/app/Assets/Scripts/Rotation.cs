@@ -35,17 +35,16 @@ public class Rotation : MonoBehaviour
         cursorMode(rightClick);
 
     if(rightClick) { 
-            Debug.Log(Input.GetAxis("Mouse X") + "    " + Input.GetAxis("Mouse Y"));
             transform.Rotate(new Vector3(Input.GetAxis("Mouse Y"), Input.GetAxis("Mouse X"), 0) * Time.deltaTime * 7, Space.World);
         }
 
     
-       if(Input.GetAxis("Zoom") > 0) { 
-        transform.Translate(Vector3.forward * scrollSpeed, Camera.main.transform);
+       if(Input.GetAxis("Zoom") > 0) {
+            Camera.main.transform.Translate(Vector3.forward * scrollSpeed, Camera.main.transform);
         } else if(Input.GetAxis("Zoom") < 0)
         {
             Debug.LogWarning(Input.GetAxis("Zoom"));
-            transform.Translate(Vector3.back * scrollSpeed, Camera.main.transform);
+            Camera.main.transform.Translate(Vector3.back * scrollSpeed, Camera.main.transform);
         }
         transform.Translate(new Vector3(strafeSpeed * Input.GetAxis("Horizontal2") *-1, strafeSpeed * Input.GetAxis("Vertical2")*-1,0f), Camera.main.transform);
 
