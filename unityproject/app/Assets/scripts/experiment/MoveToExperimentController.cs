@@ -36,8 +36,8 @@ public class MoveToExperimentController : ExperimentController
         //		graphList.Add (new Graph ("Tree_50", 50, numberOfTrialsForEveryGraph, 5.0f, experimentType.WITHCUSTOMCALIB));
         //     graphList.Add (new Graph ("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.EYE));
         graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
-        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
-        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
+		graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.EYE));
+		graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.WITHCUSTOMCALIB));
         // graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
         //graphList.Add (new Graph ("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.WITHCUSTOMCALIB));
 
