@@ -58,7 +58,13 @@ public class MoveToExperimentTrial : ExperimentTrial
 			}
 
 
-			experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
+            GameObject.FindGameObjectWithTag("RotationParent").transform.localEulerAngles = Vector3.zero;
+            GameObject.FindGameObjectWithTag("RotationParent").transform.position = new Vector3(0, 0, 0);
+            Camera.main.transform.localEulerAngles = Vector3.zero;
+            Camera.main.transform.position = new Vector3(0, 0, -40);
+            Bubble.moveTo(Bubble.REST_POS);
+
+            experimentLogger.getLogger ().currentGraphSize = _graph.NumNodes;
 			experimentLogger.getLogger ().condition = _graph.ExperimentType.ToString ();
 			experimentLogger.getLogger ().bubbleSize = _graph.BubbleSize.ToString ();
 			first = false;
