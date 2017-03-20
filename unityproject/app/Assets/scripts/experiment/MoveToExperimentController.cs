@@ -8,7 +8,7 @@ public class MoveToExperimentController : ExperimentController
 
 	[SerializeField]
 	Vector3 targetPosition;
-	int numberOfTrialsForEveryGraph = 1;
+	int numberOfTrialsForEveryGraph = 2;
 	int numberOfTrainings = 1;
 	List<Graph> graphList;
 
@@ -38,21 +38,29 @@ public class MoveToExperimentController : ExperimentController
         graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
         graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.WITHCUSTOMCALIB));
         graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.EYE));
-	
+        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 5.0f, experimentType.MOUSE));
+        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 5.0f, experimentType.WITHCUSTOMCALIB));
+        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 5.0f, experimentType.EYE));
+        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 7.5f, experimentType.MOUSE));
+        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 7.5f, experimentType.WITHCUSTOMCALIB));
+        graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 7.5f, experimentType.EYE));
+
         // graphList.Add(new Graph("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.MOUSE));
         //graphList.Add (new Graph ("Tree_150", 150, numberOfTrialsForEveryGraph, 10.0f, experimentType.WITHCUSTOMCALIB));
 
         List<experimentType> experimentTypes = new List<experimentType> ();
+        experimentTypes.Add(experimentType.MOUSE);
+
+        experimentTypes.Add(experimentType.EYE);
         experimentTypes.Add(experimentType.WITHCUSTOMCALIB);
-        experimentTypes.Add (experimentType.MOUSE);
+       
      
-        experimentTypes.Add (experimentType.EYE);
 
 
-		//experimentTypes = ShuffleList<experimentType> (experimentTypes);
+		experimentTypes = ShuffleList<experimentType> (experimentTypes);
 
 
-	//	graphList = ShuffleList<Graph> (graphList);
+	graphList = ShuffleList<Graph> (graphList);
 
 		int k = 0;
 		foreach (experimentType type in experimentTypes) {
