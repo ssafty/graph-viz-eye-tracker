@@ -79,6 +79,16 @@ public class Node : MonoBehaviour
 		rend.material.color = new Color (default_red, default_blue, default_green, rend.material.color.a);
 	}
 
+    public static void setHitbox(float rad)
+    {
+        GameObject[] nodes = GameObject.FindGameObjectsWithTag("Node");
+        foreach (GameObject node in nodes)
+        {
+            node.GetComponent<SphereCollider>().radius = rad;
+        }
+
+    }
+
     public static Node GetNodeWithId(int id)
     {
         Debug.Log("trying to get node with id: " + id);

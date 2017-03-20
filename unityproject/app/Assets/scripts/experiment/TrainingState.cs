@@ -31,6 +31,7 @@ public class TrainingState : ExperimentState
 	private bool first = true;
 	private bool PupilCalibrationDone = false;
 	private int lastTraining = -1;
+	private bool CustomCalibrationDone = false;
 	MoveToExperimentTrial mttrial;
 
 	public override ExperimentState HandleInput (ExperimentController ec)
@@ -50,16 +51,23 @@ public class TrainingState : ExperimentState
 		}
 		if (!PupilCalibrationDone && mttrial.Graph.ExperimentType != experimentType.MOUSE) {
 			Debug.Log ("going to pupil calibration");
-
 			if (mttrial.Graph.ExperimentType == experimentType.WITHCUSTOMCALIB || mttrial.Graph.ExperimentType == experimentType.EYE) {
 				PupilCalibrationDone = true;
 				return PupilCalibration;
 			}
-		} else {
+		} else if (!ec.customCalibDone && mttrial.Graph.ExperimentType != experimentType.MOUSE && mttrial.Graph.ExperimentType != experimentType.EYE) {
+			Debug.Log (mttrial.Graph.ExperimentType);
+			if (mttrial.Graph.ExperimentType == experimentType.WITHCUSTOMCALIB) {
+				Debug.Log ("going to custom calibration");
+				return CustomCalibration;
+			}
+		}
+		else {
 			ec.drawGraph = true;
 		}
 		if ((indexToUseForTraining - ec.CurrentTrialIndex) > ec.NumberOfTrainings) {
 			Debug.Log ("Training done. Going to Trial Phase");
+
 			first = true;
 			return nextState;
 		} else {

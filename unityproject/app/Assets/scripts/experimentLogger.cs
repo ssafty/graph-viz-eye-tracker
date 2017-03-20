@@ -35,23 +35,41 @@ public class experimentLogger : MonoBehaviour
 	} 
 	void Update ()
 	{
+    
         neu = GameObject.FindGameObjectWithTag("eyepointer_corrected").GetComponent<RectTransform>().anchoredPosition;
         currentEyePosAftercalibX = (neu.x + (Screen.width / 2)).ToString();
         currentEyePosAftercalibY = (neu.y + (Screen.height / 2)).ToString();
         neu = GameObject.FindGameObjectWithTag("eyepointer").GetComponent<RectTransform>().anchoredPosition;
         currentEyePosRawX = (neu.x + (Screen.width / 2)).ToString();
         currentEyePosRawY = (neu.y + (Screen.height / 2)).ToString();
-        if (Input.anyKey) {
-			if (Input.GetKeyDown (KeyCode.Return)) {
-				keypressed = "Enter";
-			} else { 
-				keypressed = Input.inputString;
-			}
-		} else if (HapringSelectAndRotate.lastPressed != "") {
-			keypressed = HapringSelectAndRotate.lastPressed;
-			HapringSelectAndRotate.lastPressed = "";
-
-		} else {
+        if (Input.anyKey)
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                keypressed = "Enter";
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                keypressed = "LEFT_MOUSE";
+            }
+            else if (Input.GetMouseButton(1))
+            {
+                keypressed = "RIGHT_MOUSE";
+            }
+            else
+            {
+                keypressed = Input.inputString;
+            }
+        }
+        else if (HapringSelectAndRotate.lastPressed != "")
+        {
+            keypressed = HapringSelectAndRotate.lastPressed;
+            HapringSelectAndRotate.lastPressed = "";
+        }
+       
+        else if (Input.GetAxis("Zoom") != 0) {
+            keypressed = "MOUSE_WHEEL";
+        } else {
             keypressed = "";
         }
 		

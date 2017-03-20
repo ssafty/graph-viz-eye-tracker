@@ -47,7 +47,7 @@ public class InstructionState : ExperimentState
 
 	public override void UpdateState (ExperimentController ec)
 	{
-		experimentLogger.getLogger ().currentState = "Introduction";
+		experimentLogger.getLogger ().currentState = "Instruction";
 		c.gameObject.SetActive (true);
 		graph.gameObject.SetActive (false);
 		//eyepointer.gameObject.SetActive(false);

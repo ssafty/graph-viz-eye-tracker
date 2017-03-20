@@ -34,7 +34,7 @@ public class StereoScript : MonoBehaviour
 		markers3d = GameObject.FindGameObjectsWithTag ("marker_stereo");
 
 		InstallCam (false);
-		toggle (markers2d, false);
+		toggle (markers2d, true);
 		toggle (markers3d, false);
 	}
 

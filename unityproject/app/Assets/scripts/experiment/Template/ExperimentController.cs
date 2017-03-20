@@ -12,6 +12,7 @@ public abstract class ExperimentController
 	protected ExperimentState currentState;
 
 	public int currentTrialIndex;
+	public bool customCalibDone = false;
 	public bool drawGraph = false;
 	private int numberOfTrainings;
 

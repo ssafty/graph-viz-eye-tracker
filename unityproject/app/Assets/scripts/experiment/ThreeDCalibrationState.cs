@@ -38,6 +38,8 @@ public class ThreeDCalibrationState : ExperimentState
 		if (Next || Input.GetKeyDown (skip) || CalibrationSkip == true) {
 			panel.gameObject.SetActive (false);
 			c.gameObject.SetActive (false);
+			init = false;
+			CalibrationSkip = false;
 			return nextState;
 		} else {
 			return this;
@@ -51,7 +53,25 @@ public class ThreeDCalibrationState : ExperimentState
 		//eyepointer.gameObject.SetActive(false);
 		experimentLogger.getLogger ().currentState = "WaitingFor3DCalibration";
 		text.text = "The second phase of calibration will start in 10 seconds.\n You will see many green nodes. \n Please focus the one which turns purple/red. \n Follow the colored nodes with your eyes.";
-		Invoke ("start3DCalib", 2);
+
+        GameObject.FindGameObjectWithTag("metaCamera").transform.position = new Vector3(0, 0, -40);
+        Camera.main.transform.localEulerAngles = Vector3.zero;
+        Camera.main.transform.position = new Vector3(0, 0, -40);
+        GameObject cr = GameObject.FindGameObjectWithTag("RightCam");
+        if (cr)
+        {
+            cr.transform.position = new Vector3(0, 0, -40);
+            cr.transform.localEulerAngles = Vector3.zero;
+        }
+
+
+        GameObject.FindGameObjectWithTag("RotationParent").transform.localEulerAngles = Vector3.zero;
+        GameObject.FindGameObjectWithTag("RotationParent").transform.position = new Vector3(0, 0, 0);
+        Camera.main.transform.localEulerAngles = Vector3.zero;
+        Camera.main.transform.position = new Vector3(0, 0, -40);
+        Bubble.moveTo(Bubble.REST_POS);
+
+        Invoke ("start3DCalib", 10);
 	}
 
 	private void start3DCalib ()
@@ -82,6 +102,7 @@ public class ThreeDCalibrationState : ExperimentState
 		if (mttrial.Graph.ExperimentType == experimentType.WITHCUSTOMCALIB) {
 			if (!init) {
 				init = true;
+
 				initialize ();
             
 			}

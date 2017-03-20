@@ -18,14 +18,11 @@ public class ResetPosition : MonoBehaviour
 		if (Input.GetKeyDown (resetKey)) {
 			start = true;
 			Debug.Log (start);
-
-			Camera.main.transform.localEulerAngles = Vector3.zero;
+            GameObject.FindGameObjectWithTag("RotationParent").transform.localEulerAngles = Vector3.zero;
+            GameObject.FindGameObjectWithTag("RotationParent").transform.position = new Vector3(0, 0, 0);
+            Camera.main.transform.localEulerAngles = Vector3.zero;
 			Camera.main.transform.position = new Vector3 (0, 0, -40);
-			GameObject rightCam = GameObject.FindGameObjectWithTag ("RightCam");
-			if (rightCam) {
-				rightCam.transform.position = new Vector3 (0, 0, -40);
-				rightCam.transform.localEulerAngles = Vector3.zero;
-			}
+
 		}
 	}
 

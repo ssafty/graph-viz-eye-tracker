@@ -176,6 +176,7 @@ public class Calib3D : MonoBehaviour
 			if (this.wait_for_python_to_get_job_done) {
 				// check if python has finished with calibration job
 				if (File.Exists (this.working_dir + this.participant_name + ".calibjobdone")) {
+					GameObject.FindGameObjectWithTag("MoveToExperimentController").GetComponent<MoveToExperimentController>().customCalibDone = true;
                     GameObject.FindGameObjectWithTag("MoveToExperimentController").GetComponent<ThreeDCalibrationState>().Next = true;
                     foreach (GameObject marker in GameObject.FindGameObjectsWithTag("CalibMarker"))
                     {
