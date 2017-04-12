@@ -1,7 +1,18 @@
-##################Install the packages ####################
+################## Install the packages ###########################
+###################################################################
+install.packages("car")
+install.packages("MBESS")
+install.packages(c('devtools','curl'))
+install.packages('BayesFactor', dependencies = TRUE)
+devtools::install_github('ndphillips/yarrr', build_vignettes = T)
+install_github("ndphillips/yarrr")
+library("yarrr")
+library(car)
+library(MBESS)
+library(devtools)
 
-
-##################Loading the data file ####################
+################## Loading the data file ##########################
+###################################################################
 
 path = "C:/Savitha/HCI/Eye Tracker Data/"
 fileNames = list.files(path=paste(path,"data/", sep=""), pattern="*.csv", full.names=TRUE)
@@ -14,7 +25,8 @@ rows = nrow(dataFrame)
 
 head(dataFrame,15)
 
-#######################################################################################################
+################## Creating DataFrame  ############################
+###################################################################
 
 data = dataFrame[,c( 
   "participantId"
@@ -60,8 +72,8 @@ conditions
 states = unique(data["currentState"])
 states
 
-################################################################################################
-#Calculate selection times
+################## Calculate selection times  #####################
+###################################################################
 
 Subject=list()
 Condition=list()
@@ -111,8 +123,8 @@ data = data.frame(Subject, Condition, SelectionTime, SelectionError, BubbleSize)
 
 head(data, nrow(data))
 
-################################################################################################
-#Calculate outlier thresholds
+############### Calculate outlier thresholds  #####################
+###################################################################
 
 threshold.upper = 0;
 threshold.lower = 0;
@@ -134,35 +146,34 @@ print(threshold.upper)
 threshold.lower = lowerq - (iqr * threshold.factor)
 print(threshold.lower)
 
-Outliers=list()
-ExperimentClean=list()
-for(t in unlist(SelectionTime))
-{
-  if(t > threshold.upper || t < threshold.lower)
-  {
-    Outliers=c(Outliers, as.numeric(t))
-  }
-  else
-  {
-    ExperimentClean=c(ExperimentClean, as.numeric(t))
-  }
-}
-Outliers = unlist(Outliers)
-print(length(Outliers))
-print(summary(Outliers))
+############### Remove outliers from data     #####################
+###################################################################
 
-ExperimentClean = unlist(ExperimentClean)
-print(length(ExperimentClean))
-print(summary(ExperimentClean))
+#Remove wrong selection times from data frame
+data<-data[!(data$SelectionTime < 0),]
+#Remove outliers from data frame
+data<-data[!(data$SelectionTime > threshold.upper | data$SelectionTime < threshold.lower),]
+
+
+head(data, nrow(data))
+
+
+############### Check for selection time normality  ###############
+###################################################################
 
 #boxplot(ExperimentClean)
 #identify(rep(1, length(ExperimentClean)), ExperimentClean, labels = seq_along(ExperimentClean))
+ExperimentClean <- data$SelectionTime
 
 hist(ExperimentClean, breaks="FD")
 qqnorm(ExperimentClean)
 qqline(ExperimentClean)
 shapiro.test(ExperimentClean)
 print(ks.test(ExperimentClean, "pnorm", mean=mean(ExperimentClean), sd=sd(ExperimentClean)))
+
+
+############### transform selection time for normality  ###########
+###################################################################
 
 ExperimentCorrected <- ExperimentClean
 
@@ -176,14 +187,8 @@ qqline(ExperimentCorrected)
 shapiro.test(ExperimentCorrected)
 print(ks.test(ExperimentCorrected, "pnorm", mean=mean(ExperimentCorrected), sd=sd(ExperimentCorrected)))
 
-#Remove wrong selection times from data frame
-data<-data[!(data$SelectionTime < 0),]
-#Remove outliers from data frame
-data<-data[!(data$SelectionTime > threshold.upper | data$SelectionTime < threshold.lower),]
 
 data$CorrectedSelectionTime<-ExperimentCorrected
-
-head(data, nrow(data))
 
 ################################################################################################
 #Calculate means per condition per participant
@@ -250,7 +255,7 @@ matrix1 <- with(data1,
                   CorrectedSelectionTime[Condition=="MOUSE"])) 
 model1 <- lm(matrix1 ~ 1)
 design1 <- factor(c("EYE", "WITHCUSTOMCALIB", "MOUSE"))
-install.packages("car")
+
 options(contrasts=c("contr.sum", "contr.poly"))
 aov1 <- Anova(model1, idata=data.frame(design1), idesign=~design1, type="III")
 summary(aov1, multivariate=F)
@@ -267,8 +272,7 @@ aovES <- aov(CorrectedSelectionTime ~ factor(Condition) + Error(factor(Subject)/
 summary(aovES)
 EffecSize<-17.875/(17.875+5.558)
 EffecSize
-install.packages("MBESS")
-library(MBESS)
+
 nSamples<-length(unique(data[,"CorrectedSelectionTime"]))
 ci.pvaf(F.value=48.24, df.1=2, df.2=30, N=nSamples)
 
@@ -297,8 +301,7 @@ matrix2 <- with(data2,
                   SelectionError[Condition=="MOUSE"])) 
 model2 <- lm(matrix2 ~ 1)
 design2 <- factor(c("EYE", "WITHCUSTOMCALIB", "MOUSE"))
-install.packages("car")
-library(car)
+
 options(contrasts=c("contr.sum", "contr.poly"))
 aov2 <- Anova(model2, idata=data.frame(design2), idesign=~design2, type="III")
 summary(aov2, multivariate=F)
@@ -315,20 +318,13 @@ aovESSE <- aov(SelectionError ~ factor(Condition) + Error(factor(Subject)/factor
 summary(aovESSE)
 EffecSize<-45.5/(45.5+209.8)
 EffecSize
-install.packages("MBESS")
-library(MBESS)
+
 nSamples<-length(unique(data[,"SelectionError"]))
 ci.pvaf(F.value=48.24, df.1=2, df.2=30, N=nSamples)
 
 
 ##################################################################################################################
-install.packages(c('devtools','curl'))
-library(devtools)
-install.packages('BayesFactor', dependencies = TRUE)
-devtools::install_github('ndphillips/yarrr', build_vignettes = T)
 
-install_github("ndphillips/yarrr")
-library("yarrr")
 #####################Pirate Plots - Selection Time######################################
 
 pirateplot(formula = SelectionTime ~ Condition, data = cleanData, main = "Selection Time"
