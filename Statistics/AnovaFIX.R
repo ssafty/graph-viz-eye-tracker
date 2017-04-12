@@ -17,30 +17,30 @@ head(dataFrame,15)
 #######################################################################################################
 
 data = dataFrame[,c( 
-    "participantId"
-    ,"condition"
-    ,"timeSinceStartup"
-    ,"correctNodeHit"
-    ,"keypressed"
-    #,"calibrationData"
-    ,"bubbleSize"
-    #,"numberNodes"
-    #,"targetNode"
-    #,"currentSelectedNode"
-    ,"currentState"
-    #,"correctedEyeX"
-    #,"correctedEyeY"
-    #,"rawEyeX"
-    #,"rawEyeY"
+  "participantId"
+  ,"condition"
+  ,"timeSinceStartup"
+  ,"correctNodeHit"
+  ,"keypressed"
+  #,"calibrationData"
+  ,"bubbleSize"
+  #,"numberNodes"
+  #,"targetNode"
+  #,"currentSelectedNode"
+  ,"currentState"
+  #,"correctedEyeX"
+  #,"correctedEyeY"
+  #,"rawEyeX"
+  #,"rawEyeY"
 )]
 
 data <- na.omit(data) # remove all NA values
 
 data = data[
-    data$currentState=="Trial"
-   # &data$correctNodeHit=="TRUE"
-    &(data$keypressed=="Enter"|data$keypressed=="HAPRING_TIP")
-    ,]
+  data$currentState=="Trial"
+  # &data$correctNodeHit=="TRUE"
+  &(data$keypressed=="Enter"|data$keypressed=="HAPRING_TIP")
+  ,]
 
 #remove wrong data :-(
 data<-data[!(data$condition=="MOUSE" & data$keypressed=="HAPRING_TIP"),]
@@ -73,32 +73,32 @@ lastTime=0;
 
 for(p in unlist(participants))
 {
-    for(c in unlist(conditions))
+  for(c in unlist(conditions))
+  {
+    pcData = data[data$participantId==p&data$condition==c,]
+    
+    firstRow = TRUE
+    
+    for(i in 1:nrow(pcData))
     {
-        pcData = data[data$participantId==p&data$condition==c,]
-        
-        firstRow = TRUE
-        
-        for(i in 1:nrow(pcData))
-        {
-            row <- pcData[i,]
-            
-            if(firstRow==FALSE)
-            {
-                Subject=c(Subject, p)
-                Condition=c(Condition, c)
-                SelectionTime=c(SelectionTime, as.numeric(row["timeSinceStartup"])-lastTime)
-                if(row["correctNodeHit"] == TRUE)
-                    SelectionError=c(SelectionError, 0)
-                else
-                    SelectionError=c(SelectionError, 1)
-                BubbleSize=c(BubbleSize, row["bubbleSize"])
-            }
-            
-            lastTime = as.numeric(row["timeSinceStartup"])
-            firstRow = FALSE
-        }
+      row <- pcData[i,]
+      
+      if(firstRow==FALSE)
+      {
+        Subject=c(Subject, p)
+        Condition=c(Condition, c)
+        SelectionTime=c(SelectionTime, as.numeric(row["timeSinceStartup"])-lastTime)
+        if(row["correctNodeHit"] == TRUE)
+          SelectionError=c(SelectionError, 0)
+        else
+          SelectionError=c(SelectionError, 1)
+        BubbleSize=c(BubbleSize, row["bubbleSize"])
+      }
+      
+      lastTime = as.numeric(row["timeSinceStartup"])
+      firstRow = FALSE
     }
+  }
 }
 
 Subject = unlist(Subject)
@@ -138,14 +138,14 @@ Outliers=list()
 ExperimentClean=list()
 for(t in unlist(SelectionTime))
 {
-    if(t > threshold.upper || t < threshold.lower)
-    {
-        Outliers=c(Outliers, as.numeric(t))
-    }
-    else
-    {
-        ExperimentClean=c(ExperimentClean, as.numeric(t))
-    }
+  if(t > threshold.upper || t < threshold.lower)
+  {
+    Outliers=c(Outliers, as.numeric(t))
+  }
+  else
+  {
+    ExperimentClean=c(ExperimentClean, as.numeric(t))
+  }
 }
 Outliers = unlist(Outliers)
 print(length(Outliers))
@@ -196,16 +196,16 @@ CorrectedSelectionTime=list()
 
 for(p in unlist(participants))
 {
-    for(c in unlist(conditions))
-    {
-        pcData = data[data$Subject==p&data$Condition==c,]
-        
-        Subject=c(Subject, p)
-        Condition=c(Condition, c)
-        SelectionTime=c(SelectionTime, mean(unlist(pcData["SelectionTime"])))
-        SelectionError=c(SelectionError, sum(unlist(pcData["SelectionError"])))
-        CorrectedSelectionTime=c(CorrectedSelectionTime, mean(unlist(pcData["CorrectedSelectionTime"])))
-    }
+  for(c in unlist(conditions))
+  {
+    pcData = data[data$Subject==p&data$Condition==c,]
+    
+    Subject=c(Subject, p)
+    Condition=c(Condition, c)
+    SelectionTime=c(SelectionTime, mean(unlist(pcData["SelectionTime"])))
+    SelectionError=c(SelectionError, sum(unlist(pcData["SelectionError"])))
+    CorrectedSelectionTime=c(CorrectedSelectionTime, mean(unlist(pcData["CorrectedSelectionTime"])))
+  }
 }
 
 Subject = unlist(Subject)
@@ -245,13 +245,16 @@ sd(dataST)
 data1 <- data.frame(Subject, Condition, SelectionTime)
 matrix1 <- with(data1, 
                 cbind(
-                    CorrectedSelectionTime[Condition=="EYE"], 
-                    CorrectedSelectionTime[Condition=="WITHCUSTOMCALIB"], 
-                    CorrectedSelectionTime[Condition=="MOUSE"])) 
+                  CorrectedSelectionTime[Condition=="EYE"], 
+                  CorrectedSelectionTime[Condition=="WITHCUSTOMCALIB"], 
+                  CorrectedSelectionTime[Condition=="MOUSE"])) 
 model1 <- lm(matrix1 ~ 1)
 design1 <- factor(c("EYE", "WITHCUSTOMCALIB", "MOUSE"))
 install.packages("car")
-8
+options(contrasts=c("contr.sum", "contr.poly"))
+aov1 <- Anova(model1, idata=data.frame(design1), idesign=~design1, type="III")
+summary(aov1, multivariate=F)
+
 
 #PostHoc
 dataPH <- data.frame(Condition, CorrectedSelectionTime)
