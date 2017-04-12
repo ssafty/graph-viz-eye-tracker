@@ -32,3 +32,4 @@ sysinfo.txt
 
 # .app for mac users
 *.app
+/Statistics/data
