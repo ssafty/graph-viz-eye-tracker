@@ -138,7 +138,7 @@ threshold.lower = 0;
 threshold.factor = 1.5
 
 # Remove negative times...
-SelectionTime = subset(data, (SelectionTime > 0), SelectionTime)
+SelectionTime = subset(data_frame, (SelectionTime > 0), SelectionTime)
 SelectionTime = unlist(SelectionTime)
 print(length(SelectionTime))
 print(summary(SelectionTime))
@@ -156,12 +156,12 @@ print(threshold.lower)
 ###################################################################
 
 #Remove wrong selection times from data frame
-data<-data[!(data$SelectionTime < 0),]
+data_frame<-data_frame[!(data_frame$SelectionTime < 0),]
 #Remove outliers from data frame
-data<-data[!(data$SelectionTime > threshold.upper | data$SelectionTime < threshold.lower),]
+data_frame<-data_frame[!(data_frame$SelectionTime > threshold.upper | data_frame$SelectionTime < threshold.lower),]
 
 
-head(data, nrow(data))
+head(data_frame, nrow(data_frame))
 
 
 ############### Check for selection time normality  ###############
@@ -169,7 +169,7 @@ head(data, nrow(data))
 
 #boxplot(ExperimentClean)
 #identify(rep(1, length(ExperimentClean)), ExperimentClean, labels = seq_along(ExperimentClean))
-ExperimentClean <- data$SelectionTime
+ExperimentClean <- data_frame$SelectionTime
 
 hist(ExperimentClean, breaks="FD")
 qqnorm(ExperimentClean)
@@ -194,7 +194,7 @@ shapiro.test(ExperimentCorrected)
 print(ks.test(ExperimentCorrected, "pnorm", mean=mean(ExperimentCorrected), sd=sd(ExperimentCorrected)))
 
 
-data$CorrectedSelectionTime<-ExperimentCorrected
+data_frame$CorrectedSelectionTime<-ExperimentCorrected
 
 ########Calculate marginals per condition per participant##########
 ###################################################################
