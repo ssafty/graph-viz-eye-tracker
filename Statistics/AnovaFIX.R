@@ -209,7 +209,7 @@ for(p in unlist(participants))
 {
   for(c in unlist(conditions))
   {
-    pcData = data[data$Subject==p&data$Condition==c,]
+    pcData = data_frame[data_frame$Subject==p&data_frame$Condition==c,]
     
     Subject=c(Subject, p)
     Condition=c(Condition, c)
@@ -225,53 +225,78 @@ SelectionTime = unlist(SelectionTime)
 SelectionError = unlist(SelectionError)
 CorrectedSelectionTime=unlist(CorrectedSelectionTime)
 
-cleanData = data.frame(Subject, Condition, SelectionTime, SelectionError, CorrectedSelectionTime)
+pc_data_frame = data.frame(Subject, Condition, SelectionTime, SelectionError, CorrectedSelectionTime)
 
-head(cleanData, nrow(cleanData))
+head(pc_data_frame, nrow(pc_data_frame))
 
 
-#####################ANOVA for Selection Time############################################
-plot1<-boxplot(SelectionTime ~ Condition, cleanData, main="Selection Time", 
+########Statistics for selection time #############################
+###################################################################
+plot1<-boxplot(SelectionTime ~ Condition, pc_data_frame, main="Selection Time", 
                xlab="Condition", ylab="Selection Time")
 
-dataST <- data[data$Condition=="EYE","SelectionTime"]
-summary(dataST)
-sd(dataST)
+data_frame_ST_builtin <- data_frame[data_frame$Condition=="Built-in Calibration","SelectionTime"]
+summary(data_frame_ST_builtin)
+sd(data_frame_ST_builtin)
 
-dataST <- data[data$Condition=="WITHCUSTOMCALIB","SelectionTime"]
-summary(dataST)
-sd(dataST)
+data_frame_ST_custom <- data_frame[data_frame$Condition=="Custom Calibration","SelectionTime"]
+summary(data_frame_ST_custom)
+sd(data_frame_ST_custom)
 
-dataST <- data[data$Condition=="MOUSE","SelectionTime"]
-summary(dataST)
-sd(dataST)
+data_frame_ST_kb <- data_frame[data_frame$Condition=="Mouse & Keyboard","SelectionTime"]
+summary(data_frame_ST_kb)
+sd(data_frame_ST_kb)
 
-#####################ANOVA for Corrected Selection Time############################################
+########ANOVA for Corrected Selection Time ########################
+###################################################################
 
-data1 <- data.frame(Subject, Condition, SelectionTime)
-matrix1 <- with(data1, 
+pc_data_frame_ANOVA_CST <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$CorrectedSelectionTime)
+pc_matrix_ANOVA_CST <- with(pc_data_frame_ANOVA_CST, 
                 cbind(
-                  CorrectedSelectionTime[Condition=="EYE"], 
-                  CorrectedSelectionTime[Condition=="WITHCUSTOMCALIB"], 
-                  CorrectedSelectionTime[Condition=="MOUSE"])) 
-model1 <- lm(matrix1 ~ 1)
-design1 <- factor(c("EYE", "WITHCUSTOMCALIB", "MOUSE"))
+                  CorrectedSelectionTime[Condition=="Built-in Calibration"], 
+                  CorrectedSelectionTime[Condition=="Custom Calibration"], 
+                  CorrectedSelectionTime[Condition=="Mouse & Keyboard"])) 
+pc_model_ANOVA_CST <- lm(pc_matrix_ANOVA_CST ~ 1)
+pc_design_ANOVA_CST <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
 
 options(contrasts=c("contr.sum", "contr.poly"))
-aov1 <- Anova(model1, idata=data.frame(design1), idesign=~design1, type="III")
-summary(aov1, multivariate=F)
+pc_aov_ANOVA_CST <- Anova(pc_model_ANOVA_CST, idata=data.frame(pc_design_ANOVA_CST), idesign=~pc_design_ANOVA_CST, type="III")
+summary(pc_aov_ANOVA_CST, multivariate=F)
 
 
-#PostHoc
-dataPH <- data.frame(Condition, CorrectedSelectionTime)
-aovPH <- aov(CorrectedSelectionTime ~ Condition, cleanData)
-summary(aovPH)
-TukeyHSD(aovPH)
+########PostHoc for Corrected Selection Time ######################
+###################################################################
+pc_data_frame_PH_CST <- data.frame(pc_data_frame$Condition, pc_data_frame$CorrectedSelectionTime)
+pc_aov_PH_CST <- aov(pc_data_frame$CorrectedSelectionTime ~ pc_data_frame$Condition, pc_data_frame)
+summary(pc_aov_PH_CST)
+TukeyHSD(pc_aov_PH_CST)
+
+
+###################################################################
+################################################################### To be tested
+###################################################################
+pc_data_frame_PH_CST <- data.frame(pc_data_frame$Condition, pc_data_frame$SelectionTime)
+pc_aov_PH_CST <- aov(pc_data_frame$SelectionTime ~ pc_data_frame$Condition, pc_data_frame)
+summary(pc_aov_PH_CST)
+TukeyHSD(pc_aov_PH_CST)
+
+pc_data_frame_PH_CST <- data.frame(data_frame$Condition, data_frame$SelectionTime)
+pc_aov_PH_CST <- aov(data_frame$SelectionTime ~ data_frame$Condition, data_frame)
+summary(pc_aov_PH_CST)
+TukeyHSD(pc_aov_PH_CST)
+
+pc_data_frame_PH_CST <- data.frame(data_frame$Condition, data_frame$CorrectedSelectionTime)
+pc_aov_PH_CST <- aov(data_frame$CorrectedSelectionTime ~ data_frame$Condition, data_frame)
+summary(pc_aov_PH_CST)
+TukeyHSD(pc_aov_PH_CST)
+###################################################################
+################################################################### To be tested
+###################################################################
 
 #Effect Size
-aovES <- aov(CorrectedSelectionTime ~ factor(Condition) + Error(factor(Subject)/factor(Condition)), data1)
+aovES <- aov(SelectionTime ~ factor(Condition) + Error(factor(Subject)/factor(Condition)), pc_data_frame_PH_CST)
 summary(aovES)
-EffecSize<-17.875/(17.875+5.558)
+EffecSize<-2054.9/(2054.9+742.4)
 EffecSize
 
 nSamples<-length(unique(data[,"CorrectedSelectionTime"]))
