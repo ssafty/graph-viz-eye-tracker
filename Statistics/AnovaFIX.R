@@ -17,24 +17,24 @@ library(devtools)
 path = "C:/Savitha/HCI/Eye Tracker Data/"
 fileNames = list.files(path=paste(path,"data/", sep=""), pattern="*.csv", full.names=TRUE)
 fileNames
-dataFrame = do.call("rbind", lapply(fileNames, function(x){read.csv(file=x, na.strings=c("", "NA"), header=TRUE, sep=",", dec=".", stringsAsFactors=FALSE)}))
-is.data.frame(dataFrame)
-ncol(dataFrame)
-nrow(dataFrame)
-rows = nrow(dataFrame)
+dataFrameRaw = do.call("rbind", lapply(fileNames, function(x){read.csv(file=x, na.strings=c("", "NA"), header=TRUE, sep=",", dec=".", stringsAsFactors=FALSE)}))
+is.data.frame(dataFrameRaw)
+ncol(dataFrameRaw)
+nrow(dataFrameRaw)
+rows = nrow(dataFrameRaw)
 
-head(dataFrame,15)
+head(dataFrameRaw,15)
 
 ################## Creating DataFrame  ############################
 ###################################################################
 
-data = dataFrame[,c( 
+data_frame = dataFrameRaw[,c( 
   "participantId"
   ,"condition"
   ,"timeSinceStartup"
   ,"correctNodeHit"
   ,"keypressed"
-  #,"calibrationData"
+  #,"calibrationdata_frame"
   ,"bubbleSize"
   #,"numberNodes"
   #,"targetNode"
@@ -46,30 +46,36 @@ data = dataFrame[,c(
   #,"rawEyeY"
 )]
 
-data <- na.omit(data) # remove all NA values
+data_frame <- na.omit(data_frame) # remove all NA values
 
-data = data[
-  data$currentState=="Trial"
-  # &data$correctNodeHit=="TRUE"
-  &(data$keypressed=="Enter"|data$keypressed=="HAPRING_TIP")
+data_frame = data_frame[
+  data_frame$currentState=="Trial"
+  # &data_frame$correctNodeHit=="TRUE"
+  &(data_frame$keypressed=="Enter"|data_frame$keypressed=="HAPRING_TIP")
   ,]
 
-#remove wrong data :-(
-data<-data[!(data$condition=="MOUSE" & data$keypressed=="HAPRING_TIP"),]
-data<-data[!(data$condition=="noCalibrationDataSet"),]
+#remove wrong data_frame :-(
+data_frame<-data_frame[!(data_frame$condition=="MOUSE" & data_frame$keypressed=="HAPRING_TIP"),]
+data_frame<-data_frame[!(data_frame$condition=="noCalibrationdata_frameSet"),]
 
-#data <- data[c(-7)] # remove "currentState" column
-data <- data[c(-5)] # remove "keypressed" column
+#data_frame <- data_frame[c(-7)] # remove "currentState" column
+data_frame <- data_frame[c(-5)] # remove "keypressed" column
 
-head(data,18)
+# rename condition field for readability
+data_frame$condition <- as.character(data_frame$condition)
+data_frame$condition[data_frame$condition == "WITHCUSTOMCALIB"] <- "Custom Calibration"
+data_frame$condition[data_frame$condition == "MOUSE"] <- "Mouse & Keyboard"
+data_frame$condition[data_frame$condition == "EYE"] <- "Built-in Calibration"
 
-participants = unique(data["participantId"])
+head(data_frame,18)
+
+participants = unique(data_frame["participantId"])
 participants
 
-conditions = unique(data["condition"])
+conditions = unique(data_frame["condition"])
 conditions
 
-states = unique(data["currentState"])
+states = unique(data_frame["currentState"])
 states
 
 ################## Calculate selection times  #####################
@@ -87,7 +93,7 @@ for(p in unlist(participants))
 {
   for(c in unlist(conditions))
   {
-    pcData = data[data$participantId==p&data$condition==c,]
+    pcData = data_frame[data_frame$participantId==p&data_frame$condition==c,]
     
     firstRow = TRUE
     
@@ -119,9 +125,9 @@ SelectionTime = unlist(SelectionTime)
 SelectionError = unlist(SelectionError)
 BubbleSize = unlist(BubbleSize)
 
-data = data.frame(Subject, Condition, SelectionTime, SelectionError, BubbleSize)
+data_frame = data.frame(Subject, Condition, SelectionTime, SelectionError, BubbleSize)
 
-head(data, nrow(data))
+head(data_frame, nrow(data_frame))
 
 ############### Calculate outlier thresholds  #####################
 ###################################################################
@@ -190,8 +196,8 @@ print(ks.test(ExperimentCorrected, "pnorm", mean=mean(ExperimentCorrected), sd=s
 
 data$CorrectedSelectionTime<-ExperimentCorrected
 
-################################################################################################
-#Calculate means per condition per participant
+########Calculate marginals per condition per participant##########
+###################################################################
 
 Subject=list()
 Condition=list()
@@ -223,11 +229,6 @@ cleanData = data.frame(Subject, Condition, SelectionTime, SelectionError, Correc
 
 head(cleanData, nrow(cleanData))
 
-cleanDataNew <- cleanData
-levels(cleanDataNew$Condition)[levels(cleanDataNew$Condition)=="WITHCUSTOMCALIB"] <- "Custom Calibration"
-levels(cleanDataNew$Condition)[levels(cleanDataNew$Condition)=="MOUSE"] <- "Mouse & Keyboard"
-levels(cleanDataNew$Condition)[levels(cleanDataNew$Condition)=="EYE"] <- "Built-in Calibration"
-cleanData <- cleanDataNew
 
 #####################ANOVA for Selection Time############################################
 plot1<-boxplot(SelectionTime ~ Condition, cleanData, main="Selection Time", 
