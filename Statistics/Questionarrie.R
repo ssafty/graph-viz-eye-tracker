@@ -90,6 +90,8 @@ participants = unique(data_frame["V2"])
 participants
 typeof(participants)
 
+###########################################Pre-Condition###################################################
+
 Value_pre <- c(data_frame$V13, 
                data_frame$V14,  
                data_frame$V15, 
@@ -116,58 +118,37 @@ typeof(Group)
 length(Group)
 
 data_frame_GV_pre <- data.frame(Group,Value_pre)
+##############################################################################################################
 
+###########################################Post-Condition###################################################
 
-  
-Groups_pre= unique(data_frame_GV["Group"])
-Groups_pre
-
-Values_pre = unique(data_frame_GV["Value_pre"])
-Values_pre 
-
-Groups=list()
-Values=list()
-
-
-lastTime=0;
-
-for(g in unlist(Groups_pre))
-{
-  for(v in unlist(Values_pre ))
-  {
-    gvData = data_frame_GV[data_frame_GV$Group==g & data_frame_GV$Value_pre==v,]
-   # print(gvData)
-    
-    
-    firstRow = TRUE
-    
-    
-   for(i in 1:nrow(gvData))
-   {
-     row <- gvData[i,]
-      
-     if(firstRow==FALSE)
-     {
-      Groups=c(Groups, g)
-       Values=c( Values, v)
-        
-      }
-     
-      firstRow = FALSE
-    }
-  }
-}
-
-Groups=unlist(Groups)
-Values=unlist(Values)
+Value_post <- c(data_frame$V29, 
+               data_frame$V30,  
+               data_frame$V31, 
+               data_frame$V32, 
+               data_frame$V33, 
+               data_frame$V34, 
+               data_frame$V35, 
+               data_frame$V36, 
+               data_frame$V37, 
+               data_frame$V38, 
+               data_frame$V39, 
+               data_frame$V40, 
+               data_frame$V41, 
+               data_frame$V42,
+               data_frame$V43, 
+               data_frame$V44)
+typeof(Value_post)
+length(Value_post)
 
 
 
-data_frame_FT = data.frame(Groups, Values)
-nrow(data_frame_FT)
+Group <- c(rep(data_frame$V2, (length(Value_post))/16))
+typeof(Group)
+length(Group)
 
-head(data_frame_FT, nrow(data_frame_FT))
-
+data_frame_GV_post <- data.frame(Group,Value_post)
+##############################################################################################################
 
 ages = unique(data_frame["V45"])
 ages
@@ -237,6 +218,27 @@ data_FT_pre <- cbind(data_frame_GV_pre[data_frame_GV_pre$Group==1,]$Value_pre,
 
 typeof(data_FT_pre)
 friedman.test(data_FT_pre)
+
+
+data_FT_post <- cbind(data_frame_GV_post[data_frame_GV_post$Group==1,]$Value_post, 
+                     data_frame_GV_post[data_frame_GV_post$Group==3,]$Value_post, 
+                     data_frame_GV_post[data_frame_GV_post$Group==4,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==6,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==7,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==8,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==9,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==10,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==11,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==12,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==13,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==14,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==15,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==16,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==17,]$Value_post,
+                     data_frame_GV_post[data_frame_GV_post$Group==18,]$Value_post)
+
+typeof(data_FT_post)
+friedman.test(data_FT_post)
 
 
 
