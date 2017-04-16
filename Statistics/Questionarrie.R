@@ -11,7 +11,6 @@ rows = nrow(dataFrame)
 
 head(dataFrame,16)
 
-
 #######################################################################################################
 
 data_frame =dataFrame[,c( 
@@ -84,7 +83,6 @@ data_frame =dataFrame[,c(
 
 
 #data <- na.omit(data_frame) 
-typeof(data_frame)
 
 data_frame$V10[data_frame$V10 == "2h"] <- as.numeric(as.character("2"))
 
@@ -92,7 +90,7 @@ participants = unique(data_frame["V2"])
 participants
 typeof(participants)
 
-Value_pre <- data.frame(data_frame$V13, 
+Value_pre <- c(data_frame$V13, 
                data_frame$V14,  
                data_frame$V15, 
                data_frame$V16, 
@@ -109,8 +107,6 @@ Value_pre <- data.frame(data_frame$V13,
                data_frame$V27, 
                data_frame$V28)
 typeof(Value_pre)
-nrow(Value_pre)
-ncol(value_pre)
 length(Value_pre)
 
 
@@ -119,7 +115,58 @@ Group <- c(rep(data_frame$V2, (length(Value_pre))/16))
 typeof(Group)
 length(Group)
 
-data_frame_GV <- data.frame(Group,Value_pre)
+data_frame_GV_pre <- data.frame(Group,Value_pre)
+
+
+  
+Groups_pre= unique(data_frame_GV["Group"])
+Groups_pre
+
+Values_pre = unique(data_frame_GV["Value_pre"])
+Values_pre 
+
+Groups=list()
+Values=list()
+
+
+lastTime=0;
+
+for(g in unlist(Groups_pre))
+{
+  for(v in unlist(Values_pre ))
+  {
+    gvData = data_frame_GV[data_frame_GV$Group==g & data_frame_GV$Value_pre==v,]
+   # print(gvData)
+    
+    
+    firstRow = TRUE
+    
+    
+   for(i in 1:nrow(gvData))
+   {
+     row <- gvData[i,]
+      
+     if(firstRow==FALSE)
+     {
+      Groups=c(Groups, g)
+       Values=c( Values, v)
+        
+      }
+     
+      firstRow = FALSE
+    }
+  }
+}
+
+Groups=unlist(Groups)
+Values=unlist(Values)
+
+
+
+data_frame_FT = data.frame(Groups, Values)
+nrow(data_frame_FT)
+
+head(data_frame_FT, nrow(data_frame_FT))
 
 
 ages = unique(data_frame["V45"])
@@ -158,17 +205,38 @@ print(comp_game_sd)
 ################################################################################################
 
 ############################hours_of_play_per_week_##########################################
+#as.numeric(as.character(data_frame$V10))
+
 hrs_of_play_mean = mean(data_frame$V10) 
 print(hrs_of_play_mean)
 hrs_of_play_sd= sd(data_frame$V10) 
 print(hrs_of_play_sd)
 #############################################################################################
 
+
+
 ###################################Friedman Test#######################################
 
 
-data_FT <- cbind(data_frame_GV[data_frame_GV$Group==1,]$Value_pre, data_frame_GV[data_frame_GV$Group==3,]$Value_pre_GV)
-friedman.test(data_FT)
+data_FT_pre <- cbind(data_frame_GV_pre[data_frame_GV_pre$Group==1,]$Value_pre, 
+                 data_frame_GV_pre[data_frame_GV_pre$Group==3,]$Value_pre, 
+                 data_frame_GV_pre[data_frame_GV_pre$Group==4,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==6,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==7,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==8,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==9,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==10,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==11,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==12,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==13,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==14,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==15,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==16,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==17,]$Value_pre,
+                 data_frame_GV_pre[data_frame_GV_pre$Group==18,]$Value_pre)
+
+typeof(data_FT_pre)
+friedman.test(data_FT_pre)
 
 
 

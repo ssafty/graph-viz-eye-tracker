@@ -94,6 +94,8 @@ for(p in unlist(participants))
   for(c in unlist(conditions))
   {
     pcData = data_frame[data_frame$participantId==p&data_frame$condition==c,]
+   # typeof(pcData)
+    
     
     firstRow = TRUE
     
