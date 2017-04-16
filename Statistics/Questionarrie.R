@@ -13,132 +13,76 @@ head(dataFrame,16)
 
 #######################################################################################################
 
-data =dataFrame[,c( 
+data_frame =dataFrame[,c( 
   #"V1"
   "V2"                                    ## "ID"   
   ,"V3"                                   ## ,"Vision_correction" 
   ,"V4"                                   # ,"Do_you_suffer_from_a_displacement_of_equilibrium_or_similar " 
   ,"V5"                                   #,"Do you suffer from a motor disorder such as an impaired hand_eye coordination" 
-  ,"V6"                                   # ,"Have you participated in a study with an Eye Tracker before"  
-  ,"V7"                                   # ,"Have you participated in a study using a Haptic Device before" 
-  ,"V8"                                   # ,"Do you have experience with 3D computer games" 
-  ,"V9"                                    # ,"How many hours do you play per week"
-  ,"V10"                                    # ,"Are you left-handed or right-handed "                                
-  ,"V11"                                   # ,"Result of Stereo Test                            
-  ,"V12"                                  # ,"General discomfort " 
-  ,"V13"                                  #,"Fatigue " 
-  ,"V14"                                  # ,"Headache " 
-  ,"V15"                                 # ,"Eyestrain "  
-  ,"V16"                                 # ,"Difficulty focusing " 
-  ,"V17"                              # ,"Increased salivation "                                                                      
-  ,"V18"                              # ,"Sweating "                           
-  ,"V19"                              # ,"Nausea "                               
-  ,"V20"                               # ,"Difficulty concentrating " 
-  ,"V21"                                 # ,"Fullness of head " 
-  ,"V22"                               # ,"Blurred vision "                                                                            
-  ,"V23"                               #  ,"Dizzy (eyes open) . Duselig bei offenen Augen"                                              
-  ,"V24"                               # ,"Dizzy (eyes closed) . Duselig bei geschlossenen Augen" 
-  ,"V25"                               #  ,"Vertigo " 
-  ,"V26"                               #  ,"Stomach awareness "
-  ,"V27"                               #  ,"Burping "
-  ,"V28"                               # ,"General discomfort " 
-  ,"V29"                               # ,"Fatigue "  
-  ,"V30"                               #  ,"Headache " 
-  ,"V31"                               # ,"Eyestrain " 
-  ,"V32"                               # ,"Difficulty focusing "                                                                       
-  ,"V33"                               #  ,"Increased salivation "  
-  ,"V34"                                 # ,"Sweating " 
-  ,"V35"
-  ,"V36"
-  ,"V37"
-  ,"V38"
-  ,"V39"
-  ,"V40"
-  ,"V41"
-  ,"V42"
-  ,"V43"
-  ,"V44"
-  ,"V45"
-  ,"V46"
-  ,"V47"
-  ,"V48"
-  ,"V49"
-  ,"V50"
-  ,"V51"
-  ,"V52"
-  ,"V53"
-  ,"V54"
-  ,"V55"
-  ,"V56"
-  ,"V57"
-  #  ,"V58"
+  ,"V6"                                  # ,"Do you have a known eye disorder"   
+  ,"V7"                                   # ,"Have you participated in a study with an Eye Tracker before" 
+  ,"V8"                                  # ,"Have you participated in a study using a Haptic Device before" 
+  ,"V9"                                    # ,"Do you have experience with 3D computer games"
+  ,"V10"                                   # ,"How many hours do you play per week"                               
+  ,"V11"                                   # ,"Are you left-handed or right-handed "                           
+  ,"V12"                                # ,"Result of Stereo Test
+  
+  #########################################Conditions Pre-Test#############################################################
+  ,"V13"                                  # ,"General discomfort "
+  ,"V14"                                  #,"Fatigue "  
+  ,"V15"                                # ,"Headache "  
+  ,"V16"                                 # ,"Eyestrain " 
+  ,"V17"                              # ,"Difficulty focusing "                                                                       
+  ,"V18"                              # ,"Increased salivation "                           
+  ,"V19"                              # ,"Sweating "                             
+  ,"V20"                              # ,"Nausea "  
+  ,"V21"                               # ,"Difficulty concentrating " 
+  ,"V22"                               # ,"Fullness of head "                                                                            
+  ,"V23"                               # ,"Blurred vision "                                               
+  ,"V24"                               #  ,"Dizzy (eyes open) . Duselig bei offenen Augen"  
+  ,"V25"                               # ,"Dizzy (eyes closed) . Duselig bei geschlossenen Augen"   
+  ,"V26"                               #  ,"Vertigo "
+  ,"V27"                               #  ,"Stomach awareness " 
+  ,"V28"                             #  ,"Burping "
+  ########################################################################################################################
+  ###########################################Condition Post-Test##########################################################
+  ,"V29"                               # ,"General discomfort "  
+  ,"V30"                               # ,"Fatigue "  
+  ,"V31"                               #  ,"Headache " 
+  ,"V32"                               # ,"Eyestrain "                                                                        
+  ,"V33"                              # ,"Difficulty focusing " 
+  ,"V34"                                #  ,"Increased salivation "  
+  ,"V35"                                # ,"Sweating "
+  ,"V36"                                #  ,"Nausea " 
+  ,"V37"                                # ,"Difficulty concentrating "  
+  ,"V38"                                #  ,"Fullness of head " 
+  ,"V39"                               #  ,"Blurred vision "  
+  ,"V40"                               #  ,"Dizzy (eyes open) . Duselig bei offenen Augen" 
+  ,"V41"                              #  ,"Dizzy (eyes closed) . Duselig bei geschlossenen Augen" 
+  ,"V42"                               # ,"Vertigo " 
+  ,"V43"                               # ,"Stomach awareness "
+  ,"V44"                               #  ,"Burping " 
+  #######################################################################################################################
+  ,"V45"                               #  ,"Age"
+  ,"V46"                               #  ,"Profession / field of study" 
+  ,"V47"                              # ,"Gender" 
+  ,"V48"                                # ,"Do you think the experiment task was too difficult" 
+  ,"V49"                               # ,"Do you think the experiment was too long"
+  ,"V50"                              # ,"How would you subjectively describe your level of attention during the experiment" 
+  ,"V51"                              #  ,"Please rate your level of comfort during selections"
+  ,"V52"                              # ,"Do you think the visual feedback was helpful to select the target" 
+  ,"V53"                              #  ,"Did you notice a difference between both eye tracker trials" 
+  ,"V54"                              #  ,"Do you think the gaze detection was helpful to select the target" 
+  ,"V55"                          #  ,"Please rate your preference for the Keyboard-and-Mouse condition "
+  ,"V56"                              #,"Please_rate_your_preferenc_for_the_Eye_Tracker_Device_condition"  
+  ,"V57"                              # ,"Additional comments " 
+  #  ,"V58"                            # ,"Not_Available" 
   
   
 )]
 
-##data =dataFrame[,c( 
 
-## "ID"                                                                                         #V2
-## ,"Vision_correction"                                                                         #V3
-# ,"Do_you_suffer_from_a_displacement_of_equilibrium_or_similar "                               #V4
-#,"Do you suffer from a motor disorder such as an impaired hand_eye coordination"               #V5            
-# ,"Do you have a known eye disorder"                                                           #V6
-# ,"Have you participated in a study with an Eye Tracker before"                                #V7
-# ,"Have you participated in a study using a Haptic Device before"                              #V8
-# ,"Do you have experience with 3D computer games"                                              #V9
-# ,"How many hours do you play per week"                                                        #V10
-# ,"Are you left-handed or right-handed "                                                       #V11
-# ,"Result of Stereo Test                                                                       #V12
-# ,"General discomfort "                                                                        #V13
-#,"Fatigue "                                                                                    #V14
-# ,"Headache "                                                                                  #V15
-# ,"Eyestrain "                                                                                 #V16
-# ,"Difficulty focusing "                                                                       #V17
-# ,"Increased salivation "                                                                      #V18
-# ,"Sweating "                                                                                  #V19
-# ,"Nausea "                                                                                    #V20
-# ,"Difficulty concentrating "                                                                  #V21
-# ,"Fullness of head "                                                                          #V22
-# ,"Blurred vision "                                                                            #V23
-#  ,"Dizzy (eyes open) . Duselig bei offenen Augen"                                              #V24
-# ,"Dizzy (eyes closed) . Duselig bei geschlossenen Augen"                                      #V25
-#  ,"Vertigo "                                                                                   #V26
-#  ,"Stomach awareness "                                                                         #V27
-#  ,"Burping "                                                                                   #V28
-# ,"General discomfort "                                                                        #V29
-# ,"Fatigue "                                                                                   #V30
-#  ,"Headache "                                                                                  #V31
-# ,"Eyestrain "                                                                                 #V32
-# ,"Difficulty focusing "                                                                       #V33
-#  ,"Increased salivation "                                                                      #V34
-# ,"Sweating "                                                                                  #V35
-#  ,"Nausea "                                                                                    #V36
-# ,"Difficulty concentrating "                                                                  #V37
-#  ,"Fullness of head "                                                                          #V38
-#  ,"Blurred vision "                                                                            #V39
-#  ,"Dizzy (eyes open) . Duselig bei offenen Augen"                                              #V40
-#  ,"Dizzy (eyes closed) . Duselig bei geschlossenen Augen"                                      #V41
-# ,"Vertigo "                                                                                   #V42
-# ,"Stomach awareness "                                                                         #V43
-#  ,"Burping "                                                                                   #V44
-#  ,"Age"                                                                                        #V45
-#  ,"Profession / field of study"                                                                #V46
-# ,"Gender"                                                                                     #V47
-# ,"Do you think the experiment task was too difficult"                                         #V48
-# ,"Do you think the experiment was too long"                                                   #V49
-# ,"How would you subjectively describe your level of attention during the experiment"          #V50
-#  ,"Please rate your level of comfort during selections"                                        #V51
-# ,"Do you think the visual feedback was helpful to select the target"                          #V52
-#  ,"Did you notice a difference between both eye tracker trials"                                #V53
-#  ,"Do you think the gaze detection was helpful to select the target"                           #V54
-#  ,"Please rate your preference for the Keyboard-and-Mouse condition "                          #V56
-#,"Please_rate_your_preferenc_for_the_Eye_Tracker_Device_condition"                             #V57
-# ,"Additional comments "                                                                       #V58                                                                                                              
-# ,"Not_Available"                                                                              #V59
-
-#)]
-
-data <- na.omit(data) 
+#data <- na.omit(data_frame) 
 
 participants = unique(data["ID"])
 participants
