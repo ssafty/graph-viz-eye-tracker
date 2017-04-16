@@ -11,6 +11,7 @@ rows = nrow(dataFrame)
 
 head(dataFrame,16)
 
+
 #######################################################################################################
 
 data_frame =dataFrame[,c( 
@@ -83,58 +84,91 @@ data_frame =dataFrame[,c(
 
 
 #data <- na.omit(data_frame) 
+typeof(data_frame)
 
-participants = unique(data["ID"])
+data_frame$V10[data_frame$V10 == "2h"] <- as.numeric(as.character("2"))
+
+participants = unique(data_frame["V2"])
 participants
+typeof(participants)
 
-ages = unique(data["Age"])
+Value_pre <- data.frame(data_frame$V13, 
+               data_frame$V14,  
+               data_frame$V15, 
+               data_frame$V16, 
+               data_frame$V17, 
+               data_frame$V18, 
+               data_frame$V19, 
+               data_frame$V20, 
+               data_frame$V21, 
+               data_frame$V22, 
+               data_frame$V23, 
+               data_frame$V24, 
+               data_frame$V25, 
+               data_frame$V26,
+               data_frame$V27, 
+               data_frame$V28)
+typeof(Value_pre)
+nrow(Value_pre)
+ncol(value_pre)
+length(Value_pre)
+
+
+
+Group <- c(rep(data_frame$V2, (length(Value_pre))/16))
+typeof(Group)
+length(Group)
+
+data_frame_GV <- data.frame(Group,Value_pre)
+
+
+ages = unique(data_frame["V45"])
 ages
 
-genders = unique(data["Gender"])
+genders = unique(data_frame["V47"])
 genders
 
 ##################################Age##################################################
-Age_Data = mean(data$Age) 
+Age_Data = mean(data_frame$V45) 
 print(Age_Data)
 
 
-Age_max = max(data$Age)
+Age_max = max(data_frame$V45)
 print(Age_max)
 
-Age_min = min(data$Age)
+Age_min = min(data_frame$V45)
 print(Age_min)    
 ########################################################################################
 
 ###################################glasses#######################################################
-b <- data.frame(number=data$Vision_correction_)
-count_glasses <- length(which(b == "Glasses"))
+Glasses_Data <- data.frame(number=data_frame$V3)
+count_glasses <- length(which(Glasses_Data== "Glasses"))
 print(count_glasses)
-count_none <- length(which(b == "None"))
+count_none <- length(which(Glasses_Data == "None"))
 print(count_none )
-count_contactlens <- length(which(b == "Contact lenses"))
+count_contactlens <- length(which(Glasses_Data == "Contact lenses"))
 print(count_contactlens)
 #########################################################################################
 
 ################################Experience_with_3D_computer_games###############################
-comp_game_mean = mean(data$Do_you_have_experience_with_3D_computer_games_Q_) 
+comp_game_mean = mean(data_frame$V9) 
 print(comp_game_mean)
-comp_game_sd= sd(data$Do_you_have_experience_with_3D_computer_games_Q_) 
+comp_game_sd= sd(data_frame$V9) 
 print(comp_game_sd)
 ################################################################################################
 
 ############################hours_of_play_per_week_##########################################
-
-hrs_of_play_mean = mean(data$How_many_hours_do_you_play_per_week_Q_) 
+hrs_of_play_mean = mean(data_frame$V10) 
 print(hrs_of_play_mean)
-hrs_of_play_sd= sd(data$How_many_hours_do_you_play_per_week_Q_) 
+hrs_of_play_sd= sd(data_frame$V10) 
 print(hrs_of_play_sd)
 #############################################################################################
 
 ###################################Friedman Test#######################################
 
 
-data2 <- cbind(data[data$Group==1,]$Value, data[data$Group==2,]$Value, data[data$Group==3,]$Value)
-friedman.test(data2)
+data_FT <- cbind(data_frame_GV[data_frame_GV$Group==1,]$Value_pre, data_frame_GV[data_frame_GV$Group==3,]$Value_pre_GV)
+friedman.test(data_FT)
 
 
 
