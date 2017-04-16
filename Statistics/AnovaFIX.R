@@ -286,106 +286,57 @@ EffecSize
 
 ########Statistics for selection error #############################
 ###################################################################
-plot2<-boxplot(SelectionError ~ Condition, pc_data_frame, main="Selection Time", 
+plot2<-boxplot(SelectionError ~ Condition, pc_data_frame, main="Selection Error", 
                xlab="Condition", ylab="Selection Error")
 
-data_frame_ST_builtin <- data_frame[data_frame$Condition=="Built-in Calibration","SelectionTime"]
-summary(data_frame_ST_builtin)
-sd(data_frame_ST_builtin)
+data_frame_SE_builtin <- data_frame[data_frame$Condition=="Built-in Calibration","SelectionError"]
+((sum(data_frame_SE_builtin)/length(data_frame_SE_builtin))*100)
 
-data_frame_ST_custom <- data_frame[data_frame$Condition=="Custom Calibration","SelectionTime"]
-summary(data_frame_ST_custom)
-sd(data_frame_ST_custom)
+data_frame_SE_custom <- data_frame[data_frame$Condition=="Custom Calibration","SelectionError"]
+((sum(data_frame_SE_custom)/length(data_frame_SE_custom))*100)
 
-data_frame_ST_kb <- data_frame[data_frame$Condition=="Mouse & Keyboard","SelectionTime"]
-summary(data_frame_ST_kb)
-sd(data_frame_ST_kb)
+data_frame_SE_kb <- data_frame[data_frame$Condition=="Mouse & Keyboard","SelectionError"]
+((sum(data_frame_SE_kb)/length(data_frame_SE_kb))*100)
 
-########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
+########ANOVA for Corrected Selection Error(ANOVA with the Sphericity test) ########################
 ###################################################################################################
 
-pc_data_frame_ANOVA_CST <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$CorrectedSelectionTime)
-pc_matrix_ANOVA_CST <- with(pc_data_frame_ANOVA_CST, 
+pc_data_frame_ANOVA_SE <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$SelectionError)
+pc_matrix_ANOVA_SE <- with(pc_data_frame_ANOVA_SE, 
                             cbind(
-                              CorrectedSelectionTime[Condition=="Built-in Calibration"], 
-                              CorrectedSelectionTime[Condition=="Custom Calibration"], 
-                              CorrectedSelectionTime[Condition=="Mouse & Keyboard"])) 
-pc_model_ANOVA_CST <- lm(pc_matrix_ANOVA_CST ~ 1)
-pc_design_ANOVA_CST <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
+                              SelectionError[Condition=="Built-in Calibration"], 
+                              SelectionError[Condition=="Custom Calibration"], 
+                              SelectionError[Condition=="Mouse & Keyboard"])) 
+pc_model_ANOVA_SE <- lm(pc_matrix_ANOVA_SE ~ 1)
+pc_design_ANOVA_SE <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
 
 options(contrasts=c("contr.sum", "contr.poly"))
-pc_aov_ANOVA_CST <- Anova(pc_model_ANOVA_CST, idata=data.frame(pc_design_ANOVA_CST), idesign=~pc_design_ANOVA_CST, type="III")
-summary(pc_aov_ANOVA_CST, multivariate=F)
+pc_aov_ANOVA_SE <- Anova(pc_model_ANOVA_SE, idata=data.frame(pc_design_ANOVA_SE), idesign=~pc_design_ANOVA_SE, type="III")
+summary(pc_aov_ANOVA_SE, multivariate=F)
 
 
-########PostHoc for Corrected Selection Time ######################
+########PostHoc for Corrected Selection Error ######################
 ###################################################################
-pc_data_frame_PH_CST <- data.frame(pc_data_frame$Condition, pc_data_frame$CorrectedSelectionTime)
-pc_aov_PH_CST <- aov(pc_data_frame$CorrectedSelectionTime ~ pc_data_frame$Condition, pc_data_frame_PH_CST)
-summary(pc_aov_PH_CST)
-TukeyHSD(pc_aov_PH_CST)
+pc_data_frame_PH_SE <- data.frame(pc_data_frame$Condition, pc_data_frame$SelectionError)
+pc_aov_PH_SE <- aov(pc_data_frame$SelectionError ~ pc_data_frame$Condition, pc_data_frame_PH_SE)
+summary(pc_aov_PH_SE)
+TukeyHSD(pc_aov_PH_SE)
 
 
 ###################Effect Size#####################################
 ###################################################################
 
-aovES_ST <- aov(CorrectedSelectionTime ~ factor(Condition) + Error(factor(Subject)/factor(Condition)), pc_data_frame_PH_CST)
-summary(aovES_ST)
-EffecSize<-17.875/(17.875+5.558)
-EffecSize
-
-#######################ANOVA for Selection Error#############################################
-
-#aov2 <- aov(SelectionError ~ Condition, cleanData)
-#summary(aov2)
-plot2<-boxplot(SelectionError ~ Condition, cleanData, main="Selection Error", 
-               xlab="Condition", ylab="Selection Error")
-
-dataSE <- data[data$Condition=="EYE","SelectionError"]
-((sum(dataSE)/length(dataSE))*100)
-
-dataSE <- data[data$Condition=="WITHCUSTOMCALIB","SelectionError"]
-((sum(dataSE)/length(dataSE))*100)
-
-dataSE <- data[data$Condition=="MOUSE","SelectionError"]
-((sum(dataSE)/length(dataSE))*100)
-
-
-data2 <- data.frame(Subject, Condition, SelectionError)
-matrix2 <- with(data2, 
-                cbind(
-                  SelectionError[Condition=="EYE"], 
-                  SelectionError[Condition=="WITHCUSTOMCALIB"], 
-                  SelectionError[Condition=="MOUSE"])) 
-model2 <- lm(matrix2 ~ 1)
-design2 <- factor(c("EYE", "WITHCUSTOMCALIB", "MOUSE"))
-
-options(contrasts=c("contr.sum", "contr.poly"))
-aov2 <- Anova(model2, idata=data.frame(design2), idesign=~design2, type="III")
-summary(aov2, multivariate=F)
-
-
-#PostHoc
-dataPHSE <- data.frame(Condition, SelectionError)
-aovPHSE <- aov(SelectionError ~ Condition, cleanData)
-summary(aovPHSE)
-TukeyHSD(aovPHSE)
-
-#Effect Size
-aovESSE <- aov(SelectionError ~ factor(Condition) + Error(factor(Subject)/factor(Condition)), data2)
-summary(aovESSE)
+aovES_SE <- aov(SelectionError ~ factor(Condition) + Error(factor(Subject)/factor(Condition)), pc_data_frame_PH_SE)
+summary(aovES_SE)
 EffecSize<-45.5/(45.5+209.8)
 EffecSize
-
-nSamples<-length(unique(data[,"SelectionError"]))
-ci.pvaf(F.value=48.24, df.1=2, df.2=30, N=nSamples)
 
 
 ##################################################################################################################
 
 #####################Pirate Plots - Selection Time######################################
 
-pirateplot(formula = SelectionTime ~ Condition, data = cleanData, main = "Selection Time"
+pirateplot(formula = SelectionTime ~ Condition, data = pc_data_frame, main = "Selection Time"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -400,7 +351,7 @@ pirateplot(formula = SelectionTime ~ Condition, data = cleanData, main = "Select
 ########################Pirate Plots - Selection Error##################################
 
 
-pirateplot(formula = SelectionError ~ Condition, data = cleanData, main = "Selection Error"
+pirateplot(formula = SelectionError ~ Condition, data = pc_data_frame, main = "Selection Error"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -415,7 +366,7 @@ pirateplot(formula = SelectionError ~ Condition, data = cleanData, main = "Selec
 ########################Pirate Plots - Corrected Selection Time##################################
 
 
-pirateplot(formula = CorrectedSelectionTime ~ Condition, data = cleanData, main = "Selection Time"
+pirateplot(formula = CorrectedSelectionTime ~ Condition, data = pc_data_frame, main = "Selection Time"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
