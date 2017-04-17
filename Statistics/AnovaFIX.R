@@ -207,6 +207,7 @@ SelectionTime=list()
 SelectionError=list()
 CorrectedSelectionTime=list()
 
+
 for(p in unlist(participants))
 {
   for(c in unlist(conditions))
@@ -369,6 +370,202 @@ pirateplot(formula = SelectionError ~ Condition, data = pc_data_frame, main = "S
 
 
 pirateplot(formula = CorrectedSelectionTime ~ Condition, data = pc_data_frame, main = "Selection Time"
+           ,theme = 2, # theme 2
+           pal = "google", # xmen palette
+           point.o = .4, # Add points
+           point.col = "black",
+           point.bg = "white",
+           point.pch = 21,
+           bean.f.o = .2, # Turn down bean filling
+           inf.f.o = .8, # Turn up inf filling
+           gl.col = "gray", # gridlines
+           gl.lwd = c(.5, 0)) # turn off minor grid lines)
+
+###########################################################################################################################################
+
+
+########Calculate marginals per bubblesize per participant##########
+#####################################################################
+
+bubble_size = unique(data_frame["BubbleSize"])
+bubble_size
+
+
+
+Subject=list()
+Condition=list()
+SelectionTime=list()
+SelectionError=list()
+CorrectedSelectionTime=list()
+bubblesize = list()
+
+
+for(p in unlist(participants))
+{
+  for(c in unlist(conditions))
+  {
+    for(b in unlist(bubble_size))
+    {
+      pbData = data_frame[data_frame$Subject==p & data_frame$BubbleSize==b & data_frame$Condition==c,]
+      
+      Subject=c(Subject, p)
+      bubblesize=c(bubblesize, b)
+      Condition=c(Condition,c)
+      SelectionTime=c(SelectionTime, mean(unlist(pbData["SelectionTime"])))
+      SelectionError=c(SelectionError, sum(unlist(pbData["SelectionError"])))
+      CorrectedSelectionTime=c(CorrectedSelectionTime, mean(unlist(pbData["CorrectedSelectionTime"])))
+    }
+  }
+  
+}
+
+Subject = unlist(Subject)
+Condition = unlist(Condition)
+bubblesize = unlist(bubblesize)
+SelectionTime = unlist(SelectionTime)
+SelectionError = unlist(SelectionError)
+CorrectedSelectionTime=unlist(CorrectedSelectionTime)
+
+pb_data_frame_bubble = data.frame(Subject, Condition,bubblesize, SelectionTime, SelectionError, CorrectedSelectionTime)
+
+head(pb_data_frame_bubble, nrow(pb_data_frame_bubble))
+
+pb_data_frame_bubble <- na.omit(pb_data_frame_bubble) # remove all NA values
+
+########Statistics for bubble size ################################
+###################################################################
+
+plot3<-boxplot(SelectionTime ~ bubblesize, pb_data_frame_bubble, main="SelectionTime", 
+               xlab="BubbleSize", ylab="Selection Time")
+
+
+
+
+data_frame_ST_bubble10 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==10,"SelectionTime"]
+summary(data_frame_ST_bubble10 )
+sd(data_frame_ST_bubble10 )
+
+
+data_frame_ST_bubble5 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==5,"SelectionTime"]
+summary(data_frame_ST_bubble5 )
+sd(data_frame_ST_bubble5 )
+
+
+data_frame_ST_bubble75 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==7.5,"SelectionTime"]
+summary(data_frame_ST_bubble75 )
+sd(data_frame_ST_bubble75 )
+
+########################################################################################################################################
+########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
+###################################################################################################
+
+pb_data_frame_ANOVA_CST <- data.frame(pb_data_frame_bubble$Subject,pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$CorrectedSelectionTime)
+pb_matrix_ANOVA_CST <- with(pb_data_frame_ANOVA_CST, 
+                            cbind(
+                              CorrectedSelectionTime[bubblesize==10], 
+                              CorrectedSelectionTime[bubblesize==5], 
+                              CorrectedSelectionTime[bubblesize==7.5])) 
+
+pb_matrix_ANOVA_CST<- na.omit(pb_matrix_ANOVA_CST) # remove all NA values
+pb_model_ANOVA_CST <- lm(pb_matrix_ANOVA_CST ~ 1)
+pb_design_ANOVA_CST <- factor(c(10, 7.5, 5))
+
+options(contrasts=c("contr.sum", "contr.poly"))
+pb_aov_ANOVA_CST <- Anova(pb_model_ANOVA_CST, idata=data.frame(pb_design_ANOVA_CST), idesign=~pb_design_ANOVA_CST, type="III")
+summary(pb_aov_ANOVA_CST, multivariate=F)
+
+
+########PostHoc for Corrected Selection Time ######################
+###################################################################
+pb_data_frame_PH_CST <- data.frame(pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$CorrectedSelectionTime)
+pb_aov_PH_CST <- aov(pb_data_frame_bubble$CorrectedSelectionTime ~ pb_data_frame_bubble$bubblesize, pb_data_frame_PH_CST)
+summary(pb_aov_PH_CST)
+TukeyHSD(pb_aov_PH_CST)
+
+
+###################Effect Size#####################################
+###################################################################
+
+aovES_ST_bubble <- aov(CorrectedSelectionTime ~ factor(bubblesize) + Error(factor(Subject)/factor(bubblesize)), pb_data_frame_PH_CST)
+summary(aovES_ST_bubble)
+EffecSize<-0.03/(0.03+10.41)
+EffecSize
+
+###########################################################################################################################################
+
+########Statistics for bubble size for Selection Error ################################
+###################################################################
+
+plot4<-boxplot(SelectionError ~ bubblesize, pb_data_frame_bubble, main="Selection Error", 
+               xlab="BubbleSize", ylab="Selection Error")
+
+data_frame_SE_bubble10 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==10,"SelectionError"]
+((sum(data_frame_SE_bubble10)/length(data_frame_SE_bubble10))*100)
+
+data_frame_SE_bubble5 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==5,"SelectionError"]
+((sum(data_frame_SE_bubble5)/length(data_frame_SE_bubble5))*100)
+
+data_frame_SE_bubble75 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==7.5,"SelectionError"]
+((sum(data_frame_SE_bubble75)/length(data_frame_SE_bubble75))*100)
+
+
+########################################################################################################################################
+
+########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
+###################################################################################################
+
+pb_data_frame_ANOVA_SE <- data.frame(pb_data_frame_bubble$Subject,pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
+pb_matrix_ANOVA_SE <- with(pb_data_frame_ANOVA_SE, 
+                            cbind(
+                              SelectionError[bubblesize==10], 
+                              SelectionError[bubblesize==5], 
+                              SelectionError[bubblesize==7.5])) 
+
+pb_matrix_ANOVA_SE<- na.omit(pb_matrix_ANOVA_SE) # remove all NA values
+pb_model_ANOVA_SE <- lm(pb_matrix_ANOVA_SE ~ 1)
+pb_design_ANOVA_SE <- factor(c(10, 7.5, 5))
+
+options(contrasts=c("contr.sum", "contr.poly"))
+pb_aov_ANOVA_SE <- Anova(pb_model_ANOVA_SE, idata=data.frame(pb_design_ANOVA_SE), idesign=~pb_design_ANOVA_SE, type="III")
+summary(pb_aov_ANOVA_SE, multivariate=F)
+
+
+########PostHoc for Corrected Selection Time ######################
+###################################################################
+pb_data_frame_PH_SE <- data.frame(pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
+pb_aov_PH_SE <- aov(pb_data_frame_bubble$SelectionError ~ pb_data_frame_bubble$bubblesize, pb_data_frame_PH_SE)
+summary(pb_aov_PH_SE)
+TukeyHSD(pb_aov_PH_SE)
+
+
+###################Effect Size#####################################
+###################################################################
+
+aovES_SE_bubble <- aov(SelectionError ~ factor(bubblesize) + Error(factor(Subject)/factor(bubblesize)), pb_data_frame_PH_SE)
+summary(aovES_SE_bubble)
+EffecSize<- 3.04/( 3.04+39.40)
+EffecSize
+
+#########################################################################################################################################
+
+#####################Pirate Plots - Selection Time######################################
+
+pirateplot(formula = SelectionTime ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Time"
+           ,theme = 2, # theme 2
+           pal = "google", # xmen palette
+           point.o = .4, # Add points
+           point.col = "black",
+           point.bg = "white",
+           point.pch = 21,
+           bean.f.o = .2, # Turn down bean filling
+           inf.f.o = .8, # Turn up inf filling
+           gl.col = "gray", # gridlines
+           gl.lwd = c(.5, 0)) # turn off minor grid lines)
+
+########################Pirate Plots - Selection Error##################################
+
+
+pirateplot(formula = SelectionError ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Error"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
