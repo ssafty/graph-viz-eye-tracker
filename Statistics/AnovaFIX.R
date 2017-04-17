@@ -17,7 +17,7 @@ library(plyr)
 ################## Loading the data file ##########################
 ###################################################################
 
-path = "C:/Savitha/HCI/Eye Tracker Data/"
+path = "Eye Tracker Data/"
 fileNames = list.files(path=paste(path,"data/", sep=""), pattern="*.csv", full.names=TRUE)
 fileNames
 dataFrameRaw = do.call("rbind", lapply(fileNames, function(x){read.csv(file=x, na.strings=c("", "NA"), header=TRUE, sep=",", dec=".", stringsAsFactors=FALSE)}))
@@ -26,7 +26,12 @@ ncol(dataFrameRaw)
 nrow(dataFrameRaw)
 rows = nrow(dataFrameRaw)
 
-head(dataFrameRaw,15)
+head(dataFrameRaw, 15)
+
+# remove unused session variables
+rm(fileNames)
+rm(path)
+rm(rows)
 
 ################## Creating DataFrame  ############################
 ###################################################################
@@ -70,77 +75,91 @@ data_frame$condition[data_frame$condition == "WITHCUSTOMCALIB"] <- "Custom Calib
 data_frame$condition[data_frame$condition == "MOUSE"] <- "Mouse & Keyboard"
 data_frame$condition[data_frame$condition == "EYE"] <- "Built-in Calibration"
 
-head(data_frame,18)
+head(data_frame, 18)
 
-participants = unique(data_frame["participantId"])
-participants
-
-conditions = unique(data_frame["condition"])
-conditions
-
-states = unique(data_frame["currentState"])
-states
+# remove unused variables
+rm(dataFrameRaw)
 
 ################## Calculate selection times  #####################
 ###################################################################
 
-Subject=list()
-Condition=list()
-SelectionTime=list()
-SelectionError=list()
-BubbleSize=list()
+# get unique values
+u_participants = unique(data_frame["participantId"])
+u_conditions = unique(data_frame["condition"])
+u_states = unique(data_frame["currentState"])
 
-lastTime=0;
+t_Subject=list()
+t_Condition = list()
+t_SelectionTime = list()
+t_SelectionError = list()
+t_BubbleSize = list()
 
-for(p in unlist(participants))
+t_lastTime=0;
+
+for(p in unlist(u_participants))
 {
-  for(c in unlist(conditions))
-  {
-    pcData = data_frame[data_frame$participantId==p&data_frame$condition==c,]
-   # typeof(pcData)
-    
-    
-    firstRow = TRUE
-    
-    for(i in 1:nrow(pcData))
+    for(c in unlist(u_conditions))
     {
-      row <- pcData[i,]
+        t_pcData = data_frame[data_frame$participantId==p&data_frame$condition==c,]
+        # typeof(pcData)
+    
+        t_firstRow = TRUE
+    
+        for (i in 1:nrow(t_pcData))
+        {
+            t_row <- t_pcData[i,]
       
-      if(firstRow==FALSE)
-      {
-        Subject=c(Subject, p)
-        Condition=c(Condition, c)
-        SelectionTime=c(SelectionTime, as.numeric(row["timeSinceStartup"])-lastTime)
-        if(row["correctNodeHit"] == TRUE)
-          SelectionError=c(SelectionError, 0)
-        else
-          SelectionError=c(SelectionError, 1)
-        BubbleSize=c(BubbleSize, row["bubbleSize"])
-      }
+            if (t_firstRow == FALSE)
+            {
+                t_Subject = c(t_Subject, p)
+                t_Condition = c(t_Condition, c)
+                t_SelectionTime = c(t_SelectionTime, as.numeric(t_row["timeSinceStartup"]) - t_lastTime)
+                if (t_row["correctNodeHit"] == TRUE)
+                    t_SelectionError = c(t_SelectionError, 0)
+                else
+                    t_SelectionError = c(t_SelectionError, 1)
+                t_BubbleSize = c(t_BubbleSize, t_row["bubbleSize"])
+            }
       
-      lastTime = as.numeric(row["timeSinceStartup"])
-      firstRow = FALSE
+            t_lastTime = as.numeric(t_row["timeSinceStartup"])
+            t_firstRow = FALSE
+        }
     }
-  }
 }
 
-Subject = unlist(Subject)
-Condition = unlist(Condition)
-SelectionTime = unlist(SelectionTime)
-SelectionError = unlist(SelectionError)
-BubbleSize = unlist(BubbleSize)
+Subject = unlist(t_Subject)
+Condition = unlist(t_Condition)
+SelectionTime = unlist(t_SelectionTime)
+SelectionError = unlist(t_SelectionError)
+BubbleSize = unlist(t_BubbleSize)
 
 data_frame = data.frame(Subject, Condition, SelectionTime, SelectionError, BubbleSize)
 
 head(data_frame, nrow(data_frame))
 
+# remove unused variables
+rm(u_conditions)
+rm(u_participants)
+rm(u_states)
+rm(t_Subject)
+rm(t_Condition)
+rm(t_SelectionTime)
+rm(t_SelectionError)
+rm(t_BubbleSize)
+rm(t_lastTime)
+rm(t_firstRow)
+rm(t_pcData)
+rm(t_row)
+rm(c)
+rm(i)
+rm(p)
+
 ############### Calculate outlier thresholds  #####################
 ###################################################################
 
-threshold.upper = 0;
-threshold.lower = 0;
-
-threshold.factor = 1.5
+t_threshold.upper = 0;
+t_threshold.lower = 0;
+t_threshold.factor = 1.5
 
 # Remove negative times...
 SelectionTime = subset(data_frame, (SelectionTime > 0), SelectionTime)
@@ -148,14 +167,22 @@ SelectionTime = unlist(SelectionTime)
 print(length(SelectionTime))
 print(summary(SelectionTime))
 
-lowerq = quantile(SelectionTime)[2]
-upperq = quantile(SelectionTime)[4]
-iqr = upperq - lowerq # IQR(ExperimentDiscrepancy) can be used as an alternative
+t_lowerq = quantile(SelectionTime)[2]
+t_upperq = quantile(SelectionTime)[4]
+t_iqr = t_upperq - t_lowerq # IQR(ExperimentDiscrepancy) can be used as an alternative
 
-threshold.upper = (iqr * threshold.factor) + upperq
-print(threshold.upper)
-threshold.lower = lowerq - (iqr * threshold.factor)
-print(threshold.lower)
+t_threshold.upper = (t_iqr * t_threshold.factor) + t_upperq
+print(t_threshold.upper)
+t_threshold.lower = t_lowerq - (t_iqr * t_threshold.factor)
+print(t_threshold.lower)
+
+# rm
+rm(Subject)
+rm(Condition)
+rm(SelectionTime)
+rm(SelectionError)
+rm(BubbleSize)
+rm(t_iqr, t_lowerq, t_upperq)
 
 ############### Remove outliers from data     #####################
 ###################################################################
@@ -163,10 +190,16 @@ print(threshold.lower)
 #Remove wrong selection times from data frame
 data_frame<-data_frame[!(data_frame$SelectionTime < 0),]
 #Remove outliers from data frame
-data_frame<-data_frame[!(data_frame$SelectionTime > threshold.upper | data_frame$SelectionTime < threshold.lower),]
+data_frame <- data_frame[!(data_frame$SelectionTime > t_threshold.upper | data_frame$SelectionTime < t_threshold.lower),]
 
 
 head(data_frame, nrow(data_frame))
+
+# rm
+rm(t_threshold.factor, t_threshold.lower, t_threshold.upper)
+
+############### Extract data_frame without errors #################
+###################################################################
 
 
 ############### Check for selection time normality  ###############
@@ -199,7 +232,11 @@ shapiro.test(ExperimentCorrected)
 print(ks.test(ExperimentCorrected, "pnorm", mean=mean(ExperimentCorrected), sd=sd(ExperimentCorrected)))
 
 
-data_frame$CorrectedSelectionTime<-ExperimentCorrected
+data_frame$CorrectedSelectionTime <- ExperimentCorrected
+
+# rm 
+rm(ExperimentClean)
+rm(ExperimentCorrected)
 
 ########Calculate marginals per condition per participant##########
 ###################################################################
@@ -208,12 +245,16 @@ Subject=list()
 Condition=list()
 SelectionTime=list()
 SelectionError=list()
-CorrectedSelectionTime=list()
+CorrectedSelectionTime = list()
+
+# get unique values
+u_participants = unique(data_frame["Subject"])
+u_conditions = unique(data_frame["Condition"])
 
 
-for(p in unlist(participants))
+for(p in unlist(u_participants))
 {
-  for(c in unlist(conditions))
+  for(c in unlist(u_conditions))
   {
     pcData = data_frame[data_frame$Subject==p&data_frame$Condition==c,]
     
@@ -231,16 +272,32 @@ SelectionTime = unlist(SelectionTime)
 SelectionError = unlist(SelectionError)
 CorrectedSelectionTime=unlist(CorrectedSelectionTime)
 
-pc_data_frame = data.frame(Subject, Condition, SelectionTime, SelectionError, CorrectedSelectionTime)
+data_frame_cond_pc = data.frame(Subject, Condition, SelectionTime, SelectionError, CorrectedSelectionTime)
 
-head(pc_data_frame, nrow(pc_data_frame))
+head(data_frame_cond_pc, nrow(data_frame_cond_pc))
+
+# rm
+rm(Subject)
+rm(Condition)
+rm(SelectionTime)
+rm(SelectionError)
+rm(BubbleSize)
+rm(CorrectedSelectionTime)
+rm(p)
+rm(c)
+rm(pcData)
+rm(u_conditions)
+rm(u_participants)
+
 ###################################################################################################################################
 
 
 ########Statistics for selection time #############################
 ###################################################################
-plot1<-boxplot(SelectionTime ~ Condition, pc_data_frame, main="Selection Time", 
-               xlab="Condition", ylab="Selection Time")
+plot1 <- boxplot(SelectionTime ~ Condition, data_frame_cond_pc, main = "Selection Time",
+               xlab = "Condition", ylab = "Selection Time")
+plot2 <- boxplot(SelectionTime ~ BubbleSize, data_frame, main = "Selection Time",
+               xlab = "Condition", ylab = "Selection Time")
 
 data_frame_ST_builtin <- data_frame[data_frame$Condition=="Built-in Calibration","SelectionTime"]
 summary(data_frame_ST_builtin)
