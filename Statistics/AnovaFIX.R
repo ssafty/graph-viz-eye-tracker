@@ -74,6 +74,9 @@ data_frame$condition <- as.character(data_frame$condition)
 data_frame$condition[data_frame$condition == "WITHCUSTOMCALIB"] <- "Custom Calibration"
 data_frame$condition[data_frame$condition == "MOUSE"] <- "Mouse & Keyboard"
 data_frame$condition[data_frame$condition == "EYE"] <- "Built-in Calibration"
+data_frame$bubbleSize[data_frame$bubbleSize == "10"] <- "Large"
+data_frame$bubbleSize[data_frame$bubbleSize == "7.5"] <- "Medium"
+data_frame$bubbleSize[data_frame$bubbleSize == "5"] <- "Small"
 
 head(data_frame, 18)
 
@@ -200,43 +203,61 @@ rm(t_threshold.factor, t_threshold.lower, t_threshold.upper)
 
 ############### Extract data_frame without errors #################
 ###################################################################
+data_frame_we <- data_frame[(data_frame$SelectionError==0),]
 
 
 ############### Check for selection time normality  ###############
 ###################################################################
 
-#boxplot(ExperimentClean)
-#identify(rep(1, length(ExperimentClean)), ExperimentClean, labels = seq_along(ExperimentClean))
 ExperimentClean <- data_frame$SelectionTime
+ExperimentClean_we <- data_frame_we$SelectionTime
 
-hist(ExperimentClean, breaks="FD")
-qqnorm(ExperimentClean)
-qqline(ExperimentClean)
-shapiro.test(ExperimentClean)
-print(ks.test(ExperimentClean, "pnorm", mean=mean(ExperimentClean), sd=sd(ExperimentClean)))
+hist(ExperimentClean, breaks = "FD")
+hist(ExperimentClean_we, breaks = "FD")
+
 
 
 ############### transform selection time for normality  ###########
 ###################################################################
 
 ExperimentCorrected <- ExperimentClean
+ExperimentCorrected_we <- ExperimentClean_we
 
 ExperimentCorrected = log(ExperimentCorrected)
-ExperimentCorrected = ExperimentCorrected + abs(summary(ExperimentCorrected)[1])
-print(summary(ExperimentCorrected))
+ExperimentCorrected_we = log(ExperimentCorrected_we)
 
-hist(ExperimentCorrected, breaks="FD")
+ExperimentCorrected = ExperimentCorrected + abs(summary(ExperimentCorrected)[1])
+ExperimentCorrected_we = ExperimentCorrected_we + abs(summary(ExperimentCorrected_we)[1])
+
+print(summary(ExperimentCorrected))
+print(summary(ExperimentCorrected_we))
+
+hist(ExperimentCorrected, breaks = "FD")
+hist(ExperimentCorrected_we, breaks = "FD")
+
+############### other checks for selection time         ###########
+###################################################################
+qqnorm(ExperimentClean)
+qqline(ExperimentClean)
+shapiro.test(ExperimentClean)
+print(ks.test(ExperimentClean, "pnorm", mean = mean(ExperimentClean), sd = sd(ExperimentClean)))
+
 qqnorm(ExperimentCorrected)
 qqline(ExperimentCorrected)
 shapiro.test(ExperimentCorrected)
 print(ks.test(ExperimentCorrected, "pnorm", mean=mean(ExperimentCorrected), sd=sd(ExperimentCorrected)))
 
+############### Store back corrected data         #################
+###################################################################
 
 data_frame$CorrectedSelectionTime <- ExperimentCorrected
+data_frame_we$CorrectedSelectionTime <- ExperimentCorrected_we
 
 # rm 
 rm(ExperimentClean)
 rm(ExperimentCorrected)
+rm(ExperimentClean_we)
+rm(ExperimentCorrected_we)
 
 ########Calculate marginals per condition per participant##########
 ###################################################################
