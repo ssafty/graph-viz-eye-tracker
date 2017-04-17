@@ -6,10 +6,12 @@ install.packages(c('devtools','curl'))
 install.packages('BayesFactor', dependencies = TRUE)
 devtools::install_github('ndphillips/yarrr', build_vignettes = T)
 install_github("ndphillips/yarrr")
+install.packages("plyr")
 library("yarrr")
 library(car)
 library(MBESS)
 library(devtools)
+library(plyr)
 
 ################## Loading the data file ##########################
 ###################################################################
@@ -382,7 +384,7 @@ pirateplot(formula = CorrectedSelectionTime ~ Condition, data = pc_data_frame, m
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
 ###########################################################################################################################################
-
+#########################################################################################################################
 
 ########Calculate marginals per bubblesize per participant##########
 #####################################################################
@@ -431,6 +433,14 @@ pb_data_frame_bubble = data.frame(Subject, Condition,bubblesize, SelectionTime, 
 head(pb_data_frame_bubble, nrow(pb_data_frame_bubble))
 
 pb_data_frame_bubble <- na.omit(pb_data_frame_bubble) # remove all NA values
+
+# rename bubble size field for readability
+#pb_data_frame_bubble $bubblesize <- as.character(pb_data_frame_bubble $condition)
+
+pb_data_frame_bubble$BubbleSizes <- mapvalues(pb_data_frame_bubble$bubblesize,
+                     from = c(10,7.5,5),
+                     to = c("Large", "Medium", "Small"))
+
 
 ########Statistics for bubble size ################################
 ###################################################################
@@ -549,9 +559,11 @@ EffecSize
 
 #########################################################################################################################################
 
+
+
 #####################Pirate Plots - Selection Time######################################
 
-pirateplot(formula = SelectionTime ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Time for Different Bubble Sizes"
+pirateplot(formula = SelectionTime ~ BubbleSizes , data = pb_data_frame_bubble, main = "Selection Time for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -566,7 +578,7 @@ pirateplot(formula = SelectionTime ~ bubblesize, data = pb_data_frame_bubble, ma
 ########################Pirate Plots - Selection Error##################################
 
 
-pirateplot(formula = SelectionError ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Error for Different Bubble Sizes"
+pirateplot(formula = SelectionError ~ BubbleSizes , data = pb_data_frame_bubble, main = "Selection Error for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
