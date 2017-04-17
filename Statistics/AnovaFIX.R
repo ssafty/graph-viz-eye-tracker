@@ -339,7 +339,7 @@ EffecSize
 
 #####################Pirate Plots - Selection Time######################################
 
-pirateplot(formula = SelectionTime ~ Condition, data = pc_data_frame, main = "Selection Time"
+pirateplot(formula = SelectionTime ~ Condition, data = pc_data_frame, main = "Selection Time for Different Conditions"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -354,7 +354,7 @@ pirateplot(formula = SelectionTime ~ Condition, data = pc_data_frame, main = "Se
 ########################Pirate Plots - Selection Error##################################
 
 
-pirateplot(formula = SelectionError ~ Condition, data = pc_data_frame, main = "Selection Error"
+pirateplot(formula = SelectionError ~ Condition, data = pc_data_frame, main = "Selection Error for Different Conditions"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -463,8 +463,8 @@ pb_data_frame_ANOVA_CST <- data.frame(pb_data_frame_bubble$Subject,pb_data_frame
 pb_matrix_ANOVA_CST <- with(pb_data_frame_ANOVA_CST, 
                             cbind(
                               CorrectedSelectionTime[bubblesize==10], 
-                              CorrectedSelectionTime[bubblesize==5], 
-                              CorrectedSelectionTime[bubblesize==7.5])) 
+                              CorrectedSelectionTime[bubblesize==7.5], 
+                              CorrectedSelectionTime[bubblesize==5])) 
 
 pb_matrix_ANOVA_CST<- na.omit(pb_matrix_ANOVA_CST) # remove all NA values
 pb_model_ANOVA_CST <- lm(pb_matrix_ANOVA_CST ~ 1)
@@ -518,8 +518,9 @@ pb_data_frame_ANOVA_SE <- data.frame(pb_data_frame_bubble$Subject,pb_data_frame_
 pb_matrix_ANOVA_SE <- with(pb_data_frame_ANOVA_SE, 
                             cbind(
                               SelectionError[bubblesize==10], 
-                              SelectionError[bubblesize==5], 
-                              SelectionError[bubblesize==7.5])) 
+                               
+                              SelectionError[bubblesize==7.5],
+                              SelectionError[bubblesize==5])) 
 
 pb_matrix_ANOVA_SE<- na.omit(pb_matrix_ANOVA_SE) # remove all NA values
 pb_model_ANOVA_SE <- lm(pb_matrix_ANOVA_SE ~ 1)
