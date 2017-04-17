@@ -550,7 +550,7 @@ EffecSize
 
 #####################Pirate Plots - Selection Time######################################
 
-pirateplot(formula = SelectionTime ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Time"
+pirateplot(formula = SelectionTime ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Time for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -565,7 +565,7 @@ pirateplot(formula = SelectionTime ~ bubblesize, data = pb_data_frame_bubble, ma
 ########################Pirate Plots - Selection Error##################################
 
 
-pirateplot(formula = SelectionError ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Error"
+pirateplot(formula = SelectionError ~ bubblesize, data = pb_data_frame_bubble, main = "Selection Error for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
