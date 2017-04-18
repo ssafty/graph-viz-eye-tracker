@@ -622,120 +622,6 @@ ci.pvaf(F.value = 0.038, df.1 = 2, df.2 = 28, N = nrow(df))
 rm(df, df_effect_size, partial_eta_2)
 
 
-########Statistics for selection error ############################
-###################################################################
-plot2<-boxplot(SelectionError ~ Condition, pc_data_frame, main="Selection Error", 
-               xlab="Condition", ylab="Selection Error")
-
-data_frame_SE_builtin <- data_frame[data_frame$Condition=="Built-in Calibration","SelectionError"]
-((sum(data_frame_SE_builtin)/length(data_frame_SE_builtin))*100)
-
-data_frame_SE_custom <- data_frame[data_frame$Condition=="Custom Calibration","SelectionError"]
-((sum(data_frame_SE_custom)/length(data_frame_SE_custom))*100)
-
-data_frame_SE_kb <- data_frame[data_frame$Condition=="Mouse & Keyboard","SelectionError"]
-((sum(data_frame_SE_kb)/length(data_frame_SE_kb))*100)
-
-########ANOVA for Corrected Selection Error(ANOVA with the Sphericity test) ########################
-###################################################################################################
-
-pc_data_frame_ANOVA_SE <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$SelectionError)
-pc_matrix_ANOVA_SE <- with(pc_data_frame_ANOVA_SE, 
-                            cbind(
-                              SelectionError[Condition=="Built-in Calibration"], 
-                              SelectionError[Condition=="Custom Calibration"], 
-                              SelectionError[Condition=="Mouse & Keyboard"])) 
-pc_model_ANOVA_SE <- lm(pc_matrix_ANOVA_SE ~ 1)
-pc_design_ANOVA_SE <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
-
-options(contrasts=c("contr.sum", "contr.poly"))
-pc_aov_ANOVA_SE <- Anova(pc_model_ANOVA_SE, idata=data.frame(pc_design_ANOVA_SE), idesign=~pc_design_ANOVA_SE, type="III")
-summary(pc_aov_ANOVA_SE, multivariate=F)
-
-
-########PostHoc for Corrected Selection Error ######################
-###################################################################
-pc_data_frame_PH_SE <- data.frame(pc_data_frame$Condition, pc_data_frame$SelectionError)
-pc_aov_PH_SE <- aov(pc_data_frame$SelectionError ~ pc_data_frame$Condition, pc_data_frame_PH_SE)
-summary(pc_aov_PH_SE)
-TukeyHSD(pc_aov_PH_SE)
-
-
-###################Effect Size#####################################
-###################################################################
-
-aovES_SE <- aov(SelectionError ~ factor(Condition) + Error(factor(Subject)/factor(Condition)), pc_data_frame_PH_SE)
-summary(aovES_SE)
-EffecSize<-45.5/(45.5+209.8)
-EffecSize
-
-
-##################################################################################################################
-
-
-###########################################################################################################################################
-#########################################################################################################################
-
-
-###########################################################################################################################################
-
-########Statistics for bubble size for Selection Error ################################
-###################################################################
-
-plot4<-boxplot(SelectionError ~ bubblesize, pb_data_frame_bubble, main="Selection Error", 
-               xlab="BubbleSize", ylab="Selection Error")
-
-data_frame_SE_bubble10 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==10,"SelectionError"]
-((sum(data_frame_SE_bubble10)/length(data_frame_SE_bubble10))*100)
-
-data_frame_SE_bubble5 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==5,"SelectionError"]
-((sum(data_frame_SE_bubble5)/length(data_frame_SE_bubble5))*100)
-
-data_frame_SE_bubble75 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize==7.5,"SelectionError"]
-((sum(data_frame_SE_bubble75)/length(data_frame_SE_bubble75))*100)
-
-
-########################################################################################################################################
-
-########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
-###################################################################################################
-
-pb_data_frame_ANOVA_SE <- data.frame(pb_data_frame_bubble$Subject,pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
-pb_matrix_ANOVA_SE <- with(pb_data_frame_ANOVA_SE, 
-                            cbind(
-                              SelectionError[bubblesize==10], 
-                               
-                              SelectionError[bubblesize==7.5],
-                              SelectionError[bubblesize==5])) 
-
-pb_matrix_ANOVA_SE<- na.omit(pb_matrix_ANOVA_SE) # remove all NA values
-pb_model_ANOVA_SE <- lm(pb_matrix_ANOVA_SE ~ 1)
-pb_design_ANOVA_SE <- factor(c(10, 7.5, 5))
-
-options(contrasts=c("contr.sum", "contr.poly"))
-pb_aov_ANOVA_SE <- Anova(pb_model_ANOVA_SE, idata=data.frame(pb_design_ANOVA_SE), idesign=~pb_design_ANOVA_SE, type="III")
-summary(pb_aov_ANOVA_SE, multivariate=F)
-
-
-########PostHoc for Corrected Selection Time ######################
-###################################################################
-pb_data_frame_PH_SE <- data.frame(pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
-pb_aov_PH_SE <- aov(pb_data_frame_bubble$SelectionError ~ pb_data_frame_bubble$bubblesize, pb_data_frame_PH_SE)
-summary(pb_aov_PH_SE)
-TukeyHSD(pb_aov_PH_SE)
-
-
-###################Effect Size#####################################
-###################################################################
-
-aovES_SE_bubble <- aov(SelectionError ~ factor(bubblesize) + Error(factor(Subject)/factor(bubblesize)), pb_data_frame_PH_SE)
-summary(aovES_SE_bubble)
-EffecSize<- 3.04/( 3.04+39.40)
-EffecSize
-
-#########################################################################################################################################
-
-
 ###################################################################
 ###################################################################
 ###################################################################
@@ -793,3 +679,124 @@ pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame, mai
            inf.f.o = .8, # Turn up inf filling
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
+
+
+###################################################################
+###################################################################
+###################################################################
+###################################################################
+###################################################################
+
+########Statistics for selection error ############################
+###################################################################
+
+plot2 <- boxplot(SelectionError ~ Condition, pc_data_frame, main = "Selection Error",
+               xlab = "Condition", ylab = "Selection Error")
+
+data_frame_SE_builtin <- data_frame[data_frame$Condition == "Built-in Calibration", "SelectionError"]
+((sum(data_frame_SE_builtin) / length(data_frame_SE_builtin)) * 100)
+
+data_frame_SE_custom <- data_frame[data_frame$Condition == "Custom Calibration", "SelectionError"]
+((sum(data_frame_SE_custom) / length(data_frame_SE_custom)) * 100)
+
+data_frame_SE_kb <- data_frame[data_frame$Condition == "Mouse & Keyboard", "SelectionError"]
+((sum(data_frame_SE_kb) / length(data_frame_SE_kb)) * 100)
+
+########ANOVA for Corrected Selection Error(ANOVA with the Sphericity test) ########################
+###################################################################################################
+
+pc_data_frame_ANOVA_SE <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$SelectionError)
+pc_matrix_ANOVA_SE <- with(pc_data_frame_ANOVA_SE,
+                            cbind(
+                              SelectionError[Condition == "Built-in Calibration"],
+                              SelectionError[Condition == "Custom Calibration"],
+                              SelectionError[Condition == "Mouse & Keyboard"]))
+pc_model_ANOVA_SE <- lm(pc_matrix_ANOVA_SE ~ 1)
+pc_design_ANOVA_SE <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
+
+options(contrasts = c("contr.sum", "contr.poly"))
+pc_aov_ANOVA_SE <- Anova(pc_model_ANOVA_SE, idata = data.frame(pc_design_ANOVA_SE), idesign = ~pc_design_ANOVA_SE, type = "III")
+summary(pc_aov_ANOVA_SE, multivariate = F)
+
+
+########PostHoc for Corrected Selection Error ######################
+###################################################################
+pc_data_frame_PH_SE <- data.frame(pc_data_frame$Condition, pc_data_frame$SelectionError)
+pc_aov_PH_SE <- aov(pc_data_frame$SelectionError ~ pc_data_frame$Condition, pc_data_frame_PH_SE)
+summary(pc_aov_PH_SE)
+TukeyHSD(pc_aov_PH_SE)
+
+
+###################Effect Size#####################################
+###################################################################
+
+aovES_SE <- aov(SelectionError ~ factor(Condition) + Error(factor(Subject) / factor(Condition)), pc_data_frame_PH_SE)
+summary(aovES_SE)
+EffecSize <- 45.5 / (45.5 + 209.8)
+EffecSize
+
+
+##################################################################################################################
+
+
+###########################################################################################################################################
+#########################################################################################################################
+
+
+###########################################################################################################################################
+
+########Statistics for bubble size for Selection Error ################################
+###################################################################
+
+plot4 <- boxplot(SelectionError ~ bubblesize, pb_data_frame_bubble, main = "Selection Error",
+               xlab = "BubbleSize", ylab = "Selection Error")
+
+data_frame_SE_bubble10 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize == 10, "SelectionError"]
+((sum(data_frame_SE_bubble10) / length(data_frame_SE_bubble10)) * 100)
+
+data_frame_SE_bubble5 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize == 5, "SelectionError"]
+((sum(data_frame_SE_bubble5) / length(data_frame_SE_bubble5)) * 100)
+
+data_frame_SE_bubble75 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize == 7.5, "SelectionError"]
+((sum(data_frame_SE_bubble75) / length(data_frame_SE_bubble75)) * 100)
+
+
+########################################################################################################################################
+
+########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
+###################################################################################################
+
+pb_data_frame_ANOVA_SE <- data.frame(pb_data_frame_bubble$Subject, pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
+pb_matrix_ANOVA_SE <- with(pb_data_frame_ANOVA_SE,
+                            cbind(
+                              SelectionError[bubblesize == 10],
+
+                              SelectionError[bubblesize == 7.5],
+                              SelectionError[bubblesize == 5]))
+
+pb_matrix_ANOVA_SE <- na.omit(pb_matrix_ANOVA_SE) # remove all NA values
+pb_model_ANOVA_SE <- lm(pb_matrix_ANOVA_SE ~ 1)
+pb_design_ANOVA_SE <- factor(c(10, 7.5, 5))
+
+options(contrasts = c("contr.sum", "contr.poly"))
+pb_aov_ANOVA_SE <- Anova(pb_model_ANOVA_SE, idata = data.frame(pb_design_ANOVA_SE), idesign = ~pb_design_ANOVA_SE, type = "III")
+summary(pb_aov_ANOVA_SE, multivariate = F)
+
+
+########PostHoc for Corrected Selection Time ######################
+###################################################################
+pb_data_frame_PH_SE <- data.frame(pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
+pb_aov_PH_SE <- aov(pb_data_frame_bubble$SelectionError ~ pb_data_frame_bubble$bubblesize, pb_data_frame_PH_SE)
+summary(pb_aov_PH_SE)
+TukeyHSD(pb_aov_PH_SE)
+
+
+###################Effect Size#####################################
+###################################################################
+
+aovES_SE_bubble <- aov(SelectionError ~ factor(bubblesize) + Error(factor(Subject) / factor(bubblesize)), pb_data_frame_PH_SE)
+summary(aovES_SE_bubble)
+EffecSize <- 3.04 / (3.04 + 39.40)
+EffecSize
+
+#########################################################################################################################################
