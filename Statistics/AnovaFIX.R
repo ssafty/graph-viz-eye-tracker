@@ -567,8 +567,12 @@ Residuals            33   6.03   0.183
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 "
+tuk_st_cond <- TukeyHSD(df_posthoc_aov)
+#Tukey result significant, will be included in paper
+plot(tuk_st_cond)   #plot for Tukey link -http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html
+                    
 
-TukeyHSD(df_posthoc_aov)
+
 
 xxxx="
   Tukey multiple comparisons of means
@@ -698,7 +702,9 @@ df_posthoc$BubbleSize  2  0.267  0.1333   0.663  0.522
 Residuals             33  6.630  0.2009               
 
 "
-TukeyHSD(df_posthoc_aov)
+tuk_df_posthoc_aov_bs<-TukeyHSD(df_posthoc_aov)
+plot(tuk_df_posthoc_aov_bs)  #plot for Tukey link -http://www.analyticsforfun.com/2014/06/performing-anova-test-in-r-results-and.html
+
 xxxx="
   Tukey multiple comparisons of means
     95% family-wise confidence level
