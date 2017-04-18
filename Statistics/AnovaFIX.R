@@ -291,7 +291,7 @@ for (p in unlist(u_participants)) {
         Subject = c(Subject, p)
         Condition = c(Condition, c)
         SelectionTime = c(SelectionTime, mean(unlist(pcData["SelectionTime"])))
-        SelectionError = c(SelectionError, sum(unlist(pcData["SelectionError"])))
+        SelectionError = c(SelectionError, mean(unlist(pcData["SelectionError"]))) # not sum use mean as we are interested in fraction of errors
         CorrectedSelectionTime = c(CorrectedSelectionTime, mean(unlist(pcData["CorrectedSelectionTime"])))
     }
 }
@@ -383,7 +383,7 @@ for (p in unlist(u_participants)) {
         Subject = c(Subject, p)
         BubbleSize = c(BubbleSize, b)
         SelectionTime = c(SelectionTime, mean(unlist(pbData["SelectionTime"])))
-        SelectionError = c(SelectionError, sum(unlist(pbData["SelectionError"])))
+        SelectionError = c(SelectionError, mean(unlist(pbData["SelectionError"]))) # not sum use mean as we are interested in fraction of errors
         CorrectedSelectionTime = c(CorrectedSelectionTime, mean(unlist(pbData["CorrectedSelectionTime"])))
     }
 }
@@ -766,7 +766,7 @@ rm(df, df_effect_size, partial_eta_2)
 ###################################################################
 ###################################################################
 ################################################################### All pirate plots
-# the plots for paper
+# the plots for paper SelectionTime
 attach(mtcars)
 par(mfrow = c(2, 1))
 par(mfrow = c(1, 2))
@@ -801,6 +801,15 @@ pirateplot(formula = SelectionTime ~ BubbleSize, data = marg_PB_data_frame_witho
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
+# the plots for paper SelectionError
+attach(mtcars)
+par(mfrow = c(2, 1))
+par(mfrow = c(1, 2))
+boxplot(SelectionError ~ Condition, marg_PC_data_frame, main = "Selection Error vs. Condtitions",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionError ~ BubbleSize, marg_PB_data_frame, main = "Selection Error vs. Bubble size",
+               xlab = "Bubble Size", ylab = "Selection Time")
+
 par(mfrow = c(1, 1))
 pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame, main = "Selection Error for Different Conditions"
            , theme = 2, # theme 2
@@ -827,7 +836,7 @@ pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame, mai
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
-######## Overview of all data using boxplots   #################### Debugging
+######## Overview of all data using boxplots   #################### Debugging only for SelectionTime
 ###################################################################
 attach(mtcars)
 par(mfrow = c(2, 2))
@@ -859,7 +868,7 @@ boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Marg
 
 
 
-######## Print some statistical numbers for SelectionError #########
+######## Print some statistical numbers for SelectionError ########
 ###################################################################
 
 # for Condition
