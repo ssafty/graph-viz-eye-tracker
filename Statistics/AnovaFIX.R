@@ -875,15 +875,15 @@ boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Marg
 
 df <- marg_PC_data_frame
 
-stat_calib_builtin <- df[df$Condition == "Built-in Calibration", "SelectionTime"]
+stat_calib_builtin <- df[df$Condition == "Built-in Calibration", "SelectionError"]
 summary(stat_calib_builtin)
 sd(stat_calib_builtin)
 
-stat_calib_custom <- df[df$Condition == "Custom Calibration", "SelectionTime"]
+stat_calib_custom <- df[df$Condition == "Custom Calibration", "SelectionError"]
 summary(stat_calib_custom)
 sd(stat_calib_custom)
 
-stat_calib_mouseKB <- df[df$Condition == "Mouse & Keyboard", "SelectionTime"]
+stat_calib_mouseKB <- df[df$Condition == "Mouse & Keyboard", "SelectionError"]
 summary(stat_calib_mouseKB)
 sd(stat_calib_mouseKB)
 
@@ -891,136 +891,298 @@ rm(df, stat_calib_builtin, stat_calib_custom, stat_calib_mouseKB)
 
 # for BubbleSize
 
-df <- marg_PB_data_frame_without_err
+df <- marg_PB_data_frame
 
-stat_bubble_small <- df[df$BubbleSize == "Small", "SelectionTime"]
+stat_bubble_small <- df[df$BubbleSize == "Small", "SelectionError"]
 summary(stat_bubble_small)
 sd(stat_bubble_small)
 
-stat_bubble_medium <- df[df$BubbleSize == "Medium", "SelectionTime"]
+stat_bubble_medium <- df[df$BubbleSize == "Medium", "SelectionError"]
 summary(stat_bubble_medium)
 sd(stat_bubble_medium)
 
-stat_bubble_large <- df[df$BubbleSize == "Large", "SelectionTime"]
+stat_bubble_large <- df[df$BubbleSize == "Large", "SelectionError"]
 summary(stat_bubble_large)
 sd(stat_bubble_large)
 
 rm(df, stat_bubble_small, stat_bubble_medium, stat_bubble_large)
 
 
-
-
-
-########Statistics for selection error ############################
+######## Statistical tests for SelectionError ##################### for 'Condition'
 ###################################################################
 
-plot2 <- boxplot(SelectionError ~ Condition, pc_data_frame, main = "Selection Error",
-               xlab = "Condition", ylab = "Selection Error")
+# 1. ANOVA with the Sphericity test
 
-data_frame_SE_builtin <- data_frame[data_frame$Condition == "Built-in Calibration", "SelectionError"]
-((sum(data_frame_SE_builtin) / length(data_frame_SE_builtin)) * 100)
-
-data_frame_SE_custom <- data_frame[data_frame$Condition == "Custom Calibration", "SelectionError"]
-((sum(data_frame_SE_custom) / length(data_frame_SE_custom)) * 100)
-
-data_frame_SE_kb <- data_frame[data_frame$Condition == "Mouse & Keyboard", "SelectionError"]
-((sum(data_frame_SE_kb) / length(data_frame_SE_kb)) * 100)
-
-########ANOVA for Corrected Selection Error(ANOVA with the Sphericity test) ########################
-###################################################################################################
-
-pc_data_frame_ANOVA_SE <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$SelectionError)
-pc_matrix_ANOVA_SE <- with(pc_data_frame_ANOVA_SE,
-                            cbind(
-                              SelectionError[Condition == "Built-in Calibration"],
-                              SelectionError[Condition == "Custom Calibration"],
-                              SelectionError[Condition == "Mouse & Keyboard"]))
-pc_model_ANOVA_SE <- lm(pc_matrix_ANOVA_SE ~ 1)
-pc_design_ANOVA_SE <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
+df_anova <- marg_PC_data_frame
+df_anova[5] <- NULL # remove CorrectedSelectedTime we only analyze SelectionError
+df_anova[3] <- NULL # remove SelectedTime we only analyze SelectionError
+df_anova_matrix <- with(df_anova,
+    cbind(
+        SelectionError[Condition == "Built-in Calibration"],
+        SelectionError[Condition == "Custom Calibration"],
+        SelectionError[Condition == "Mouse & Keyboard"]
+        )
+    )
+df_anova_model <- lm(df_anova_matrix ~ 1)
+df_anova_design <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
 
 options(contrasts = c("contr.sum", "contr.poly"))
-pc_aov_ANOVA_SE <- Anova(pc_model_ANOVA_SE, idata = data.frame(pc_design_ANOVA_SE), idesign = ~pc_design_ANOVA_SE, type = "III")
-summary(pc_aov_ANOVA_SE, multivariate = F)
+df_anova_aov <- Anova(df_anova_model, idata = data.frame(df_anova_design), idesign = ~df_anova_design, type = "III")
+
+summary(df_anova_aov, multivariate = F)
+
+xxxx = "
+
+Univariate Type III Repeated-Measures ANOVA Assuming Sphericity
+
+                     SS num Df Error SS den Df      F  Pr(>F)   
+(Intercept)     0.29556      1  0.33735     11 9.6373 0.01003 * 
+df_anova_design 0.15942      2  0.30416     22 5.7654 0.00970 **
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
-########PostHoc for Corrected Selection Error ######################
+Mauchly Tests for Sphericity
+
+                Test statistic p-value
+df_anova_design        0.95402  0.7903
+
+
+Greenhouse-Geisser and Huynh-Feldt Corrections
+ for Departure from Sphericity
+
+                 GG eps Pr(>F[GG])  
+df_anova_design 0.95604    0.01085 *
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+                  HF eps  Pr(>F[HF])
+df_anova_design 1.152357 0.009700145
+
+"
+
+# 2. PostHoc for SelectionError
+df <- marg_PC_data_frame
+df_posthoc <- df
+df_posthoc[5] <- NULL # remove column CorrectedSelectionTime
+df_posthoc[3] <- NULL # remove column SelectionTime
+df_posthoc[1] <- NULL # remove column Subject
+
+df_posthoc_aov <- aov(df_posthoc$SelectionError ~ df_posthoc$Condition, df_posthoc)
+summary(df_posthoc_aov)
+
+xxxx = "
+                     Df Sum Sq Mean Sq F value Pr(>F)  
+df_posthoc$Condition  2 0.1594 0.07971     4.1 0.0257 *
+Residuals            33 0.6415 0.01944                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+"
+
+TukeyHSD(df_posthoc_aov)
+
+xxxx = "
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = df_posthoc$SelectionError ~ df_posthoc$Condition, data = df_posthoc)
+
+$`df_posthoc$Condition`
+                                               diff         lwr         upr     p adj
+Custom Calibration-Built-in Calibration  0.04404762 -0.09562371  0.18371894 0.7214642
+Mouse & Keyboard-Built-in Calibration   -0.11388889 -0.25356021  0.02578244 0.1278549
+Mouse & Keyboard-Custom Calibration     -0.15793651 -0.29760783 -0.01826518 0.0238772
+
+"
+
+# rm
+rm(df_anova, df_anova_aov, df_anova_design, df_anova_matrix, df_anova_model)
+rm(df, df_posthoc, df_posthoc_aov)
+
+# 3. Effect Size
+# With one-way repeated-measure ANOVA, we found a significant effect of Group 'Condition' on Value 'SelectionError' 
+# (F(2,22)=5.765, p<0.01, partial_eta_2 = 0.3438309 with CI=[0.01916242, 0.4524208]).
+df <- marg_PC_data_frame
+df_effect_size <- aov(df$SelectionError ~ factor(df$Condition) + Error(factor(df$Subject) / factor(df$Condition)), df)
+summary(df_effect_size)
+
+xxxx = "
+
+Error: factor(df$Subject)
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 11 0.3373 0.03067               
+
+Error: factor(df$Subject):factor(df$Condition)
+                     Df Sum Sq Mean Sq F value Pr(>F)   
+factor(df$Condition)  2 0.1594 0.07971   5.765 0.0097 **
+Residuals            22 0.3042 0.01383                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+> 
+
+"
+
+partial_eta_2 = 0.1594 / (0.1594 + 0.3042) # 0.3438309
+partial_eta_2
+ci.pvaf(F.value = 5.765, df.1 = 2, df.2 = 22, N = nrow(df))
+
+xxxx = "
+$Lower.Limit.Proportion.of.Variance.Accounted.for
+[1] 0.01916242
+
+$Probability.Less.Lower.Limit
+[1] 0.025
+
+$Upper.Limit.Proportion.of.Variance.Accounted.for
+[1] 0.4524208
+
+$Probability.Greater.Upper.Limit
+[1] 0.025
+
+$Actual.Coverage
+[1] 0.95
+
+> 
+
+"
+
+# rm
+rm(df, df_effect_size, partial_eta_2)
+
+
+######## Statistical tests for SelectionError ##################### for 'BubbleSize'
 ###################################################################
-pc_data_frame_PH_SE <- data.frame(pc_data_frame$Condition, pc_data_frame$SelectionError)
-pc_aov_PH_SE <- aov(pc_data_frame$SelectionError ~ pc_data_frame$Condition, pc_data_frame_PH_SE)
-summary(pc_aov_PH_SE)
-TukeyHSD(pc_aov_PH_SE)
 
+# 1. ANOVA with the Sphericity test
 
-###################Effect Size#####################################
-###################################################################
-
-aovES_SE <- aov(SelectionError ~ factor(Condition) + Error(factor(Subject) / factor(Condition)), pc_data_frame_PH_SE)
-summary(aovES_SE)
-EffecSize <- 45.5 / (45.5 + 209.8)
-EffecSize
-
-
-##################################################################################################################
-
-
-###########################################################################################################################################
-#########################################################################################################################
-
-
-###########################################################################################################################################
-
-########Statistics for bubble size for Selection Error ################################
-###################################################################
-
-plot4 <- boxplot(SelectionError ~ bubblesize, pb_data_frame_bubble, main = "Selection Error",
-               xlab = "BubbleSize", ylab = "Selection Error")
-
-data_frame_SE_bubble10 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize == 10, "SelectionError"]
-((sum(data_frame_SE_bubble10) / length(data_frame_SE_bubble10)) * 100)
-
-data_frame_SE_bubble5 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize == 5, "SelectionError"]
-((sum(data_frame_SE_bubble5) / length(data_frame_SE_bubble5)) * 100)
-
-data_frame_SE_bubble75 <- pb_data_frame_bubble[pb_data_frame_bubble$bubblesize == 7.5, "SelectionError"]
-((sum(data_frame_SE_bubble75) / length(data_frame_SE_bubble75)) * 100)
-
-
-########################################################################################################################################
-
-########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
-###################################################################################################
-
-pb_data_frame_ANOVA_SE <- data.frame(pb_data_frame_bubble$Subject, pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
-pb_matrix_ANOVA_SE <- with(pb_data_frame_ANOVA_SE,
-                            cbind(
-                              SelectionError[bubblesize == 10],
-
-                              SelectionError[bubblesize == 7.5],
-                              SelectionError[bubblesize == 5]))
-
-pb_matrix_ANOVA_SE <- na.omit(pb_matrix_ANOVA_SE) # remove all NA values
-pb_model_ANOVA_SE <- lm(pb_matrix_ANOVA_SE ~ 1)
-pb_design_ANOVA_SE <- factor(c(10, 7.5, 5))
+df_anova <- marg_PB_data_frame
+df_anova[5] <- NULL # remove CorrectedSelectedTime we only analyze SelectionError
+df_anova[3] <- NULL # remove SelectedTime we only analyze SelectionError
+df_anova_matrix <- with(df_anova,
+    cbind(
+        SelectionError[BubbleSize == "Large"],
+        SelectionError[BubbleSize == "Medium"],
+        SelectionError[BubbleSize == "Small"]
+        )
+    )
+df_anova_model <- lm(df_anova_matrix ~ 1)
+df_anova_design <- factor(c("Large", "Medium", "Small"))
 
 options(contrasts = c("contr.sum", "contr.poly"))
-pb_aov_ANOVA_SE <- Anova(pb_model_ANOVA_SE, idata = data.frame(pb_design_ANOVA_SE), idesign = ~pb_design_ANOVA_SE, type = "III")
-summary(pb_aov_ANOVA_SE, multivariate = F)
+df_anova_aov <- Anova(df_anova_model, idata = data.frame(df_anova_design), idesign = ~df_anova_design, type = "III")
+
+summary(df_anova_aov, multivariate = F)
+
+xxxx = "
+Univariate Type III Repeated-Measures ANOVA Assuming Sphericity
+
+                     SS num Df Error SS den Df       F   Pr(>F)   
+(Intercept)     0.32246      1  0.35068     11 10.1147 0.008755 **
+df_anova_design 0.01853      2  0.31824     22  0.6404 0.536635   
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 
-########PostHoc for Corrected Selection Time ######################
-###################################################################
-pb_data_frame_PH_SE <- data.frame(pb_data_frame_bubble$bubblesize, pb_data_frame_bubble$SelectionError)
-pb_aov_PH_SE <- aov(pb_data_frame_bubble$SelectionError ~ pb_data_frame_bubble$bubblesize, pb_data_frame_PH_SE)
-summary(pb_aov_PH_SE)
-TukeyHSD(pb_aov_PH_SE)
+Mauchly Tests for Sphericity
+
+                Test statistic p-value
+df_anova_design        0.84712 0.43623
 
 
-###################Effect Size#####################################
-###################################################################
+Greenhouse-Geisser and Huynh-Feldt Corrections
+ for Departure from Sphericity
 
-aovES_SE_bubble <- aov(SelectionError ~ factor(bubblesize) + Error(factor(Subject) / factor(bubblesize)), pb_data_frame_PH_SE)
-summary(aovES_SE_bubble)
-EffecSize <- 3.04 / (3.04 + 39.40)
-EffecSize
+                 GG eps Pr(>F[GG])
+df_anova_design 0.86739     0.5167
 
-#########################################################################################################################################
+                  HF eps Pr(>F[HF])
+df_anova_design 1.015483  0.5366346
+
+"
+
+# 2. PostHoc for SelectionError
+df <- marg_PB_data_frame
+df_posthoc <- df
+df_posthoc[5] <- NULL # remove column CorrectedSelectionTime
+df_posthoc[3] <- NULL # remove column SelectionTime
+df_posthoc[1] <- NULL # remove column Subject
+
+df_posthoc_aov <- aov(df_posthoc$SelectionError ~ df_posthoc$BubbleSize, df_posthoc)
+summary(df_posthoc_aov)
+
+xxxx = "
+                      Df Sum Sq  Mean Sq F value Pr(>F)
+df_posthoc$BubbleSize  2 0.0185 0.009264   0.457  0.637
+Residuals             33 0.6689 0.020270
+
+"
+
+TukeyHSD(df_posthoc_aov)
+
+xxxx = "
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = df_posthoc$SelectionError ~ df_posthoc$BubbleSize, data = df_posthoc)
+
+$`df_posthoc$BubbleSize`
+                    diff        lwr        upr     p adj
+Medium-Large -0.01329365 -0.1559183 0.12933104 0.9716002
+Small-Large  -0.05337302 -0.1959977 0.08925167 0.6327814
+Small-Medium -0.04007937 -0.1827041 0.10254532 0.7711949
+"
+
+# rm
+rm(df_anova, df_anova_aov, df_anova_design, df_anova_matrix, df_anova_model)
+rm(df, df_posthoc, df_posthoc_aov)
+
+# 3. Effect Size
+# With one-way repeated-measure ANOVA, we found a significant effect of Group 'BubbleSize' on Value 'SelectionError' 
+# (F(2,22)=0.64, p<0.01, partial_eta_2 = 0.05494505 with CI=[0, 0.1809875]).
+df <- marg_PB_data_frame
+df_effect_size <- aov(df$SelectionError ~ factor(df$BubbleSize) + Error(factor(df$Subject) / factor(df$BubbleSize)), df)
+summary(df_effect_size)
+
+xxxx = "
+
+
+Error: factor(df$Subject)
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 11 0.3507 0.03188               
+
+Error: factor(df$Subject):factor(df$BubbleSize)
+                      Df Sum Sq  Mean Sq F value Pr(>F)
+factor(df$BubbleSize)  2 0.0185 0.009264    0.64  0.537
+Residuals             22 0.3182 0.014466               
+> 
+
+"
+
+partial_eta_2 = 0.0185 / (0.0185 + 0.3182) # 0.05494505
+partial_eta_2
+ci.pvaf(F.value = 0.64, df.1 = 2, df.2 = 22, N = nrow(df))
+
+xxxx = "
+$Lower.Limit.Proportion.of.Variance.Accounted.for
+[1] 0
+
+$Probability.Less.Lower.Limit
+[1] 0
+
+$Upper.Limit.Proportion.of.Variance.Accounted.for
+[1] 0.1809875
+
+$Probability.Greater.Upper.Limit
+[1] 0.025
+
+$Actual.Coverage
+[1] 0.975
+
+> 
+
+"
+
+# rm
+rm(df, df_effect_size, partial_eta_2)
+
