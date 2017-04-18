@@ -629,7 +629,7 @@ rm(df, df_effect_size, partial_eta_2)
 ###################################################################
 ################################################################### All pirate plots
 
-
+par(mfrow = c(1, 1))
 pirateplot(formula = SelectionTime ~ Condition, data = data_frame_without_err, main = "Selection Time for Different Conditions"
            , theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -642,7 +642,7 @@ pirateplot(formula = SelectionTime ~ Condition, data = data_frame_without_err, m
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
-
+par(mfrow = c(1, 1))
 pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame, main = "Selection Error for Different Conditions"
            , theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -655,6 +655,7 @@ pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame, main
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
+par(mfrow = c(1, 1))
 pirateplot(formula = SelectionTime ~ BubbleSize, data = data_frame_without_err, main = "Selection Time for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -667,7 +668,7 @@ pirateplot(formula = SelectionTime ~ BubbleSize, data = data_frame_without_err, 
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
-
+par(mfrow = c(1, 1))
 pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame, main = "Selection Error for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
