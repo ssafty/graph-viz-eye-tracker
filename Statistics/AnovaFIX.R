@@ -201,9 +201,14 @@ head(data_frame, nrow(data_frame))
 # rm
 rm(t_threshold.factor, t_threshold.lower, t_threshold.upper)
 
+############### Subject 14 Seems to be wrong ######################
+###################################################################
+data_frame <- data_frame[!(data_frame$Subject == "14"),]
+
 ############### Extract data_frame without errors #################
 ###################################################################
-data_frame_we <- data_frame[(data_frame$SelectionError==0),]
+data_frame_we <- data_frame[(data_frame$SelectionError == 0),]
+data_frame_we[4] <- NULL # remove selection error column
 
 
 ############### Check for selection time normality  ###############
@@ -262,10 +267,10 @@ rm(ExperimentCorrected_we)
 ########Calculate marginals per condition per participant##########
 ###################################################################
 
-Subject=list()
-Condition=list()
-SelectionTime=list()
-SelectionError=list()
+Subject = list()
+Condition = list()
+SelectionTime = list()
+SelectionError = list()
 CorrectedSelectionTime = list()
 
 # get unique values
@@ -273,36 +278,33 @@ u_participants = unique(data_frame["Subject"])
 u_conditions = unique(data_frame["Condition"])
 
 
-for(p in unlist(u_participants))
-{
-  for(c in unlist(u_conditions))
-  {
-    pcData = data_frame[data_frame$Subject==p&data_frame$Condition==c,]
-    
-    Subject=c(Subject, p)
-    Condition=c(Condition, c)
-    SelectionTime=c(SelectionTime, mean(unlist(pcData["SelectionTime"])))
-    SelectionError=c(SelectionError, sum(unlist(pcData["SelectionError"])))
-    CorrectedSelectionTime=c(CorrectedSelectionTime, mean(unlist(pcData["CorrectedSelectionTime"])))
-  }
+for (p in unlist(u_participants)) {
+    for (c in unlist(u_conditions)) {
+        pcData = data_frame[data_frame$Subject == p & data_frame$Condition == c,]
+
+        Subject = c(Subject, p)
+        Condition = c(Condition, c)
+        SelectionTime = c(SelectionTime, mean(unlist(pcData["SelectionTime"])))
+        SelectionError = c(SelectionError, sum(unlist(pcData["SelectionError"])))
+        CorrectedSelectionTime = c(CorrectedSelectionTime, mean(unlist(pcData["CorrectedSelectionTime"])))
+    }
 }
 
 Subject = unlist(Subject)
 Condition = unlist(Condition)
 SelectionTime = unlist(SelectionTime)
 SelectionError = unlist(SelectionError)
-CorrectedSelectionTime=unlist(CorrectedSelectionTime)
+CorrectedSelectionTime = unlist(CorrectedSelectionTime)
 
-data_frame_cond_pc = data.frame(Subject, Condition, SelectionTime, SelectionError, CorrectedSelectionTime)
+marg_PC_data_frame = data.frame(Subject, Condition, SelectionTime, SelectionError, CorrectedSelectionTime)
 
-head(data_frame_cond_pc, nrow(data_frame_cond_pc))
+head(marg_PC_data_frame, nrow(marg_PC_data_frame))
 
 # rm
 rm(Subject)
 rm(Condition)
 rm(SelectionTime)
 rm(SelectionError)
-rm(BubbleSize)
 rm(CorrectedSelectionTime)
 rm(p)
 rm(c)
@@ -310,33 +312,234 @@ rm(pcData)
 rm(u_conditions)
 rm(u_participants)
 
+########Calculate marginals per condition per participant########## without error case
+###################################################################
+
+Subject = list()
+Condition = list()
+SelectionTime = list()
+CorrectedSelectionTime = list()
+
+# get unique values
+u_participants = unique(data_frame["Subject"])
+u_conditions = unique(data_frame["Condition"])
+
+
+for (p in unlist(u_participants)) {
+    for (c in unlist(u_conditions)) {
+        pcData = data_frame_we[data_frame_we$Subject == p & data_frame_we$Condition == c,]
+
+        Subject = c(Subject, p)
+        Condition = c(Condition, c)
+        SelectionTime = c(SelectionTime, mean(unlist(pcData["SelectionTime"])))
+        CorrectedSelectionTime = c(CorrectedSelectionTime, mean(unlist(pcData["CorrectedSelectionTime"])))
+    }
+}
+
+Subject = unlist(Subject)
+Condition = unlist(Condition)
+SelectionTime = unlist(SelectionTime)
+CorrectedSelectionTime = unlist(CorrectedSelectionTime)
+
+marg_PC_data_frame_we = data.frame(Subject, Condition, SelectionTime, CorrectedSelectionTime)
+
+head(marg_PC_data_frame_we, nrow(marg_PC_data_frame_we))
+
+# rm
+rm(Subject)
+rm(Condition)
+rm(SelectionTime)
+rm(CorrectedSelectionTime)
+rm(p)
+rm(c)
+rm(pcData)
+rm(u_conditions)
+rm(u_participants)
+
+######## Calculate marginals per BubbleSize per participant #######
+###################################################################
+
+Subject = list()
+BubbleSize = list()
+SelectionTime = list()
+SelectionError = list()
+CorrectedSelectionTime = list()
+
+# get unique values
+u_participants = unique(data_frame["Subject"])
+u_bubblesize = unique(data_frame["BubbleSize"])
+
+
+for (p in unlist(u_participants)) {
+    for (b in unlist(u_bubblesize)) {
+        pbData = data_frame[data_frame$Subject == p & data_frame$BubbleSize == b,]
+
+        Subject = c(Subject, p)
+        BubbleSize = c(BubbleSize, b)
+        SelectionTime = c(SelectionTime, mean(unlist(pbData["SelectionTime"])))
+        SelectionError = c(SelectionError, sum(unlist(pbData["SelectionError"])))
+        CorrectedSelectionTime = c(CorrectedSelectionTime, mean(unlist(pbData["CorrectedSelectionTime"])))
+    }
+}
+
+Subject = unlist(Subject)
+BubbleSize = unlist(BubbleSize)
+SelectionTime = unlist(SelectionTime)
+SelectionError = unlist(SelectionError)
+CorrectedSelectionTime = unlist(CorrectedSelectionTime)
+
+marg_PB_data_frame = data.frame(Subject, BubbleSize, SelectionTime, SelectionError, CorrectedSelectionTime)
+
+head(marg_PB_data_frame, nrow(marg_PB_data_frame))
+
+# rm
+rm(Subject)
+rm(BubbleSize)
+rm(SelectionTime)
+rm(SelectionError)
+rm(CorrectedSelectionTime)
+rm(p)
+rm(b)
+rm(pbData)
+rm(u_bubblesize)
+rm(u_participants)
+
+######## Calculate marginals per BubbleSize per participant ####### without error case
+###################################################################
+
+Subject = list()
+BubbleSize = list()
+SelectionTime = list()
+CorrectedSelectionTime = list()
+
+# get unique values
+u_participants = unique(data_frame["Subject"])
+u_bubblesize = unique(data_frame["BubbleSize"])
+
+
+for (p in unlist(u_participants)) {
+    for (b in unlist(u_bubblesize)) {
+        pbData = data_frame_we[data_frame_we$Subject == p & data_frame_we$BubbleSize == b,]
+
+        Subject = c(Subject, p)
+        BubbleSize = c(BubbleSize, b)
+        SelectionTime = c(SelectionTime, mean(unlist(pbData["SelectionTime"])))
+        CorrectedSelectionTime = c(CorrectedSelectionTime, mean(unlist(pbData["CorrectedSelectionTime"])))
+    }
+}
+
+Subject = unlist(Subject)
+BubbleSize = unlist(BubbleSize)
+SelectionTime = unlist(SelectionTime)
+CorrectedSelectionTime = unlist(CorrectedSelectionTime)
+
+marg_PB_data_frame_we = data.frame(Subject, BubbleSize, SelectionTime, CorrectedSelectionTime)
+
+head(marg_PB_data_frame_we, nrow(marg_PB_data_frame_we))
+
+# rm
+rm(Subject)
+rm(BubbleSize)
+rm(SelectionTime)
+rm(CorrectedSelectionTime)
+rm(p)
+rm(b)
+rm(pbData)
+rm(u_bubblesize)
+rm(u_participants)
+
+######## Overview of all data using boxplots   #################### Debugging
+###################################################################
+attach(mtcars)
+par(mfrow = c(2, 2))
+boxplot(SelectionTime ~ Condition, data_frame, main = "No Marginal & with errors",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ Condition, data_frame_we, main = "No Marginal & without errors",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ Condition, marg_PC_data_frame, main = "Marginal & with errors",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ Condition, marg_PC_data_frame_we, main = "Marginal & without errors",
+               xlab = "Condition", ylab = "Selection Time")
+
+attach(mtcars)
+par(mfrow = c(2, 2))
+boxplot(SelectionTime ~ BubbleSize, data_frame, main = "No Marginal & with errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, data_frame_we, main = "No Marginal & without errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame, main = "Marginal & with errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_we, main = "Marginal & without errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+
+######## Print some statistical numbers for SelectionTime #########
+###################################################################
+
+# for Condition
+
+df <- marg_PC_data_frame_we
+
+stat_calib_builtin <- df[df$Condition == "Built-in Calibration", "SelectionTime"]
+summary(stat_calib_builtin)
+sd(stat_calib_builtin)
+
+stat_calib_custom <- df[df$Condition == "Custom Calibration", "SelectionTime"]
+summary(stat_calib_custom)
+sd(stat_calib_custom)
+
+stat_calib_mouseKB <- df[df$Condition == "Mouse & Keyboard", "SelectionTime"]
+summary(stat_calib_mouseKB)
+sd(stat_calib_mouseKB)
+
+rm(df, stat_calib_builtin, stat_calib_custom, stat_calib_mouseKB)
+
+# for BubbleSize
+
+df <- marg_PB_data_frame_we
+
+stat_bubble_small <- df[df$BubbleSize == "Small", "SelectionTime"]
+summary(stat_bubble_small)
+sd(stat_bubble_small)
+
+stat_bubble_medium <- df[df$BubbleSize == "Medium", "SelectionTime"]
+summary(stat_bubble_medium)
+sd(stat_bubble_medium)
+
+stat_bubble_large <- df[df$BubbleSize == "Large", "SelectionTime"]
+summary(stat_bubble_large)
+sd(stat_bubble_large)
+
+rm(df, stat_bubble_small, stat_bubble_medium, stat_bubble_large)
+
+
+######## Statistical tests for CorrectedSelectionTime #############
+###################################################################
+
+# 1. ANOVA with the Sphericity test
+
+df_anova <- marg_PC_data_frame_we
+df_anova[3] <- NULL # remove SelectedTime we only analyze CorrectedSelectionTime
+df_anova_matrix <- with(df_anova,
+    cbind(
+        CorrectedSelectionTime[Condition == "Built-in Calibration"],
+        CorrectedSelectionTime[Condition == "Custom Calibration"],
+        CorrectedSelectionTime[Condition == "Mouse & Keyboard"]
+        )
+    )
+df_anova_model <- lm(df_anova_matrix ~ 1)
+
+######## Statistical tests for CorrectedSelectionTime ############# without error case
+###################################################################
+
 ###################################################################################################################################
 
 
-########Statistics for selection time #############################
-###################################################################
-plot1 <- boxplot(SelectionTime ~ Condition, data_frame_cond_pc, main = "Selection Time",
-               xlab = "Condition", ylab = "Selection Time")
-plot2 <- boxplot(SelectionTime ~ BubbleSize, data_frame, main = "Selection Time",
-               xlab = "Condition", ylab = "Selection Time")
-
-data_frame_ST_builtin <- data_frame[data_frame$Condition=="Built-in Calibration","SelectionTime"]
-summary(data_frame_ST_builtin)
-sd(data_frame_ST_builtin)
-
-data_frame_ST_custom <- data_frame[data_frame$Condition=="Custom Calibration","SelectionTime"]
-summary(data_frame_ST_custom)
-sd(data_frame_ST_custom)
-
-data_frame_ST_kb <- data_frame[data_frame$Condition=="Mouse & Keyboard","SelectionTime"]
-summary(data_frame_ST_kb)
-sd(data_frame_ST_kb)
-
 ########ANOVA for Corrected Selection Time(ANOVA with the Sphericity test) ########################
 ###################################################################################################
+pc_data_frame <- marg_PC_data_frame_we
+pc_data_frame[3] <- NULL
 
-pc_data_frame_ANOVA_CST <- data.frame(pc_data_frame$Subject, pc_data_frame$Condition, pc_data_frame$CorrectedSelectionTime)
-pc_matrix_ANOVA_CST <- with(pc_data_frame_ANOVA_CST, 
+pc_matrix_ANOVA_CST <- with(pc_data_frame,
                 cbind(
                   CorrectedSelectionTime[Condition=="Built-in Calibration"], 
                   CorrectedSelectionTime[Condition=="Custom Calibration"], 
