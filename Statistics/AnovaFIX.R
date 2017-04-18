@@ -201,9 +201,15 @@ head(data_frame, nrow(data_frame))
 # rm
 rm(t_threshold.factor, t_threshold.lower, t_threshold.upper)
 
-############### Subject 14 Seems to be wrong ######################
+############### Subject xx Seems to be wrong ######################
 ###################################################################
+#data_frame <- data_frame[!(data_frame$Subject == "14" & data_frame$Condition == "Custom Calibration"),]
+#data_frame <- data_frame[!(data_frame$Subject == "15"),]
+data_frame <- data_frame[!(data_frame$Subject == "8"),]
+data_frame <- data_frame[!(data_frame$Subject == "9"),]
+data_frame <- data_frame[!(data_frame$Subject == "11"),]
 data_frame <- data_frame[!(data_frame$Subject == "14"),]
+unique(data_frame$Subject)
 
 ############### Extract data_frame without errors #################
 ###################################################################
@@ -215,10 +221,10 @@ data_frame_without_err[4] <- NULL # remove selection error column
 ###################################################################
 
 ExperimentClean <- data_frame$SelectionTime
-ExperimentClean_we <- data_frame_without_err$SelectionTime
+ExperimentClean_without_err <- data_frame_without_err$SelectionTime
 
 hist(ExperimentClean, breaks = "FD")
-hist(ExperimentClean_we, breaks = "FD")
+hist(ExperimentClean_without_err, breaks = "FD")
 
 
 
@@ -226,19 +232,19 @@ hist(ExperimentClean_we, breaks = "FD")
 ###################################################################
 
 ExperimentCorrected <- ExperimentClean
-ExperimentCorrected_we <- ExperimentClean_we
+ExperimentCorrected_without_error <- ExperimentClean_without_err
 
 ExperimentCorrected = log(ExperimentCorrected)
-ExperimentCorrected_we = log(ExperimentCorrected_we)
+ExperimentCorrected_without_error = log(ExperimentCorrected_without_error)
 
 ExperimentCorrected = ExperimentCorrected + abs(summary(ExperimentCorrected)[1])
-ExperimentCorrected_we = ExperimentCorrected_we + abs(summary(ExperimentCorrected_we)[1])
+ExperimentCorrected_without_error = ExperimentCorrected_without_error + abs(summary(ExperimentCorrected_without_error)[1])
 
 print(summary(ExperimentCorrected))
-print(summary(ExperimentCorrected_we))
+print(summary(ExperimentCorrected_without_error))
 
 hist(ExperimentCorrected, breaks = "FD")
-hist(ExperimentCorrected_we, breaks = "FD")
+hist(ExperimentCorrected_without_error, breaks = "FD")
 
 ############### other checks for selection time         ###########
 ###################################################################
@@ -256,13 +262,13 @@ print(ks.test(ExperimentCorrected, "pnorm", mean=mean(ExperimentCorrected), sd=s
 ###################################################################
 
 data_frame$CorrectedSelectionTime <- ExperimentCorrected
-data_frame_without_err$CorrectedSelectionTime <- ExperimentCorrected_we
+data_frame_without_err$CorrectedSelectionTime <- ExperimentCorrected_without_error
 
 # rm 
 rm(ExperimentClean)
 rm(ExperimentCorrected)
-rm(ExperimentClean_we)
-rm(ExperimentCorrected_we)
+rm(ExperimentClean_without_err)
+rm(ExperimentCorrected_without_error)
 
 ########Calculate marginals per condition per participant##########
 ###################################################################
@@ -448,39 +454,6 @@ rm(pbData)
 rm(u_bubblesize)
 rm(u_participants)
 
-######## Overview of all data using boxplots   #################### Debugging
-###################################################################
-attach(mtcars)
-par(mfrow = c(2, 2))
-boxplot(SelectionTime ~ Condition, data_frame, main = "No Marginal & with errors",
-               xlab = "Condition", ylab = "Selection Time")
-boxplot(SelectionTime ~ Condition, data_frame_without_err, main = "No Marginal & without errors",
-               xlab = "Condition", ylab = "Selection Time")
-boxplot(SelectionTime ~ Condition, marg_PC_data_frame, main = "Marginal & with errors",
-               xlab = "Condition", ylab = "Selection Time")
-boxplot(SelectionTime ~ Condition, marg_PC_data_frame_without_err, main = "Marginal & without errors",
-               xlab = "Condition", ylab = "Selection Time")
-
-attach(mtcars)
-par(mfrow = c(2, 2))
-boxplot(SelectionTime ~ BubbleSize, data_frame, main = "No Marginal & with errors",
-               xlab = "Bubble Size", ylab = "Selection Time")
-boxplot(SelectionTime ~ BubbleSize, data_frame_without_err, main = "No Marginal & without errors",
-               xlab = "Bubble Size", ylab = "Selection Time")
-boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame, main = "Marginal & with errors",
-               xlab = "Bubble Size", ylab = "Selection Time")
-boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Marginal & without errors",
-               xlab = "Bubble Size", ylab = "Selection Time")
-
-# the plots for paper
-attach(mtcars)
-par(mfrow = c(2, 1))
-par(mfrow = c(1, 2))
-boxplot(SelectionTime ~ Condition, marg_PC_data_frame_without_err, main = "Selection time vs. Condtitions",
-               xlab = "Condition", ylab = "Selection Time")
-boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Bubble size vs. Condtitions",
-               xlab = "Bubble Size", ylab = "Selection Time")
-
 
 ######## Print some statistical numbers for SelectionTime #########
 ###################################################################
@@ -544,6 +517,38 @@ df_anova_aov <- Anova(df_anova_model, idata = data.frame(df_anova_design), idesi
 
 summary(df_anova_aov, multivariate = F)
 
+xxxx="
+
+Univariate Type III Repeated - Measures ANOVA Assuming Sphericity
+
+SS num Df Error SS den Df F Pr( > F)
+(Intercept) 190.574 1 1.9871 11 1054.944 2.808e-12 ** *
+df_anova_design 14.399 2 4.0429 22 39.178 5.620e-08 ** *
+---
+Signif. codes:0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+
+Mauchly Tests for
+    Sphericity
+
+    Test statistic p - value
+df_anova_design 0.84886 0.44075
+
+
+Greenhouse - Geisser and Huynh - Feldt Corrections
+for
+    Departure from Sphericity
+
+GG eps Pr( > F[GG])
+df_anova_design 0.86871 3.495e-07 ** *
+---
+Signif. codes:0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+HF eps Pr( > F[HF])
+df_anova_design 1.017478 5.619662e-08
+
+"
+
 # 2. PostHoc for Corrected Selection Time
 df <- marg_PC_data_frame_without_err
 df_posthoc <- df
@@ -552,7 +557,32 @@ df_posthoc[1] <- NULL # remove column Subject
 
 df_posthoc_aov <- aov(df_posthoc$CorrectedSelectionTime ~ df_posthoc$Condition, df_posthoc)
 summary(df_posthoc_aov)
+
+xxxx="
+
+                     Df Sum Sq Mean Sq F value  Pr(>F)    
+df_posthoc$Condition  2  14.40   7.200    39.4 1.8e-09 ***
+Residuals            33   6.03   0.183                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+"
+
 TukeyHSD(df_posthoc_aov)
+
+xxxx="
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = df_posthoc$CorrectedSelectionTime ~ df_posthoc$Condition, data = df_posthoc)
+
+$`df_posthoc$Condition`
+                                             diff        lwr         upr     p adj
+Custom Calibration-Built-in Calibration -0.506844 -0.9350616 -0.07862647 0.0174508
+Mouse & Keyboard-Built-in Calibration   -1.521183 -1.9494010 -1.09296591 0.0000000
+Mouse & Keyboard-Custom Calibration     -1.014339 -1.4425570 -0.58612187 0.0000049
+
+"
 
 # rm
 rm(df_anova, df_anova_aov, df_anova_design, df_anova_matrix, df_anova_model)
@@ -560,13 +590,47 @@ rm(df, df_posthoc, df_posthoc_aov)
 
 # 3. Effect Size
 # With one-way repeated-measure ANOVA, we found a significant effect of Group 'Condition' on Value 'SelectionTime' 
-# (F(2,28)=50.24, p<0.01, partial_eta_2 = 0.7820432 with CI=[0.4960631, 0.795146]).
+# (F(2,22)=39.18, p<0.01, partial_eta_2 = 0.7807722 with CI=[0.4545357, 0.8006797]).
 df <- marg_PC_data_frame_without_err
 df_effect_size <- aov(df$CorrectedSelectionTime ~ factor(df$Condition) + Error(factor(df$Subject) / factor(df$Condition)), df)
 summary(df_effect_size)
-partial_eta_2 = 18.579 / (18.579 + 5.178) # 0.7820432
+
+xxxx="
+
+Error: factor(df$Subject)
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 11  1.987  0.1807               
+
+Error: factor(df$Subject):factor(df$Condition)
+                     Df Sum Sq Mean Sq F value   Pr(>F)    
+factor(df$Condition)  2 14.399   7.200   39.18 5.62e-08 ***
+Residuals            22  4.043   0.184                     
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+"
+
+partial_eta_2 = 14.399 / (14.399 + 4.043) # 0.7807722
 partial_eta_2
-ci.pvaf(F.value = 50.24, df.1 = 2, df.2 = 28, N = nrow(df))
+ci.pvaf(F.value = 39.18, df.1 = 2, df.2 = 22, N = nrow(df))
+
+xxxx="
+$Lower.Limit.Proportion.of.Variance.Accounted.for
+[1] 0.4545357
+
+$Probability.Less.Lower.Limit
+[1] 0.025
+
+$Upper.Limit.Proportion.of.Variance.Accounted.for
+[1] 0.8006797
+
+$Probability.Greater.Upper.Limit
+[1] 0.025
+
+$Actual.Coverage
+[1] 0.95
+
+"
 
 # rm
 rm(df, df_effect_size, partial_eta_2)
@@ -594,6 +658,32 @@ df_anova_aov <- Anova(df_anova_model, idata = data.frame(df_anova_design), idesi
 
 summary(df_anova_aov, multivariate = F)
 
+xxxx="
+Univariate Type III Repeated-Measures ANOVA Assuming Sphericity
+
+                     SS num Df Error SS den Df       F    Pr(>F)    
+(Intercept)     177.502      1   2.2069     11 884.725 7.317e-12 ***
+df_anova_design   0.267      2   4.4226     22   0.663    0.5253    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+
+Mauchly Tests for Sphericity
+
+                Test statistic p-value
+df_anova_design        0.73935 0.22093
+
+
+Greenhouse-Geisser and Huynh-Feldt Corrections
+ for Departure from Sphericity
+
+                 GG eps Pr(>F[GG])
+df_anova_design 0.79324     0.4941
+
+                   HF eps Pr(>F[HF])
+df_anova_design 0.9049637  0.5118322
+"
+
 # 2. PostHoc for Corrected Selection Time
 df <- marg_PB_data_frame_without_err
 df_posthoc <- df
@@ -602,7 +692,25 @@ df_posthoc[1] <- NULL # remove column Subject
 
 df_posthoc_aov <- aov(df_posthoc$CorrectedSelectionTime ~ df_posthoc$BubbleSize, df_posthoc)
 summary(df_posthoc_aov)
+xxxx="
+                      Df Sum Sq Mean Sq F value Pr(>F)
+df_posthoc$BubbleSize  2  0.267  0.1333   0.663  0.522
+Residuals             33  6.630  0.2009               
+
+"
 TukeyHSD(df_posthoc_aov)
+xxxx="
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = df_posthoc$CorrectedSelectionTime ~ df_posthoc$BubbleSize, data = df_posthoc)
+
+$`df_posthoc$BubbleSize`
+                    diff        lwr       upr     p adj
+Medium-Large -0.07485429 -0.5238553 0.3741467 0.9121311
+Small-Large  -0.20806648 -0.6570675 0.2409345 0.4985691
+Small-Medium -0.13321219 -0.5822132 0.3157888 0.7487798
+"
 
 # rm
 rm(df_anova, df_anova_aov, df_anova_design, df_anova_matrix, df_anova_model)
@@ -610,14 +718,44 @@ rm(df, df_posthoc, df_posthoc_aov)
 
 # 3. Effect Size
 # With one-way repeated-measure ANOVA, we found a significant effect of Group 'Condition' on Value 'SelectionTime' 
-# (F(2,28)=0.038, p<0.01, partial_eta_2 = 0.002711007 with CI=[0, 0.01775197]).
+# (F(2,22)=0.663, p<0.01, partial_eta_2 = 0.05692964 with CI=[0, 0.1836511]).
 df <- marg_PB_data_frame_without_err
 df_effect_size <- aov(df$CorrectedSelectionTime ~ factor(df$BubbleSize) + Error(factor(df$Subject) / factor(df$BubbleSize)), df)
 summary(df_effect_size)
-partial_eta_2 = 0.015 / (0.015 + 5.518) # 0.002711007
-partial_eta_2
-ci.pvaf(F.value = 0.038, df.1 = 2, df.2 = 28, N = nrow(df))
 
+xxxx="
+
+Error: factor(df$Subject)
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals 11  2.207  0.2006               
+
+Error: factor(df$Subject):factor(df$BubbleSize)
+                      Df Sum Sq Mean Sq F value Pr(>F)
+factor(df$BubbleSize)  2  0.267  0.1333   0.663  0.525
+Residuals             22  4.423  0.2010               
+
+"
+partial_eta_2 = 0.267 / (0.267 + 4.423) # 0.05692964
+partial_eta_2
+ci.pvaf(F.value = 0.663, df.1 = 2, df.2 = 22, N = nrow(df))
+
+xxxx="
+$Lower.Limit.Proportion.of.Variance.Accounted.for
+[1] 0
+
+$Probability.Less.Lower.Limit
+[1] 0
+
+$Upper.Limit.Proportion.of.Variance.Accounted.for
+[1] 0.1836511
+
+$Probability.Greater.Upper.Limit
+[1] 0.025
+
+$Actual.Coverage
+[1] 0.975
+
+"
 # rm
 rm(df, df_effect_size, partial_eta_2)
 
@@ -628,10 +766,31 @@ rm(df, df_effect_size, partial_eta_2)
 ###################################################################
 ###################################################################
 ################################################################### All pirate plots
+# the plots for paper
+attach(mtcars)
+par(mfrow = c(2, 1))
+par(mfrow = c(1, 2))
+boxplot(SelectionTime ~ Condition, marg_PC_data_frame_without_err, main = "Selection time vs. Condtitions",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Selection time vs. Bubble size",
+               xlab = "Bubble Size", ylab = "Selection Time")
 
 par(mfrow = c(1, 1))
-pirateplot(formula = SelectionTime ~ Condition, data = data_frame_without_err, main = "Selection Time for Different Conditions"
+pirateplot(formula = SelectionTime ~ Condition, data = marg_PC_data_frame_without_err, main = "Selection Time for Different Conditions"
            , theme = 2, # theme 2
+           pal = "google", # xmen palette
+           point.o = .4, # Add points
+           point.col = "black",
+           point.bg = "white",
+           point.pch = 21,
+           bean.f.o = .2, # Turn down bean filling
+           inf.f.o = .8, # Turn up inf filling
+           gl.col = "gray", # gridlines
+           gl.lwd = c(.5, 0)) # turn off minor grid lines)
+
+par(mfrow = c(1, 1))
+pirateplot(formula = SelectionTime ~ BubbleSize, data = marg_PB_data_frame_without_err, main = "Selection Time for Different Bubble Sizes"
+           ,theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
            point.col = "black",
@@ -656,19 +815,6 @@ pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame, main
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
 par(mfrow = c(1, 1))
-pirateplot(formula = SelectionTime ~ BubbleSize, data = data_frame_without_err, main = "Selection Time for Different Bubble Sizes"
-           ,theme = 2, # theme 2
-           pal = "google", # xmen palette
-           point.o = .4, # Add points
-           point.col = "black",
-           point.bg = "white",
-           point.pch = 21,
-           bean.f.o = .2, # Turn down bean filling
-           inf.f.o = .8, # Turn up inf filling
-           gl.col = "gray", # gridlines
-           gl.lwd = c(.5, 0)) # turn off minor grid lines)
-
-par(mfrow = c(1, 1))
 pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame, main = "Selection Error for Different Bubble Sizes"
            ,theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -681,12 +827,80 @@ pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame, mai
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
+######## Overview of all data using boxplots   #################### Debugging
+###################################################################
+attach(mtcars)
+par(mfrow = c(2, 2))
+boxplot(SelectionTime ~ Condition, data_frame, main = "No Marginal & with errors",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ Condition, data_frame_without_err, main = "No Marginal & without errors",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ Condition, marg_PC_data_frame, main = "Marginal & with errors",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ Condition, marg_PC_data_frame_without_err, main = "Marginal & without errors",
+               xlab = "Condition", ylab = "Selection Time")
+
+attach(mtcars)
+par(mfrow = c(2, 2))
+boxplot(SelectionTime ~ BubbleSize, data_frame, main = "No Marginal & with errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, data_frame_without_err, main = "No Marginal & without errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame, main = "Marginal & with errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Marginal & without errors",
+               xlab = "Bubble Size", ylab = "Selection Time")
 
 ###################################################################
 ###################################################################
 ###################################################################
 ###################################################################
 ###################################################################
+
+
+
+######## Print some statistical numbers for SelectionError #########
+###################################################################
+
+# for Condition
+
+df <- marg_PC_data_frame
+
+stat_calib_builtin <- df[df$Condition == "Built-in Calibration", "SelectionTime"]
+summary(stat_calib_builtin)
+sd(stat_calib_builtin)
+
+stat_calib_custom <- df[df$Condition == "Custom Calibration", "SelectionTime"]
+summary(stat_calib_custom)
+sd(stat_calib_custom)
+
+stat_calib_mouseKB <- df[df$Condition == "Mouse & Keyboard", "SelectionTime"]
+summary(stat_calib_mouseKB)
+sd(stat_calib_mouseKB)
+
+rm(df, stat_calib_builtin, stat_calib_custom, stat_calib_mouseKB)
+
+# for BubbleSize
+
+df <- marg_PB_data_frame_without_err
+
+stat_bubble_small <- df[df$BubbleSize == "Small", "SelectionTime"]
+summary(stat_bubble_small)
+sd(stat_bubble_small)
+
+stat_bubble_medium <- df[df$BubbleSize == "Medium", "SelectionTime"]
+summary(stat_bubble_medium)
+sd(stat_bubble_medium)
+
+stat_bubble_large <- df[df$BubbleSize == "Large", "SelectionTime"]
+summary(stat_bubble_large)
+sd(stat_bubble_large)
+
+rm(df, stat_bubble_small, stat_bubble_medium, stat_bubble_large)
+
+
+
+
 
 ########Statistics for selection error ############################
 ###################################################################
