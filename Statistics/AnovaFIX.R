@@ -472,6 +472,16 @@ boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame, main = "Marginal & with 
 boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_we, main = "Marginal & without errors",
                xlab = "Bubble Size", ylab = "Selection Time")
 
+# the plots for paper
+attach(mtcars)
+par(mfrow = c(2, 1))
+par(mfrow = c(1, 2))
+boxplot(SelectionTime ~ Condition, marg_PC_data_frame_we, main = "Selection time vs. Condtitions",
+               xlab = "Condition", ylab = "Selection Time")
+boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_we, main = "Bubble size vs. Condtitions",
+               xlab = "Bubble Size", ylab = "Selection Time")
+
+
 ######## Print some statistical numbers for SelectionTime #########
 ###################################################################
 
@@ -527,6 +537,40 @@ df_anova_matrix <- with(df_anova,
         )
     )
 df_anova_model <- lm(df_anova_matrix ~ 1)
+df_anova_design <- factor(c("Built-in Calibration", "Custom Calibration", "Mouse & Keyboard"))
+
+options(contrasts = c("contr.sum", "contr.poly"))
+df_anova_aov <- Anova(df_anova_model, idata = data.frame(df_anova_design), idesign = ~df_anova_design, type = "III")
+
+summary(df_anova_aov, multivariate = F)
+
+# 2. PostHoc for Corrected Selection Time
+df <- marg_PC_data_frame_we
+df_posthoc <- df
+df_posthoc[3] <- NULL # remove column SelectionTime
+df_posthoc[1] <- NULL # remove column Subject
+
+df_posthoc_aov <- aov(df_posthoc$CorrectedSelectionTime ~ df_posthoc$Condition, df_posthoc)
+summary(df_posthoc_aov)
+TukeyHSD(df_posthoc_aov)
+
+# rm
+rm(df_anova, df_anova_aov, df_anova_design, df_anova_matrix, df_anova_model)
+rm(df, df_effect_size, df_posthoc, df_posthoc_aov)
+
+# 3. Effect Size
+df <- data_frame_we
+df_effect_size <- aov(df$CorrectedSelectionTime ~ factor(df$Condition) + Error(factor(df$Subject) / factor(df$Condition)), df)
+summary(df_effect_size)
+EffecSize <- 77.94 / (77.94 + 22.25)
+EffecSize # 0.7779219
+
+df <- data_frame
+df_effect_size <- aov(df$CorrectedSelectionTime ~ factor(df$Condition) + Error(factor(df$Subject) / factor(df$Condition)), df)
+summary(df_effect_size)
+EffecSize <- 68.44 / (68.44 + 27.94)
+EffecSize # 0.7101058
+
 
 ######## Statistical tests for CorrectedSelectionTime ############# without error case
 ###################################################################
