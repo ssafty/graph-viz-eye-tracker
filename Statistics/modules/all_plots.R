@@ -13,8 +13,8 @@ boxplot(SelectionTime ~ Condition, marg_PC_data_frame_without_err, main = "Selec
 boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Selection time vs. Bubble size",
                xlab = "Bubble Size", ylab = "Selection Time")
 
-par(mfrow = c(1, 1))
-pirateplot(formula = SelectionTime ~ Condition, data = marg_PC_data_frame_without_err, main = "Selection Time for Different Conditions"
+par(mfrow = c(1, 1))  #, main = "Selection_Time_for_Different_Conditions"
+pirateplot(formula = SelectionTime ~ Condition, data = marg_PC_data_frame_without_err
            , theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -26,8 +26,8 @@ pirateplot(formula = SelectionTime ~ Condition, data = marg_PC_data_frame_withou
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
-par(mfrow = c(1, 1))
-pirateplot(formula = SelectionTime ~ BubbleSize, data = marg_PB_data_frame_without_err, main = "Selection Time for Different Bubble Sizes"
+par(mfrow = c(1, 1)) #, main = "Selection Time for Different Bubble Sizes"
+pirateplot(formula = SelectionTime ~ BubbleSize, data = marg_PB_data_frame_without_err
            , theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -48,8 +48,8 @@ boxplot(SelectionError ~ Condition, marg_PC_data_frame, main = "Selection Error 
 boxplot(SelectionError ~ BubbleSize, marg_PB_data_frame, main = "Selection Error vs. Bubble size",
                xlab = "Bubble Size", ylab = "Selection Time")
 
-par(mfrow = c(1, 1))
-pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame, main = "Selection Error for Different Conditions"
+par(mfrow = c(1, 1))#, main = "Selection Error for Different Conditions"
+pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame
            , theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
@@ -61,8 +61,8 @@ pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame, main
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
 
-par(mfrow = c(1, 1))
-pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame, main = "Selection Error for Different Bubble Sizes"
+par(mfrow = c(1, 1)) #, main = "Selection Error for Different Bubble Sizes"
+pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame
            , theme = 2, # theme 2
            pal = "google", # xmen palette
            point.o = .4, # Add points
