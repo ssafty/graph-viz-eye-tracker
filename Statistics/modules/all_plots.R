@@ -13,7 +13,8 @@ boxplot(SelectionTime ~ Condition, marg_PC_data_frame_without_err, main = "Selec
 boxplot(SelectionTime ~ BubbleSize, marg_PB_data_frame_without_err, main = "Selection time vs. Bubble size",
                xlab = "Bubble Size", ylab = "Selection Time")
 
-par(mfrow = c(1, 1))  #, main = "Selection_Time_for_Different_Conditions"
+par(mfrow = c(1, 1)) #, main = "Selection_Time_for_Different_Conditions"
+pdf("images/Selection_Time_for_Different_Conditions.pdf", width = 7.32, height = 5.05)
 pirateplot(formula = SelectionTime ~ Condition, data = marg_PC_data_frame_without_err
            , theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -25,8 +26,10 @@ pirateplot(formula = SelectionTime ~ Condition, data = marg_PC_data_frame_withou
            inf.f.o = .8, # Turn up inf filling
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
+dev.off()
 
 par(mfrow = c(1, 1)) #, main = "Selection Time for Different Bubble Sizes"
+pdf("images/Selection_Time_for_Different_Bubble_Sizes.pdf", width = 7.32, height = 5.05)
 pirateplot(formula = SelectionTime ~ BubbleSize, data = marg_PB_data_frame_without_err
            , theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -38,6 +41,7 @@ pirateplot(formula = SelectionTime ~ BubbleSize, data = marg_PB_data_frame_witho
            inf.f.o = .8, # Turn up inf filling
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
+dev.off()
 
 # the plots for paper SelectionError
 attach(mtcars)
@@ -48,7 +52,8 @@ boxplot(SelectionError ~ Condition, marg_PC_data_frame, main = "Selection Error 
 boxplot(SelectionError ~ BubbleSize, marg_PB_data_frame, main = "Selection Error vs. Bubble size",
                xlab = "Bubble Size", ylab = "Selection Time")
 
-par(mfrow = c(1, 1))#, main = "Selection Error for Different Conditions"
+par(mfrow = c(1, 1)) #, main = "Selection Error for Different Conditions"
+pdf("images/Selection_Error_for_Different_Conditions.pdf", width = 7.32, height = 5.05)
 pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame
            , theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -60,8 +65,10 @@ pirateplot(formula = SelectionError ~ Condition, data = marg_PC_data_frame
            inf.f.o = .8, # Turn up inf filling
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
+dev.off()
 
 par(mfrow = c(1, 1)) #, main = "Selection Error for Different Bubble Sizes"
+pdf("images/Selection_Error_for_Different_Bubble_Sizes.pdf", width = 7.32, height = 5.05)
 pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame
            , theme = 2, # theme 2
            pal = "google", # xmen palette
@@ -73,6 +80,7 @@ pirateplot(formula = SelectionError ~ BubbleSize, data = marg_PB_data_frame
            inf.f.o = .8, # Turn up inf filling
            gl.col = "gray", # gridlines
            gl.lwd = c(.5, 0)) # turn off minor grid lines)
+dev.off()
 
 ######## Overview of all data using boxplots   #################### Debugging only for SelectionTime
 ###################################################################
