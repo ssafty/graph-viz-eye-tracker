@@ -86,6 +86,9 @@ data_frame =dataFrame[,c(
 
 data_frame$V10[data_frame$V10 == "2h"] <- as.numeric(as.character("2"))
 
+
+#data_frame_new <- data_frame[!((data_frame$V2 == 9) | (data_frame$V2 == 8) | (data_frame$V2 == 11) | (data_frame$V2 == 14) ),]
+
 participants = unique(data_frame["V2"])
 participants
 typeof(participants)
@@ -143,7 +146,7 @@ length(Value_post)
 
 
 
-Group <- c(rep(data_frame$V2, (length(Value_post))/16))
+Group <- c(rep(data_frame$V2, (length(Value_post)/16)))
 typeof(Group)
 length(Group)
 
