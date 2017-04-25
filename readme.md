@@ -1,4 +1,4 @@
-#Graph Navigation with Eye-tracker
+# Graph Navigation with Eye-tracker
 Creating a gaze-aided graph navigating application using [Unity3D](https://unity3d.com/) and [Pupil-lab](https://github.com/pupil-labs/pupil).
 
 ### Features:
