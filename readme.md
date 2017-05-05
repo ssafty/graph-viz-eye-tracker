@@ -3,6 +3,7 @@ Creating a gaze-aided graph navigating application using [Unity3D](https://unity
 
 ### Features:
 * [Dataset](https://snap.stanford.edu/data/#wikipedia) from wikipedia is sampled and projected in 3D space using [Force-directed-layouts](https://en.wikipedia.org/wiki/Force-directed_graph_drawing).
+    * Inspired by this [post](http://collaboradev.com/2014/03/12/visualizing-3d-network-topologies-using-unity/).
 * Supports keyboard/mouse controls.
 * Navigation/Rotation and Dramatic Camera in Node selection.
 * ~~Information panel added for each selected Node to render extra information.~~
